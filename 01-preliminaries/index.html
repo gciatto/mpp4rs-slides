@@ -1,8 +1,7 @@
 <!DOCTYPE html><html lang="en"><head>
-	<meta name="generator" content="Hugo 0.117.0">
     <meta charset="utf-8">
-<title>MPP4RS</title>
-<meta name="description" content="Landing page">
+<title>Preliminaries</title>
+<meta name="description" content="Motivation and context for the course">
 <meta name="author" content="Giovanni Ciatto">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -22,13 +21,179 @@
       <div class="slides">
   
 
-    <section><h1 id="multi-platform-programming-for-research-oriented-software">Multi-platform Programming for Research-Oriented Software</h1>
-<p>PhD Course for the Computer Science and Engineering PhD Programme</p>
+    <section>
+
+<section data-shortcode-section="">
+<h1 id="what-are-software-platforms">What are software platforms?</h1>
+<ul>
+<li>
+<p>Fuzzy concept</p>
+<ul>
+<li>often mentioned in courses / literature, yet not precisely defined</li>
+</ul>
+</li>
+<li>
+<p>Insight:</p>
+</li>
+</ul>
+<blockquote>
+<p>The <strong>substratum</strong> upon which <strong>software applications</strong> <em>run</em></p>
+</blockquote>
 </section><section>
-<h1 id="table-of-contents">Table of contents</h1>
+<h1 id="what-are-software-platforms-1">What are software platforms?</h1>
+<h2 id="operative-systems-">Operative systems (?)</h2>
+<ul>
+<li>
+<p>Most software runs on top of an <strong>opertive system</strong> (OS)</p>
+</li>
+<li>
+<p>So yes, all operative systems are platforms</p>
+</li>
+<li>
+<p>Is there more?</p>
+<ul>
+<li>e.g. <a href="https://www.jabref.org/">JabRef</a>: <strong>Java</strong> application running on top of <strong>JVM</strong>
+<ul>
+<li>the JVM is an application for the OS</li>
+</ul>
+</li>
+<li>e.g. <a href="https://app.diagrams.net/">Draw.io</a>: <strong>Web</strong> application running on top of <strong>browsers</strong>
+<ul>
+<li>the browser is an application for the OS</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h1 id="what-are-software-platforms-2">What are software platforms?</h1>
+<h2 id="operative-systems--">Operative systems + ???</h2>
+<ul>
+<li>
+<p>Programming languages?</p>
+<ul>
+<li>not that simple
+<ul>
+<li>e.g. Scala apps can call Java code</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Runtimes</p>
+<ul>
+<li>i.e. the set of libraries and conventions backing programming languages</li>
+</ul>
+</li>
+</ul>
+
+</section>
+</section><section>
+<h1 id="what-are-software-platforms">What are software platforms?</h1>
+<h2 id="precise-definitions">Precise definitions</h2>
+<blockquote>
+<p><strong>Software platform</strong> $\stackrel{\Delta}{=}$ anything having an <strong>API</strong> enabling the writing of applications,
+and the <strong>runtime</strong> supporting the execution of those applications</p>
+</blockquote>
+<ul>
+<li>thank you chap, what are API and runtimes then?</li>
+</ul>
+</section><section>
+
+
+<section data-shortcode-section="">
+<h1 id="what-are-api-and-runtimes">What are API and runtimes?</h1>
+<blockquote>
+<p><strong>API</strong> $\equiv$ application programming interface(s)  $\stackrel{\Delta}{=}$ a <em>formal</em> specification of the set of <strong>functionalities</strong> provided by a software (sub-)system for <em>external</em> usage, there including their <strong>input</strong>, <strong>outputs</strong>, and <em>enviromental</em> <strong>preconditions</strong> and <strong>effects</strong></p>
+</blockquote>
+<ul>
+<li>client-server methaphor is implicit</li>
+</ul>
+</section><section>
+<p>Examples:</p>
+<ul>
+<li>
+<p>all possible <em>public</em> interfaces / classes / structures in an OOP module</p>
+<ul>
+<li>and their public/protected methods / fields / properties / constructors
+<ul>
+<li>and their formal arguments, return types, throwable excepions</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>all possible commands a CLI application accept as input</p>
+<ul>
+<li>and their admissible sub-commands, options, and arguments
+<ul>
+<li>and the corresponding outputs, exit values, and side-effects</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>all possible paths a Web service may accept HTTP request onto</p>
+<ul>
+<li>and their admissible HTTP methods
+<ul>
+<li>and their admissible query / path / body / header parameters
+<ul>
+<li>and the corresponding status codes, and response bodies</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<p>TODO: define runtime</p>
+
+</section>
+<h2 id="platforms-and-multi-platforms-applications">Platforms and multi-platforms applications</h2>
 <ol>
-<li><a href="./about">About the course</a></li>
-<li><a href="./preliminaries">Preliminaries</a></li>
+<li>
+<p>Software is always developed/run on top of some <strong>platform</strong></p>
+</li>
+<li>
+<p>Technically, platforms are most common OS</p>
+<ul>
+<li>e.g. Linux, Mac OS, and Windows</li>
+</ul>
+</li>
+<li>
+<p>In the past, applications were said “multi-platform” if they were buildable – and therefore executable – on several OS</p>
+<ul>
+<li>this definition is <strong>outdated</strong></li>
+</ul>
+</li>
+<li>
+<p>Nowadays, mainstream SW dev is performed on top of <strong>virtual</strong> platforms, which already support multiple OS</p>
+<ul>
+<li>e.g. JVM, .NET, Python, JS, ART (Android RunTime), etc</li>
+</ul>
+</li>
+<li>
+<p>This is made possible by virtual machines:</p>
+<ol>
+<li>define a low-level API/byte-code which is OS-agnostic</li>
+<li>implement several VM, one for each OS, supporting that API/byte-code</li>
+</ol>
+</li>
+<li>
+<p>One can now execute a Java/Python/JS/.NET program on any (relevant) OS</p>
+<ul>
+<li>however, no matter how beautiful my Java program is, if I want it in my browser I must either rewrite it in JS or wrap it in a WS</li>
+<li>however, no matter how cool my .NET ML toolkit is, if I want it to go mainstream I need to make it usable for Python developers</li>
+</ul>
+</li>
+<li>
+<p>Nowadays, by “platforms” we mean not only OS but <strong>runtimes</strong> too</p>
+<ul>
+<li><strong>multi-platform</strong> applications support several runtimes and OS</li>
+</ul>
+</li>
 </ol>
 </section>
 
