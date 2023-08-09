@@ -1,0 +1,81 @@
+name: Build and deploy
+
+on:
+  push:
+    tags: '*'
+    branches-ignore:
+      - 'autodelivery**'
+      - 'bump-**'
+      - 'renovate/**'
+    paths-ignore:
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - 'LICENSE'
+      - '.github/workflows/update-hugo.yml'
+  pull_request:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  Build-Slides:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      # Checkout the repository
+      - name: Checkout
+        uses: danysk/action-checkout@0.2.10
+      - name: Compute the version of Hugo
+        id: hugo
+        shell: bash
+        run: |
+          # Idea: the regex matcher of Renovate keeps this string up to date automatically
+          # The version is extracted and used to access the correct version of the scripts
+          USES=$(cat <<TRICK_RENOVATE
+          - uses: gohugoio/hugo@v0.117.0
+          TRICK_RENOVATE
+          )
+          echo "Scripts update line: \"$USES\""
+          echo "Computed version: \"${USES#*@v}\""
+          echo "version=${USES#*@v}" >> $GITHUB_OUTPUT
+      - name: Download Hugo
+        run: |
+          HUGO_VERSION="${{ steps.hugo.outputs.version }}"
+          URL="https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb"
+          wget --retry-connrefused --waitretry=1 --read-timeout=20 "$URL" --output-document=hugo.deb
+      - name: List files
+        run: ls -ahl
+      - name: Install Hugo
+        run: sudo dpkg -i hugo.deb
+      - name: Print Hugo version
+        run: hugo version
+      - name: Remove Hugo Installer
+        run: rm hugo.deb
+      # - name: Start SSH session
+      #   uses: luchihoratiu/debug-via-ssh@main
+      #   with:
+      #     NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+      #     SSH_PASS: ${{ secrets.SSH_PASS }}
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1.152.0
+        with:
+          working-directory: shared-slides
+      - name: Run the preprocessor
+        run: shared-slides/preprocess.rb
+      - name: Build slides with hugo
+        run: hugo
+      - name: Transform and Inline Mermaid charts
+        uses: cric96/inline-mermaid@v1.8.1
+        with:
+          css-file-regex: '^css\\/.*custom.*theme.*\\.css$'
+      - name: Get branch name
+        id: branch-name
+        uses: tj-actions/branch-names@v7
+      - name: Deploy website
+        if: ${{ github.event_name != 'pull_request' && steps.branch-name.outputs.is_default == 'true' }}
+        uses: JamesIves/github-pages-deploy-action@v4.4.3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          folder: build
