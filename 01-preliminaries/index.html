@@ -104,13 +104,20 @@ and the <strong>runtime</strong> supporting the execution of those applications<
 <section data-shortcode-section="">
 <h1 id="what-are-api-and-runtimes">What are API and runtimes?</h1>
 <blockquote>
-<p><strong>API</strong> $\equiv$ application programming interface(s)  $\stackrel{\Delta}{=}$ a <em>formal</em> specification of the set of <strong>functionalities</strong> provided by a software (sub-)system for <em>external</em> usage, there including their <strong>input</strong>, <strong>outputs</strong>, and <em>enviromental</em> <strong>preconditions</strong> and <strong>effects</strong></p>
+<p><a href="https://en.wikipedia.org/wiki/API"><strong>API</strong></a> $\equiv$ application programming interface(s) $\stackrel{\Delta}{=}$ a <em>formal</em> specification of the set of <strong>functionalities</strong> provided by a software (sub-)system for <em>external</em> usage, there including their <strong>input</strong>, <strong>outputs</strong>, and <em>enviromental</em> <strong>preconditions</strong> and <strong>effects</strong></p>
 </blockquote>
 <ul>
 <li>client-server methaphor is implicit</li>
 </ul>
+<blockquote>
+<p><a href="https://en.wikipedia.org/wiki/Runtime_system"><strong>Runtime</strong></a> [system/environment] $\approx$ the set of computational resources backing the execution of a software (sub-)system</p>
+</blockquote>
+<ul>
+<li>we say that “runtimes <em>support</em> API”</li>
+</ul>
 </section><section>
-<p>Examples:</p>
+<h1 id="what-are-api-and-runtimes-1">What are API and runtimes?</h1>
+<h2 id="examples-of-api">Examples of API</h2>
 <ul>
 <li>
 <p>all possible <em>public</em> interfaces / classes / structures in an OOP module</p>
@@ -148,9 +155,547 @@ and the <strong>runtime</strong> supporting the execution of those applications<
 </li>
 </ul>
 </section><section>
-<p>TODO: define runtime</p>
+<h1 id="what-are-api-and-runtimes-2">What are API and runtimes?</h1>
+<h2 id="examples-of-runtimes">Examples of runtimes</h2>
+<ul>
+<li>
+<p>any virtual machine (JVM, CRL, CPython, V8)</p>
+<ul>
+<li>and their standard libraries</li>
+<li>and their type system and internal conventions
+<ul>
+<li>eg value/reference types in JVM/CRL, global lock in CPython</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>any operative system (Win, Mac, Linux)</p>
+<ul>
+<li>and their system calls, daemons, package managers, default commands, etc</li>
+<li>and their program memory, access control, file system models</li>
+</ul>
+</li>
+<li>
+<p>any Web service</p>
+<ul>
+<li>and the protocols they leverage upon</li>
+<li>and their URL structuring model</li>
+<li>the data schema of their input/output objects</li>
+<li>the authentication / authorization mechanisms they support</li>
+</ul>
+</li>
+</ul>
 
 </section>
+</section><section>
+<h1 id="notable-platforms">Notable platforms</h1>
+<ul>
+<li>
+<p>The Java Virtual Machine (JVM)</p>
+<ul>
+<li>supported languages: Java, Kotlin, Scala, Clojure, etc.</li>
+</ul>
+</li>
+<li>
+<p>.NET’s [pronunced “dot NET”] Common Language Runtime (CRL)</p>
+<ul>
+<li>supported languages: C#, VB.NET, F#, etc.</li>
+</ul>
+</li>
+<li>
+<p>Python 3</p>
+<ul>
+<li>supported language: Python</li>
+</ul>
+</li>
+<li>
+<p>NodeJS (V8)</p>
+<ul>
+<li>supported language: JavaScript, TypeScript, etc.</li>
+</ul>
+</li>
+<li>
+<p>Each browser may be considered as a platform per se</p>
+<ul>
+<li>supported language: JavaScript</li>
+</ul>
+</li>
+<li>
+<p>…</p>
+</li>
+</ul>
+</section><section>
+<h1 id="practical-features-of-platforms">Practical features of platforms</h1>
+<ul>
+<li>
+<p>standard libraries</p>
+<ul>
+<li>i.e. pre-cooked functionalities developers / users may exploit</li>
+</ul>
+</li>
+<li>
+<p>predefined design decisions</p>
+<ul>
+<li>e.g. global lock in Python, event loop in JavaScript, etc.</li>
+</ul>
+</li>
+<li>
+<p>organizational, stylistic, technical conventions</p>
+<ul>
+<li>e.g. project structure, code linting, nomenclature, etc.</li>
+</ul>
+</li>
+<li>
+<p>packaging conventions, import mechanisms, and software repositories</p>
+<ul>
+<li>e.g. classpath for the JVM, NPM for JS, Pip + Pypi for Python, etc.</li>
+</ul>
+</li>
+<li>
+<p>user communities</p>
+<ul>
+<li>e.g. many Data scientists use Python, many Web developers use JVM / JS</li>
+</ul>
+</li>
+</ul>
+</section><section>
+
+
+<section data-shortcode-section="">
+<h1 id="example-the-jvm-platform">Example: the JVM platform</h1>
+</section><section>
+<h2 id="standard-libraries">Standard libraries</h2>
+<ul>
+<li>
+<p>Types from the <code>java.*</code> and <code>javax.*</code> packages are usable from any JVM language</p>
+</li>
+<li>
+<p>Many nice functionalities covering:</p>
+<ul>
+<li>multi-threading, non-blocking IO, asynchronous programming</li>
+<li>OS-independent GUI, or IO management</li>
+<li>data structures and algorithms for collections and streams</li>
+<li>unlimited precision arithmetic</li>
+</ul>
+</li>
+<li>
+<p>Many functionalities are provided by community-driven third party libraries</p>
+<ul>
+<li>e.g. YAML/JSON parsing / generation, CSV parsing, complex numbers</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="predefined-design-decisions">Predefined design decisions</h2>
+<ul>
+<li>
+<p>Everything is (indirectly) a subclass/instance of <code>Object</code></p>
+<ul>
+<li>except fixed set of primitive types, and static stuff</li>
+</ul>
+</li>
+<li>
+<p>Every object is potentially a lock</p>
+<ul>
+<li>useful for concurrency</li>
+</ul>
+</li>
+<li>
+<p>Default methods inherited by <code>Object</code> class</p>
+<ul>
+<li>e.g. <code>toString</code>, <code>equals</code>, <code>hashCode</code></li>
+</ul>
+</li>
+<li>
+<p>All methods are virtual by default</p>
+</li>
+<li>
+<p>…</p>
+</li>
+</ul>
+</section><section>
+<h2 id="organizational-stylistic-technical-conventions">Organizational, stylistic, technical conventions</h2>
+<ul>
+<li>
+<p>Project should be organized according to the Maven’s <a href="https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html">standard directory layout</a></p>
+</li>
+<li>
+<p>Official stylistic conventions for most JVM languages</p>
+<ul>
+<li>e.g. type names in <code>PascalCase</code>, members names in <code>camelCase</code></li>
+<li>e.g. getters/setters in Java vs. Kotlin’s or Scala’s properties</li>
+</ul>
+</li>
+<li>
+<p>Many technical conventions:</p>
+</li>
+</ul>
+<ul>
+<li>iterable data structures should implement the <code>Iterable</code> interface</li>
+<li>variadic arguments are considered arrays</li>
+<li>constructors for collections subclasses accept <code>Iterable</code>s as input</li>
+<li>…</li>
+</ul>
+</section><section>
+<h2 id="packaging-conventions-import-mechanisms-and-software-repositories">Packaging conventions, import mechanisms, and software repositories</h2>
+<ul>
+<li>
+<p>Code is organized into packages</p>
+<ul>
+<li>packages must correspond to directory structures</li>
+</ul>
+</li>
+<li>
+<p>Code archives (JAR) are Zip files containing compiled classes</p>
+</li>
+<li>
+<p>Basic import mechanism: the class path</p>
+<ul>
+<li>i.e. the path where classes are looked for</li>
+<li>commonly set at application startup</li>
+</ul>
+</li>
+<li>
+<p>Many third-party repositories for JVM libraries</p>
+<ul>
+<li><a href="https://central.sonatype.com">Maven central repository</a> is the most relevant one</li>
+<li>many tools for dependency management (e.g. Maven, Gradle)</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="user-communities">User communities</h2>
+<ul>
+<li>
+<p>Android developers</p>
+</li>
+<li>
+<p>Back-end Web developers</p>
+</li>
+<li>
+<p>Desktop applications developers</p>
+</li>
+<li>
+<p>Researchers in the fields of: semantic Web, multi-agent systems, etc.</p>
+</li>
+<li>
+<p>…</p>
+</li>
+</ul>
+
+</section>
+</section><section>
+
+
+<section data-shortcode-section="">
+<h1 id="example-the-python-platform">Example: the Python platform</h1>
+</section><section>
+<h2 id="standard-libraries">Standard libraries</h2>
+<ul>
+<li>
+<p>Notably, one the richest standard libraries ever</p>
+</li>
+<li>
+<p>Many nice functionalities covering:</p>
+<ul>
+<li>all the stuff covered by Java</li>
+<li>plus many more, e.g. complex numbers, JSON and CSV parsing, etc</li>
+</ul>
+</li>
+<li>
+<p>Many functionalities are provided by community-driven third party libraries</p>
+<ul>
+<li>e.g. scientific or ML libraries</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="predefined-design-decisions">Predefined design decisions</h2>
+<ul>
+<li>
+<p>Everything is (indirectly) a subclass/instance of <code>object</code></p>
+<ul>
+<li>no exceptions</li>
+</ul>
+</li>
+<li>
+<p><a href="https://realpython.com/python-gil/">Global Interpreter Lock</a> (GIL)</p>
+</li>
+<li>
+<p>Magic methods supporting various language features</p>
+<ul>
+<li>e.g. <code>__str__</code>, <code>__eq__</code>, <code>__iter__</code></li>
+</ul>
+</li>
+<li>
+<p>No support for overloading</p>
+</li>
+<li>
+<p>Variadic and keywords arguments</p>
+</li>
+<li>
+<p>…</p>
+</li>
+</ul>
+</section><section>
+<h2 id="organizational-stylistic-technical-conventions">Organizational, stylistic, technical conventions</h2>
+<ul>
+<li>
+<p>Project should be organized according to <a href="https://docs.python-guide.org/writing/structure/">Kenneth Reitz’s layout</a></p>
+</li>
+<li>
+<p>Official stylistic conventions for Python (<a href="https://peps.python.org/pep-0008/">PEP8</a>)</p>
+<ul>
+<li>e.g. type names in <code>PascalCase</code>, members names in <code>snake_case</code></li>
+<li>e.g. getters/setters in Java vs. Kotlin’s or Scala’s properties</li>
+</ul>
+</li>
+<li>
+<p>Many technical conventions:</p>
+</li>
+</ul>
+<ul>
+<li><a href="https://realpython.com/lessons/duck-typing/">duck typing</a></li>
+<li>iterable data structures should implement the <code>__iter__</code> method</li>
+<li>variadic arguments are considered tuples</li>
+<li>keyword arguments are considered sets</li>
+<li>…</li>
+</ul>
+</section><section>
+<h2 id="packaging-conventions-import-mechanisms-and-software-repositories">Packaging conventions, import mechanisms, and software repositories</h2>
+<ul>
+<li>
+<p>Code is organized into packages and modules</p>
+<ul>
+<li>packages must correspond to directory structures</li>
+<li>modules must correspond to files</li>
+</ul>
+</li>
+<li>
+<p>Code archives (JAR) are wheel files containing Python sources</p>
+</li>
+<li>
+<p>Each Python installation has an internal folder where libraries are stored</p>
+<ul>
+<li><code>pip</code> simply unzips modules/packages in there</li>
+<li><code>import</code> statements look for packages/modules in there</li>
+</ul>
+</li>
+<li>
+<p><a href="https://pypi.org/">Pypi</a> as the official repository for Python libraries</p>
+<ul>
+<li><code>pip</code> as the official tool for dependency management</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="user-communities">User communities</h2>
+<ul>
+<li>
+<p>Data-science community</p>
+</li>
+<li>
+<p>Back-end Web developers</p>
+</li>
+<li>
+<p>Desktop applications developers</p>
+</li>
+<li>
+<p>System administrators</p>
+</li>
+<li>
+<p>…</p>
+</li>
+</ul>
+
+</section>
+</section><section>
+
+
+<section data-shortcode-section="">
+<h1 id="example-the-nodejs-platform">Example: the NodeJS platform</h1>
+</section><section>
+<h2 id="standard-library">Standard library</h2>
+<ul>
+<li>
+<p>Very limited standard library from JavaScript</p>
+<ul>
+<li>enriched with many Node modules</li>
+</ul>
+</li>
+<li>
+<p>Many nice functionalities covering:</p>
+<ul>
+<li>networking and IPC</li>
+<li>OS, multiprocess, and cryptographic utilities</li>
+</ul>
+</li>
+<li>
+<p>Many functionalities are provided by community-driven third party libraries</p>
+<ul>
+<li>you can find virtually anything on <a href="https://www.npmjs.com/">npmjs.com</a></li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="predefined-design-decisions">Predefined design decisions</h2>
+<ul>
+<li>
+<p>Object orientation based on <a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object_prototypes">prototypes</a></p>
+</li>
+<li>
+<p>Single threaded design + <a href="https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick">event loop</a></p>
+</li>
+<li>
+<p>Asynchronous programming via <a href="https://matt.might.net/articles/by-example-continuation-passing-style/">continuation-passing style</a></p>
+</li>
+</ul>
+</section><section>
+<h2 id="organizational-stylistic-technical-conventions">Organizational, stylistic, technical conventions</h2>
+<ul>
+<li>
+<p>Project structure is somewhat arbitrary</p>
+<ul>
+<li>the project must contain a <code>package.json</code> file</li>
+<li>declaring the entry point of the project</li>
+</ul>
+</li>
+<li>
+<p>Many conventions co-exist</p>
+<ul>
+<li>e.g. <a href="https://www.w3schools.com/js/js_conventions.asp">W3School’s one</a></li>
+</ul>
+</li>
+<li>
+<p>Many technical conventions:</p>
+<ul>
+<li>duck typing</li>
+<li>magic variables, e.g. for prototype</li>
+<li>…</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="packaging-conventions-import-mechanisms-and-software-repositories">Packaging conventions, import mechanisms, and software repositories</h2>
+<ul>
+<li>
+<p>Code is organized into modules</p>
+<ul>
+<li>modules are file containing anything</li>
+<li>and declaring what to export</li>
+</ul>
+</li>
+<li>
+<p>Code archives (JAR) are tarball files containing JS sources</p>
+</li>
+<li>
+<p>Third party libraries can be installed via <code>npm</code></p>
+<ul>
+<li>locally, for the user, or globally</li>
+</ul>
+</li>
+<li>
+<p><a href="https://www.npmjs.com/">NPM</a> as the official repository for JS libraries</p>
+<ul>
+<li><code>npm</code> as the official tool for dependency management</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="user-communities">User communities</h2>
+<ul>
+<li>
+<p>Front-end Web developers</p>
+</li>
+<li>
+<p>Back-end Web developers</p>
+</li>
+<li>
+<p>GUI developers</p>
+</li>
+<li>
+<p>…</p>
+</li>
+</ul>
+
+</section>
+</section><section>
+
+
+<section data-shortcode-section="">
+<h1 id="platforms-from-software-developers-perspective">Platforms from software developers’ perspective</h1>
+<p>The choice of a platform impacts developers during:</p>
+<ul>
+<li>
+<p>the design phase</p>
+</li>
+<li>
+<p>the implementation phase</p>
+</li>
+<li>
+<p>the testing phase</p>
+</li>
+<li>
+<p>the release phase</p>
+</li>
+</ul>
+</section><section>
+<h2 id="how-platform-affects-the-design-phase">How platform affects the <strong>design</strong> phase</h2>
+<ul>
+<li>One may choose the platform which minimises the <strong>abstraction gap</strong> w.r.t. the problem at hand</li>
+</ul>
+<blockquote>
+<p><strong>Abstraction gap</strong> $\approx$ the space among the <strong>problem</strong> and the prior functionalities offered by a <strong>platform</strong>. Ideally, the bigger the space the more <em>effort</em> is required to build the solution</p>
+</blockquote>
+</section><section>
+<h2 id="how-platform-affects-the-implementation-phase">How platform affects the <strong>implementation</strong> phase</h2>
+<ul>
+<li>
+<p>Developers build solutions by leveraging the API of the platform</p>
+</li>
+<li>
+<p>… as well as the API of any third-party library available for that platform</p>
+</li>
+</ul>
+</section><section>
+<h2 id="how-platform-affects-the-testing-phase">How platform affects the <strong>testing</strong> phase</h2>
+<ul>
+<li>
+<p>Test suites are a “project in the project”</p>
+<ul>
+<li>so remarks are similar w.r.t. the implementation phase</li>
+</ul>
+</li>
+<li>
+<p>One may test the system against as many versions as possible of the underlying platforms</p>
+</li>
+<li>
+<p>One may test the system against as many OS as possible</p>
+<ul>
+<li>virtual platforms may behave differently depending on the OS</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="how-platform-affects-the-release-phase">How platform affects the <strong>release</strong> phase</h2>
+<ul>
+<li>
+<p>Packaging systems are platform-specific…</p>
+</li>
+<li>
+<p>Repositories are platform-specific…</p>
+</li>
+<li>
+<p>… release is therefore platform specific</p>
+</li>
+</ul>
+<blockquote>
+<p><strong>Release</strong> $\approx$ publishing some packaged software system onto a repository, hence enabling its import and exploitation</p>
+</blockquote>
+
+</section>
+</section><section>
 <h2 id="platforms-and-multi-platforms-applications">Platforms and multi-platforms applications</h2>
 <ol>
 <li>
