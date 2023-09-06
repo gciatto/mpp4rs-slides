@@ -624,4 +624,4 @@ The choice of a platform impacts developers during:
 > Create multiple artifacts, one per each supported platform, sharing the same design and functioning
 
 - Practical goal: 
-> design and write the software once, then automatically port it to several platforms
+> design and write the software once, then port it to several platforms
