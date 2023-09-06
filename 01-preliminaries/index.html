@@ -347,7 +347,7 @@ and the <strong>runtime</strong> supporting the execution of those applications<
 </ul>
 </li>
 <li>
-<p>Code archives (JAR) are Zip files containing compiled classes</p>
+<p>Code archives (<code>.jar</code>) are Zip files containing compiled classes</p>
 </li>
 <li>
 <p>Basic import mechanism: the class path</p>
@@ -448,7 +448,8 @@ and the <strong>runtime</strong> supporting the execution of those applications<
 <p>Official stylistic conventions for Python (<a href="https://peps.python.org/pep-0008/">PEP8</a>)</p>
 <ul>
 <li>e.g. type names in <code>PascalCase</code>, members names in <code>snake_case</code></li>
-<li>e.g. getters/setters in Java vs. Kotlin’s or Scala’s properties</li>
+<li>e.g. indentation-aware syntax, blank line conventions, etc.</li>
+<li>…</li>
 </ul>
 </li>
 <li>
@@ -473,7 +474,7 @@ and the <strong>runtime</strong> supporting the execution of those applications<
 </ul>
 </li>
 <li>
-<p>Code archives (JAR) are wheel files containing Python sources</p>
+<p>Code archives (<code>.whl</code>) are Zip files containing Python sources</p>
 </li>
 <li>
 <p>Each Python installation has an internal folder where libraries are stored</p>
@@ -587,7 +588,7 @@ and the <strong>runtime</strong> supporting the execution of those applications<
 </ul>
 </li>
 <li>
-<p>Code archives (JAR) are tarball files containing JS sources</p>
+<p>Code archives (<code>.tar.?z</code>) are compressed tarball files containing JS sources</p>
 </li>
 <li>
 <p>Third party libraries can be installed via <code>npm</code></p>
@@ -648,6 +649,8 @@ and the <strong>runtime</strong> supporting the execution of those applications<
 <blockquote>
 <p><strong>Abstraction gap</strong> $\approx$ the space among the <strong>problem</strong> and the prior functionalities offered by a <strong>platform</strong>. Ideally, the bigger the space the more <em>effort</em> is required to build the solution</p>
 </blockquote>
+<figure><img src="abstraction-gap.svg" width="70%">
+</figure>
 </section><section>
 <h2 id="how-platform-affects-the-implementation-phase">How platform affects the <strong>implementation</strong> phase</h2>
 <ul>
@@ -658,6 +661,8 @@ and the <strong>runtime</strong> supporting the execution of those applications<
 <p>… as well as the API of any third-party library available for that platform</p>
 </li>
 </ul>
+<figure><img src="third-party.svg" width="80%">
+</figure>
 </section><section>
 <h2 id="how-platform-affects-the-testing-phase">How platform affects the <strong>testing</strong> phase</h2>
 <ul>
@@ -679,6 +684,9 @@ and the <strong>runtime</strong> supporting the execution of those applications<
 </ul>
 </section><section>
 <h2 id="how-platform-affects-the-release-phase">How platform affects the <strong>release</strong> phase</h2>
+<blockquote>
+<p><strong>Release</strong> $\approx$ publishing some packaged software system onto a repository, hence enabling its import and exploitation</p>
+</blockquote>
 <ul>
 <li>
 <p>Packaging systems are platform-specific…</p>
@@ -690,56 +698,96 @@ and the <strong>runtime</strong> supporting the execution of those applications<
 <p>… release is therefore platform specific</p>
 </li>
 </ul>
-<blockquote>
-<p><strong>Release</strong> $\approx$ publishing some packaged software system onto a repository, hence enabling its import and exploitation</p>
-</blockquote>
 
 </section>
 </section><section>
-<h2 id="platforms-and-multi-platforms-applications">Platforms and multi-platforms applications</h2>
+<h2 id="platform-choice-for-a-new-sw-project">Platform choice for a new SW project</h2>
+<ul>
+<li>
+<p>Choice is commonly driven by design / technical decisions</p>
+<ul>
+<li>which platform would ease developers’ work the most?</li>
+</ul>
+</li>
+<li>
+<p>However, choosing the platform is a business decision as well</p>
+<ul>
+<li>platforms have user communities</li>
+<li>SW project benefit from wide(r) user communities</li>
+</ul>
+</li>
+<li>
+<p>Business decision: which user communities to target?</p>
+<ul>
+<li>what are the most relevant platforms for that communities?</li>
+</ul>
+</li>
+<li>
+<p>Coherency is key for success in platform selection</p>
 <ol>
-<li>
-<p>Software is always developed/run on top of some <strong>platform</strong></p>
-</li>
-<li>
-<p>Technically, platforms are most common OS</p>
-<ul>
-<li>e.g. Linux, Mac OS, and Windows</li>
-</ul>
-</li>
-<li>
-<p>In the past, applications were said “multi-platform” if they were buildable – and therefore executable – on several OS</p>
-<ul>
-<li>this definition is <strong>outdated</strong></li>
-</ul>
-</li>
-<li>
-<p>Nowadays, mainstream SW dev is performed on top of <strong>virtual</strong> platforms, which already support multiple OS</p>
-<ul>
-<li>e.g. JVM, .NET, Python, JS, ART (Android RunTime), etc</li>
-</ul>
-</li>
-<li>
-<p>This is made possible by virtual machines:</p>
-<ol>
-<li>define a low-level API/byte-code which is OS-agnostic</li>
-<li>implement several VM, one for each OS, supporting that API/byte-code</li>
+<li>coherently choose the target community w.r.t SW goal</li>
+<li>coherently choose the platform w.r.t. target community</li>
 </ol>
 </li>
-<li>
-<p>One can now execute a Java/Python/JS/.NET program on any (relevant) OS</p>
+</ul>
+</section><section>
+<h2 id="general-benefits-of-coherence">General benefits of coherence</h2>
 <ul>
-<li>however, no matter how beautiful my Java program is, if I want it in my browser I must either rewrite it in JS or wrap it in a WS</li>
-<li>however, no matter how cool my .NET ML toolkit is, if I want it to go mainstream I need to make it usable for Python developers</li>
+<li>
+<p>The abstraction gap is likely lower</p>
+</li>
+<li>
+<p>More third party libraries are likey available</p>
+</li>
+<li>
+<p>The potential audience is wider</p>
+<ul>
+<li>implies the SW project is more valuable</li>
 </ul>
 </li>
 <li>
-<p>Nowadays, by “platforms” we mean not only OS but <strong>runtimes</strong> too</p>
+<p>Easier to find support / help in case of issues</p>
+</li>
+<li>
+<p>More likely that third-party issues are timely fixed</p>
+</li>
+</ul>
+</section><section>
+<h2 id="what-about-__research-oriented__-software">What about <strong>research-oriented</strong> software?</h2>
+</section><section>
+<h2 id="general-benefits-of-coherence-__for-researchers__">General benefits of coherence, <strong>for researchers</strong></h2>
 <ul>
-<li><strong>multi-platform</strong> applications support several runtimes and OS</li>
+<li>
+<p>The abstraction gap is likely lower</p>
+<ul>
+<li>???</li>
 </ul>
 </li>
-</ol>
+<li>
+<p>More third party libraries are likey available</p>
+<ul>
+<li>???</li>
+</ul>
+</li>
+<li>
+<p>The potential audience is wider</p>
+<ul>
+<li>???</li>
+</ul>
+</li>
+<li>
+<p>Easier to find support / help in case of issues</p>
+<ul>
+<li>???</li>
+</ul>
+</li>
+<li>
+<p>More likely that third-party issues are timely fixed</p>
+<ul>
+<li>???</li>
+</ul>
+</li>
+</ul>
 </section>
 
   
