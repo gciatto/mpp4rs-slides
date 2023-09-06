@@ -753,41 +753,198 @@ and the <strong>runtime</strong> supporting the execution of those applications<
 </li>
 </ul>
 </section><section>
-<h2 id="what-about-__research-oriented__-software">What about <strong>research-oriented</strong> software?</h2>
+
+
+<section data-shortcode-section="">
+<h2 id="what-about-__research-oriented__-software-pt-1">What about <strong>research-oriented</strong> software? (pt. 1)</h2>
+<blockquote>
+<p>Researchers may act as software developers</p>
+</blockquote>
+<ol>
+<li>
+<p>to elaborate data</p>
+</li>
+<li>
+<p>to create in-silico experiments</p>
+</li>
+<li>
+<p>to study software system</p>
+</li>
+<li>
+<p>to create software tools improving their research</p>
+</li>
+<li>
+<p>to create software tools for the community</p>
+<ul>
+<li>this is how many FOSS tools have been created</li>
+</ul>
+</li>
+</ol>
+</section><section>
+<h2 id="what-about-__research-oriented__-software-pt-2">What about <strong>research-oriented</strong> software? (pt. 2)</h2>
+<blockquote>
+<p>Research institutions are <em>not</em> software houses</p>
+</blockquote>
+<ul>
+<li>
+<p>Personnel can only dedicate a fraction of their time to development</p>
+</li>
+<li>
+<p>Most software artifacts are disposable (1, 2, 4)</p>
+</li>
+<li>
+<p>Development efforts are discontinuous</p>
+</li>
+<li>
+<p>Development teams are small</p>
+</li>
+<li>
+<p>Software is commonly a means, not an objective</p>
+</li>
+<li>
+<p>Commitment to software development is:</p>
+<ul>
+<li>commonly on the individual</li>
+<li>sometimes on the project</li>
+<li>rarely on the institution</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="what-about-__research-oriented__-software-pt-3">What about <strong>research-oriented</strong> software? (pt. 3)</h2>
+<blockquote>
+<p>Research-oriented software development should maximise audience and impact, while minimising development and maintenance effort</p>
+</blockquote>
+<ul>
+<li>
+<p>Science requires reproducibility</p>
+<ul>
+<li>wide(r) user base is a facilitator for reproducility</li>
+</ul>
+</li>
+<li>
+<p>The wider the community, the wider the impact of community-driven research software</p>
+<ul>
+<li>more potential citations</li>
+</ul>
+</li>
+<li>
+<p>Minimising effort can be done by improving efficiency</p>
+<ul>
+<li>by means of software engineering</li>
+</ul>
+</li>
+</ul>
 </section><section>
 <h2 id="general-benefits-of-coherence-__for-researchers__">General benefits of coherence, <strong>for researchers</strong></h2>
+<blockquote>
+<p>Choosing the right community / platform is strategical for research-oriented software</p>
+</blockquote>
 <ul>
 <li>
 <p>The abstraction gap is likely lower</p>
 <ul>
-<li>???</li>
+<li>less development effort</li>
 </ul>
 </li>
 <li>
-<p>More third party libraries are likey available</p>
+<p>More third party libraries are likely available</p>
 <ul>
-<li>???</li>
+<li>less development effort</li>
 </ul>
 </li>
 <li>
 <p>The potential audience is wider</p>
 <ul>
-<li>???</li>
+<li>more value, more impact, more reproducibility</li>
 </ul>
 </li>
 <li>
 <p>Easier to find support / help in case of issues</p>
 <ul>
-<li>???</li>
+<li>potentially, less development effort</li>
 </ul>
 </li>
 <li>
 <p>More likely that third-party issues are timely fixed</p>
 <ul>
-<li>???</li>
+<li>potentially, less development effort</li>
 </ul>
 </li>
 </ul>
+
+</section>
+</section><section>
+
+
+<section data-shortcode-section="">
+<h2 id="about-technological-silos">About technological silos</h2>
+<blockquote>
+<p><strong>Silos</strong> (in IT) are software components / systems / ecosystems having poor external interoperability
+(i.e. software from silos A hardly interoperates with software from silos B)</p>
+</blockquote>
+<ul>
+<li>
+<p>Platforms are (pretty wide) software silos</p>
+<ul>
+<li>making software from any two platforms interoperate is non-trivial</li>
+<li>making software from the same platform interoperate is easier</li>
+</ul>
+</li>
+<li>
+<p>Examples:</p>
+<ul>
+<li>intra-platform: Kotlin program calling Java library</li>
+<li>inter-platform: Python program calling native library</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="open-research-communities-vs-technological-silos">Open research communities vs. technological silos</h2>
+<ul>
+<li>
+<p>Research communities in CS / AI may overlap with platforms communities:</p>
+<ul>
+<li>e.g. neural networks researchers $\rightarrow$ Python</li>
+<li>e.g. data science $\rightarrow$ Python | R</li>
+<li>e.g. symbolic AI $\rightarrow$ JVM | Prolog</li>
+<li>e.g. multi-agent systems $\rightarrow$ JVM</li>
+<li>e.g. semantic-web $\rightarrow$ JVM | Python</li>
+</ul>
+</li>
+<li>
+<p>What about inter-community research efforts?</p>
+<ul>
+<li>they may need interoperability among different silos</li>
+<li>in lack of which, research is slowed down</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>Multi-platform programming is an enabler for inter-community research</p>
+</blockquote>
+
+</section>
+</section><section>
+<h2 id="the-need-for-multi-platform-programming">The need for multi-platform programming</h2>
+<ul>
+<li>Ideal goal:</li>
+</ul>
+<blockquote>
+<p>let the same software tool run on multiple platforms</p>
+</blockquote>
+<ul>
+<li>More reasonable goal:</li>
+</ul>
+<blockquote>
+<p>Create multiple artifacts, one per each supported platform, sharing the same design and functioning</p>
+</blockquote>
+<ul>
+<li>Practical goal:</li>
+</ul>
+<blockquote>
+<p>design and write the software once, then automatically port it to several platforms</p>
+</blockquote>
 </section>
 
   
