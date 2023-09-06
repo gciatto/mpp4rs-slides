@@ -213,7 +213,7 @@ aliases = [
 * Code is organized into packages
   - packages must correspond to directory structures
 
-* Code archives (JAR) are Zip files containing compiled classes
+* Code archives (`.jar`) are Zip files containing compiled classes
 
 * Basic import mechanism: the class path
   * i.e. the path where classes are looked for
@@ -284,7 +284,8 @@ aliases = [
 
 - Official stylistic conventions for Python ([PEP8](https://peps.python.org/pep-0008/))
   * e.g. type names in `PascalCase`, members names in `snake_case`
-  * e.g. getters/setters in Java vs. Kotlin's or Scala's properties
+  * e.g. indentation-aware syntax, blank line conventions, etc.
+  * ...
 
 - Many technical conventions:
  * [duck typing](https://realpython.com/lessons/duck-typing/)
@@ -301,7 +302,7 @@ aliases = [
   - packages must correspond to directory structures
   - modules must correspond to files
 
-* Code archives (JAR) are wheel files containing Python sources
+* Code archives (`.whl`) are Zip files containing Python sources
 
 * Each Python installation has an internal folder where libraries are stored
   * `pip` simply unzips modules/packages in there
@@ -380,7 +381,7 @@ aliases = [
   - modules are file containing anything
   - and declaring what to export
 
-* Code archives (JAR) are tarball files containing JS sources
+* Code archives (`.tar.?z`) are compressed tarball files containing JS sources
 
 * Third party libraries can be installed via `npm`
   * locally, for the user, or globally
@@ -427,6 +428,8 @@ The choice of a platform impacts developers during:
 
 > __Abstraction gap__ $\approx$ the space among the __problem__ and the prior functionalities offered by a __platform__. Ideally, the bigger the space the more _effort_ is required to build the solution 
 
+{{< figure src="abstraction-gap.svg" width="70%" >}}
+
 ---
 
 ## How platform affects the **implementation** phase
@@ -434,6 +437,8 @@ The choice of a platform impacts developers during:
 - Developers build solutions by leveraging the API of the platform
 
 - ... as well as the API of any third-party library available for that platform
+
+{{< figure src="third-party.svg" width="80%" >}}
 
 ---
 
@@ -451,38 +456,68 @@ The choice of a platform impacts developers during:
 
 ## How platform affects the **release** phase
 
+> __Release__ $\approx$ publishing some packaged software system onto a repository, hence enabling its import and exploitation
+
 - Packaging systems are platform-specific...
 
 - Repositories are platform-specific...
 
 - ... release is therefore platform specific
 
-> __Release__ $\approx$ publishing some packaged software system onto a repository, hence enabling its import and exploitation
-
 {{% /section %}}
 
 ---
 
-## Platforms and multi-platforms applications
+## Platform choice for a new SW project
 
-1. Software is always developed/run on top of some __platform__
+- Choice is commonly driven by design / technical decisions
+  + which platform would ease developers' work the most?
 
-0. Technically, platforms are most common OS
-    - e.g. Linux, Mac OS, and Windows
+- However, choosing the platform is a business decision as well
+  + platforms have user communities
+  + SW project benefit from wide(r) user communities
 
-0. In the past, applications were said "multi-platform" if they were buildable -- and therefore executable -- on several OS
-    - this definition is __outdated__
+- Business decision: which user communities to target?
+  + what are the most relevant platforms for that communities?
 
-0. Nowadays, mainstream SW dev is performed on top of __virtual__ platforms, which already support multiple OS
-    - e.g. JVM, .NET, Python, JS, ART (Android RunTime), etc
+- Coherency is key for success in platform selection
+  1. coherently choose the target community w.r.t SW goal
+  2. coherently choose the platform w.r.t. target community
+  
+---
 
-0. This is made possible by virtual machines:
-    1. define a low-level API/byte-code which is OS-agnostic
-    1. implement several VM, one for each OS, supporting that API/byte-code
+## General benefits of coherence
 
-0. One can now execute a Java/Python/JS/.NET program on any (relevant) OS
-    + however, no matter how beautiful my Java program is, if I want it in my browser I must either rewrite it in JS or wrap it in a WS
-    + however, no matter how cool my .NET ML toolkit is, if I want it to go mainstream I need to make it usable for Python developers
++ The abstraction gap is likely lower
 
-0. Nowadays, by "platforms" we mean not only OS but __runtimes__ too
-    + __multi-platform__ applications support several runtimes and OS
++ More third party libraries are likey available
+
++ The potential audience is wider
+  * implies the SW project is more valuable
+
++ Easier to find support / help in case of issues
+
++ More likely that third-party issues are timely fixed
+
+---
+
+## What about __research-oriented__ software?
+
+---
+
+## General benefits of coherence, __for researchers__
+
++ The abstraction gap is likely lower
+  * ???
+
++ More third party libraries are likey available
+  * ???
+
++ The potential audience is wider
+  * ???
+
++ Easier to find support / help in case of issues
+  * ???
+
++ More likely that third-party issues are timely fixed
+  * ???
