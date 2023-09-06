@@ -501,23 +501,127 @@ The choice of a platform impacts developers during:
 
 ---
 
-## What about __research-oriented__ software?
+{{% section %}}
+
+## What about __research-oriented__ software? (pt. 1)
+
+> Researchers may act as software developers
+
+1. to elaborate data
+
+2. to create in-silico experiments
+
+3. to study software system
+
+4. to create software tools improving their research
+
+5. to create software tools for the community
+    * this is how many FOSS tools have been created
+
+---
+
+## What about __research-oriented__ software? (pt. 2)
+
+> Research institutions are _not_ software houses
+
+- Personnel can only dedicate a fraction of their time to development
+
+- Most software artifacts are disposable (1, 2, 4)
+
+- Development efforts are discontinuous
+
+- Development teams are small 
+
+- Software is commonly a means, not an objective
+
+- Commitment to software development is:
+  * commonly on the individual 
+  * sometimes on the project
+  * rarely on the institution
+
+---
+
+## What about __research-oriented__ software? (pt. 3)
+
+> Research-oriented software development should maximise audience and impact, while minimising development and maintenance effort
+
+- Science requires reproducibility
+  * wide(r) user base is a facilitator for reproducility
+
+- The wider the community, the wider the impact of community-driven research software
+  * more potential citations
+
+- Minimising effort can be done by improving efficiency
+  * by means of software engineering
 
 ---
 
 ## General benefits of coherence, __for researchers__
 
-+ The abstraction gap is likely lower
-  * ???
+> Choosing the right community / platform is strategical for research-oriented software
 
-+ More third party libraries are likey available
-  * ???
++ The abstraction gap is likely lower
+  * less development effort
+
++ More third party libraries are likely available
+  * less development effort
 
 + The potential audience is wider
-  * ???
+  * more value, more impact, more reproducibility
 
 + Easier to find support / help in case of issues
-  * ???
+  * potentially, less development effort
 
 + More likely that third-party issues are timely fixed
-  * ???
+  * potentially, less development effort
+
+{{% /section %}}
+
+---
+
+{{% section %}}
+
+## About technological silos
+
+> __Silos__ (in IT) are software components / systems / ecosystems having poor external interoperability 
+> (i.e. software from silos A hardly interoperates with software from silos B)
+
+- Platforms are (pretty wide) software silos
+  * making software from any two platforms interoperate is non-trivial
+  * making software from the same platform interoperate is easier
+
+- Examples:
+  * intra-platform: Kotlin program calling Java library
+  * inter-platform: Python program calling native library
+
+--- 
+
+## Open research communities vs. technological silos
+
+- Research communities in CS / AI may overlap with platforms communities:
+  * e.g. neural networks researchers $\rightarrow$ Python
+  * e.g. data science $\rightarrow$ Python | R
+  * e.g. symbolic AI $\rightarrow$ JVM | Prolog
+  * e.g. multi-agent systems $\rightarrow$ JVM
+  * e.g. semantic-web $\rightarrow$ JVM | Python
+
+- What about inter-community research efforts?
+  * they may need interoperability among different silos
+  * in lack of which, research is slowed down
+
+> Multi-platform programming is an enabler for inter-community research
+
+{{% /section %}}
+
+--- 
+
+## The need for multi-platform programming
+
+- Ideal goal:
+> let the same software tool run on multiple platforms
+
+- More reasonable goal:
+> Create multiple artifacts, one per each supported platform, sharing the same design and functioning
+
+- Practical goal: 
+> design and write the software once, then automatically port it to several platforms
