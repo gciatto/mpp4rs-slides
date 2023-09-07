@@ -632,7 +632,7 @@ The choice of a platform impacts developers during:
 
 ## Approaches for multi-platform programming
 
-1. Write once, build everywhere
+1. Write once, build anywhere
     - software is developed using some sort of "super-language"
     - code from the "super-language" is automatically compiled for all platforms
 
@@ -642,13 +642,13 @@ The choice of a platform impacts developers during:
 
 ---
 
-## Write once, build everywhere (concept)
+## Write once, build anywhere (concept)
 
 {{< figure src="write-once-build-everywhere.svg" width="70%" >}}
 
 ---
 
-## Write once, build everywhere (explanation)
+## Write once, build anywhere (explanation)
 
 - Assumptions:
   * one "super-language" exists, having:
@@ -670,7 +670,7 @@ The choice of a platform impacts developers during:
 
 ---
 
-## Write once, build everywhere (analysis)
+## Write once, build anywhere (analysis)
 
 Let `N` be the amount of supported platforms
 
@@ -696,7 +696,7 @@ Let `N` be the amount of supported platforms
 
 ---
 
-## Write once, build everywhere (strategy)
+## Write once, build anywhere (strategy)
 
 Whenever a new functionality needs to be developed:
 

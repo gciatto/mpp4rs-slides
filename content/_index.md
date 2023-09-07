@@ -20,4 +20,6 @@ PhD Course for the Computer Science and Engineering PhD Programme
 
 1. [About the course](./about)
 0. [Preliminaries](./preliminaries)
+0. [Write once, build anywhere](./woba)
+0. [Write first, wrap elsewhere](./wfbe)
 
