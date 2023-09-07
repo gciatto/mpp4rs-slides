@@ -945,6 +945,200 @@ and the <strong>runtime</strong> supporting the execution of those applications<
 <blockquote>
 <p>design and write the software once, then port it to several platforms</p>
 </blockquote>
+</section><section>
+
+
+<section data-shortcode-section="">
+<h2 id="approaches-for-multi-platform-programming">Approaches for multi-platform programming</h2>
+<ol>
+<li>
+<p>Write once, build everywhere</p>
+<ul>
+<li>software is developed using some sort of “super-language”</li>
+<li>code from the “super-language” is automatically compiled for all platforms</li>
+</ul>
+</li>
+<li>
+<p>Write first, wrap elsewhere</p>
+<ul>
+<li>software is developed for some principal platform</li>
+<li>implementations for all other platforms are wrappers of the first one</li>
+</ul>
+</li>
+</ol>
+</section><section>
+<h2 id="write-once-build-everywhere-concept">Write once, build everywhere (concept)</h2>
+<figure><img src="write-once-build-everywhere.svg" width="70%">
+</figure>
+</section><section>
+<h2 id="write-once-build-everywhere-explanation">Write once, build everywhere (explanation)</h2>
+<ul>
+<li>
+<p>Assumptions:</p>
+<ul>
+<li>one “super-language” exists, having:
+<ol>
+<li>a code-generator targetting multiple platforms
+<ul>
+<li>e.g. compiler, transpiler, etc.</li>
+</ul>
+</li>
+<li>the same standard library implemented for all those platforms</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p>Workflow:</p>
+<ol>
+<li>
+<p>Design, implement, and test most of the project via the super-language</p>
+<ul>
+<li>this is the platform-agnostic (a.k.a. “common”) part of the project</li>
+</ul>
+</li>
+<li>
+<p>Complete, refine, or optimise platform-specific aspects via</p>
+<ul>
+<li>platform-specific code</li>
+<li>platform-specific third-party libraries</li>
+</ul>
+</li>
+<li>
+<p>Build platform-specific artifacts, following platform-specific rules</p>
+</li>
+<li>
+<p>Upload platform-specific artifacts on platform-specific repositories</p>
+</li>
+</ol>
+</li>
+</ul>
+</section><section>
+<h2 id="write-once-build-everywhere-analysis">Write once, build everywhere (analysis)</h2>
+<p>Let <code>N</code> be the amount of supported platforms</p>
+<ul>
+<li>
+<p>Platform-agnostic functionalities require effort which is independent from <code>N</code></p>
+</li>
+<li>
+<p>Platform-specific functionalities require effort proportional to <code>N</code></p>
+</li>
+<li>
+<p>Better to minimise platform-specific code</p>
+<ul>
+<li>by maximising common code</li>
+<li>this is true both for main code and for test code</li>
+</ul>
+</li>
+<li>
+<p>Relevant questions:</p>
+<ul>
+<li>what to realise as common code? what as platform-specific code?</li>
+<li>how to set the boundary of the common (resp. platform-specific) code?</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h3 id="takeaway">Takeaway</h3>
+<blockquote>
+<p>The abstraction gap of the common code is as wide as the one of the platform having the widest abstraction gap</p>
+</blockquote>
+<figure><img src="abstraction-gap-mp.svg" width="50%">
+</figure>
+</section><section>
+<h2 id="write-once-build-everywhere-strategy">Write once, build everywhere (strategy)</h2>
+<p>Whenever a new functionality needs to be developed:</p>
+<ol>
+<li>
+<p>Try to realise it with common std-lib only</p>
+</li>
+<li>
+<p>If not possible, try to maximise the portion of platform-agnostic code</p>
+</li>
+</ol>
+<ul>
+<li>make it possible to plug platform-specific aspects</li>
+</ul>
+<ol start="3">
+<li>For each functionality which cannot be realised as purely platform-agnostic:</li>
+<li>design a platform-agnostic interface</li>
+<li>implement the interface <code>N</code> times, one per target platform</li>
+</ol>
+</section><section>
+<h2 id="write-first-wrap-elsewhere-concept">Write first, wrap elsewhere (concept)</h2>
+<figure><img src="write-first-wrap-elsewhere.svg" width="70%">
+</figure>
+</section><section>
+<h2 id="write-first-wrap-elsewhere-explanation">Write first, wrap elsewhere (explanation)</h2>
+<ul>
+<li>
+<p>Assumptions:</p>
+<ul>
+<li>one “main” platform exists such that
+<ul>
+<li>code from the “main” platform can be called from other target platforms</li>
+</ul>
+</li>
+<li>the software has been designed in a platform-agnostic way</li>
+</ul>
+</li>
+<li>
+<p>Workflow:</p>
+<ol>
+<li>
+<p>Fully implement, test, and deploy the software for the main platform</p>
+</li>
+<li>
+<p>For all other platforms:</p>
+</li>
+<li>
+<p>re-design and re-write platform-specific API code</p>
+</li>
+<li>
+<p>implement platform-specific API by calling the main platform’s code</p>
+</li>
+<li>
+<p>re-write test for API code</p>
+</li>
+<li>
+<p>build platform-specific packages, wrapping the main platform’s package and runtime</p>
+</li>
+<li>
+<p>Upload platform-specific artifacts on platform-specific repositories</p>
+</li>
+</ol>
+</li>
+</ul>
+</section><section>
+<h2 id="write-once-build-everywhere-analysis-1">Write once, build everywhere (analysis)</h2>
+<p>Let <code>N</code> be the amount of supported platforms</p>
+<ul>
+<li>
+<p>Clear separation of API code from implementation code is quintessential</p>
+</li>
+<li>
+<p>The effort required for writing API code is virtually the same on all platforms</p>
+</li>
+<li>
+<p>Global effort is sub-linearly dependent on <code>N</code></p>
+<ul>
+<li>implementing API and wrapper code is a manual task</li>
+<li>still less effort than implementing the same design <code>N</code> times</li>
+</ul>
+</li>
+<li>
+<p>The <code>i</code>-th platform’s wrapper code will only call the main platform’s API code</p>
+</li>
+<li>
+<p>Relevant questions:</p>
+<ul>
+<li>how to deal with platform-specific aspects?</li>
+<li>how to create platform agnostic design?</li>
+</ul>
+</li>
+</ul>
+
+</section>
 </section>
 
   
