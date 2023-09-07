@@ -625,3 +625,134 @@ The choice of a platform impacts developers during:
 
 - Practical goal: 
 > design and write the software once, then port it to several platforms
+
+---
+
+{{% section %}}
+
+## Approaches for multi-platform programming
+
+1. Write once, build everywhere
+    - software is developed using some sort of "super-language"
+    - code from the "super-language" is automatically compiled for all platforms
+
+2. Write first, wrap elsewhere
+    - software is developed for some principal platform
+    - implementations for all other platforms are wrappers of the first one
+
+---
+
+## Write once, build everywhere (concept)
+
+{{< figure src="write-once-build-everywhere.svg" width="70%" >}}
+
+---
+
+## Write once, build everywhere (explanation)
+
+- Assumptions:
+  * one "super-language" exists, having:
+    1. a code-generator targetting multiple platforms
+        + e.g. compiler, transpiler, etc.
+    2. the same standard library implemented for all those platforms
+
+- Workflow:
+  1. Design, implement, and test most of the project via the super-language
+      - this is the platform-agnostic (a.k.a. "common") part of the project
+
+  2. Complete, refine, or optimise platform-specific aspects via 
+      - platform-specific code
+      - platform-specific third-party libraries
+
+  3. Build platform-specific artifacts, following platform-specific rules
+  
+  4. Upload platform-specific artifacts on platform-specific repositories
+
+---
+
+## Write once, build everywhere (analysis)
+
+Let `N` be the amount of supported platforms
+
+- Platform-agnostic functionalities require effort which is independent from `N`
+
+- Platform-specific functionalities require effort proportional to `N`
+
+- Better to minimise platform-specific code
+  * by maximising common code
+  * this is true both for main code and for test code 
+
+- Relevant questions: 
+  * what to realise as common code? what as platform-specific code?
+  * how to set the boundary of the common (resp. platform-specific) code?
+
+---
+
+### Takeaway
+
+> The abstraction gap of the common code is as wide as the one of the platform having the widest abstraction gap
+
+{{< figure src="abstraction-gap-mp.svg" width="50%" >}}
+
+---
+
+## Write once, build everywhere (strategy)
+
+Whenever a new functionality needs to be developed:
+
+1. Try to realise it with common std-lib only
+
+2. If not possible, try to maximise the portion of platform-agnostic code
+  * make it possible to plug platform-specific aspects
+
+3. For each functionality which cannot be realised as purely platform-agnostic:
+  1. design a platform-agnostic interface
+  2. implement the interface `N` times, one per target platform
+
+---
+
+## Write first, wrap elsewhere (concept)
+
+{{< figure src="write-first-wrap-elsewhere.svg" width="70%" >}}
+
+---
+
+## Write first, wrap elsewhere (explanation)
+
+- Assumptions:
+  * one "main" platform exists such that
+    + code from the "main" platform can be called from other target platforms
+  * the software has been designed in a platform-agnostic way
+
+- Workflow:
+  1. Fully implement, test, and deploy the software for the main platform
+
+  2. For all other platforms:
+    1. re-design and re-write platform-specific API code
+    2. implement platform-specific API by calling the main platform's code
+    3. re-write test for API code
+    4. build platform-specific packages, wrapping the main platform's package and runtime
+  
+  3. Upload platform-specific artifacts on platform-specific repositories
+
+---
+
+## Write once, build everywhere (analysis)
+
+Let `N` be the amount of supported platforms
+
+- Clear separation of API code from implementation code is quintessential
+
+- The effort required for writing API code is virtually the same on all platforms
+
+- Global effort is sub-linearly dependent on `N`
+  * implementing API and wrapper code is a manual task
+  * still less effort than implementing the same design `N` times
+
+- The `i`-th platform's wrapper code will only call the main platform's API code
+
+- Relevant questions: 
+  * how to deal with platform-specific aspects?
+  * how to create platform agnostic design?
+
+{{% /section %}}
