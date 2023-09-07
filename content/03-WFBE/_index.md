@@ -1,10 +1,11 @@
 +++
-title = "Write once, build anywhere with Kotlin"
-description = "Kotlin as the super language for multi-platform programming"
+title = "Write first, wrap elsewhere: the case of JPype"
+description = "Multiplatform programming among Python and JVM via JPype"
 outputs = ["Reveal"]
 aliases = [
-    "/woba/",
-    "/kotlin/"
+    "/wfbe/",
+    "/python/",
+    "/jpype/",
 ]
 +++
 

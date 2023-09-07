@@ -753,6 +753,6 @@ Let `N` be the amount of supported platforms
 
 - Relevant questions: 
   * how to deal with platform-specific aspects?
-  * how to create platform agnostic design?
+  * how to create platform-agnostic design?
 
 {{% /section %}}
