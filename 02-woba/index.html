@@ -131,6 +131,7 @@
 </ul>
 </section><section>
 <h2 id="kotlin-multi-platform-project-structure">Kotlin multi-platform project structure</h2>
+<p>Kotlin enforces strong segregation of the platform-agnostic and platform-specific parts</p>
 <ul>
 <li>
 <p><strong>common <em>main</em> code</strong>: platform-agnostic code which only depends on:</p>
@@ -206,33 +207,41 @@
 <li>
 <p>which version of the Kotlin compiler to adopt</p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#000">plugins</span> <span style="color:#000;font-weight:bold">{</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#000">kotlin</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"multiplatform"</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000">version</span> <span style="color:#4e9a06">"1.9.10"</span>
-</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">kotlin</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"multiplatform"</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000">version</span> <span style="color:#4e9a06">"1.9.10"</span> <span style="color:#8f5902;font-style:italic">// defines plugin and compiler version
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000;font-weight:bold">}</span>
 </span></span></code></pre></div></li>
 <li>
 <p>which repositories should Gradle use when looking for dependencies</p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#000">repositories</span> <span style="color:#000;font-weight:bold">{</span> 
-</span></span><span style="display:flex;"><span>    <span style="color:#000">mavenCentral</span><span style="color:#000;font-weight:bold">()</span> 
-</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// custom repository here
+</span></span><span style="display:flex;"><span>    <span style="color:#000">mavenCentral</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#8f5902;font-style:italic">// use MCR for downloading dependencies (recommneded)
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// other custom repositories here (discouraged)
 </span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000;font-weight:bold">}</span> 
 </span></span></code></pre></div></li>
 <li>
 <p>which platforms to target (reference <a href="https://kotlinlang.org/docs/multiplatform-dsl-reference.html#targets">here</a>)</p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#000">kotlin</span> <span style="color:#000;font-weight:bold">{</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#000">jvm</span> <span style="color:#000;font-weight:bold">{</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#000">withJava</span><span style="color:#000;font-weight:bold">()</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#000">js</span> <span style="color:#000;font-weight:bold">{</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#000">nodejs</span> <span style="color:#000;font-weight:bold">{</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#000">runTask</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#8f5902;font-style:italic">/* ... */</span> <span style="color:#000;font-weight:bold">}</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#000">testRuns</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#8f5902;font-style:italic">/* ... */</span> <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// declares JVM as target
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000">jvm</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000">withJava</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#8f5902;font-style:italic">// jvm-specific targets may include java sources
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// declares JavaScript as target
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000">js</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8f5902;font-style:italic">// the target will consist of a Node project (with NodeJS's stdlib)
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>        <span style="color:#000">nodejs</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000">runTask</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#8f5902;font-style:italic">/* configure project running in Node here */</span> <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000">testRuns</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#8f5902;font-style:italic">/* configure Node's testing frameworks */</span> <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#8f5902;font-style:italic">// alternatively, or additionally to nodejs:
 </span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>        <span style="color:#000">browser</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#8f5902;font-style:italic">/* ... */</span> <span style="color:#000;font-weight:bold">}</span> 
 </span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// other targets here
 </span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000;font-weight:bold">}</span>
-</span></span></code></pre></div></li>
+</span></span></code></pre></div><p>Other admissible targets:
+* <code>android</code>
+* various native sub-targets (details <a href="https://kotlinlang.org/docs/native-target-support.html">here</a>)</p>
+</li>
 </ul>
 </section><section>
 <h2 id="kotlin-multi-platform-build-configuration-pt-2">Kotlin multi-platform build configuration (pt. 2)</h2>
@@ -243,7 +252,8 @@
 </span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">commonMain</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">getting</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>            <span style="color:#000">dependencies</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>                <span style="color:#000">api</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">kotlin</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"stdlib-common"</span><span style="color:#000;font-weight:bold">))</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#000">implementation</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"group.of"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"multiplatform-library"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"X.Y.Z"</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#8f5902;font-style:italic">// or api
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>            <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">commonTest</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">getting</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>            <span style="color:#000">dependencies</span> <span style="color:#000;font-weight:bold">{</span>
@@ -253,10 +263,10 @@
 </span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">jvmMain</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">getting</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>            <span style="color:#000">dependencies</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>                <span style="color:#000">api</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">kotlin</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"stdlib-jdk8"</span><span style="color:#000;font-weight:bold">))</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#000">implementation</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"ordinaryGroupID"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"ordinaryArtifactID"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"X.Y.Z"</span><span style="color:#000;font-weight:bold">)</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#000">implementation</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"group.of"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"jvm-library"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"X.Y.Z"</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#8f5902;font-style:italic">// or api
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>            <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">jsTest</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">getting</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">jvmTest</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">getting</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>            <span style="color:#000">dependencies</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>                <span style="color:#000">implementation</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">kotlin</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"test-junit"</span><span style="color:#000;font-weight:bold">))</span>
 </span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span>
@@ -264,8 +274,8 @@
 </span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">jsMain</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">getting</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>            <span style="color:#000">dependencies</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>                <span style="color:#000">api</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">kotlin</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"stdlib-js"</span><span style="color:#000;font-weight:bold">))</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#000">api</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">npm</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"npmProjectName"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"npmProjectVersion"</span><span style="color:#000;font-weight:bold">))</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#000">implementation</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">npm</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"npm-module"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"X.Y.Z"</span><span style="color:#000;font-weight:bold">))</span> <span style="color:#8f5902;font-style:italic">// lookup on https://www.npmjs.com
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>            <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">jsTest</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">getting</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>            <span style="color:#000">dependencies</span> <span style="color:#000;font-weight:bold">{</span>
@@ -279,22 +289,35 @@
 </section><section>
 <h2 id="kotlin-multi-platform-build-configuration-pt-3">Kotlin multi-platform build configuration (pt. 3)</h2>
 <ul>
-<li>configure Kotlin compiler options
+<li>
+<p>configure Kotlin compiler options</p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#000">kotlin</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#000">sourceSets</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">all</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#000">languageSettings</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">apply</span> <span style="color:#000;font-weight:bold">{</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#000">languageVersion</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">"1.8"</span> <span style="color:#8f5902;font-style:italic">// possible values: "1.4", "1.5", "1.6", "1.7", "1.8", "1.9"
+</span></span><span style="display:flex;"><span>            <span style="color:#8f5902;font-style:italic">// provides source compatibility with the specified version of Kotlin.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>            <span style="color:#000">languageVersion</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">"1.8"</span> <span style="color:#8f5902;font-style:italic">// possible values: "1.4", "1.5", "1.6", "1.7", "1.8", "1.9"
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>
+</span></span><span style="display:flex;"><span>            <span style="color:#8f5902;font-style:italic">// allows using declarations only from the specified version of Kotlin bundled libraries.
 </span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>            <span style="color:#000">apiVersion</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">"1.8"</span> <span style="color:#8f5902;font-style:italic">// possible values: "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9"
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>
+</span></span><span style="display:flex;"><span>            <span style="color:#8f5902;font-style:italic">// enables the specified language feature
 </span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>            <span style="color:#000">enableLanguageFeature</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"InlineClasses"</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#8f5902;font-style:italic">// language feature name
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>
+</span></span><span style="display:flex;"><span>            <span style="color:#8f5902;font-style:italic">// allow using the specified opt-in
 </span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>            <span style="color:#000">optIn</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"kotlin.ExperimentalUnsignedTypes"</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#8f5902;font-style:italic">// annotation FQ-name
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>
+</span></span><span style="display:flex;"><span>            <span style="color:#8f5902;font-style:italic">// enables/disable progressive mode
 </span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>            <span style="color:#000">progressiveMode</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">true</span> <span style="color:#8f5902;font-style:italic">// false by default
 </span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>        <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
-</span></span></code></pre></div></li>
+</span></span></code></pre></div><p>Details about:
+* progressive mode <a href="https://kotlinlang.org/docs/whatsnew13.html#progressive-mode">here</a>
+* opt-ins <a href="https://kotlinlang.org/docs/opt-in-requirements.html#opt-in-to-using-api">here</a></p>
+</li>
 </ul>
 </section><section>
-<h2 id="fuild-configuration-full-example">Fuild configuration: full example</h2>
+<h2 id="build-configuration-full-example">Build configuration: full example</h2>
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#000">plugins</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#000">kotlin</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"multiplatform"</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000">version</span> <span style="color:#4e9a06">"1.9.10"</span>
 </span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
@@ -321,7 +344,8 @@
 </span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">commonMain</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">getting</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>            <span style="color:#000">dependencies</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>                <span style="color:#000">api</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">kotlin</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"stdlib-common"</span><span style="color:#000;font-weight:bold">))</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#000">implementation</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"group.of"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"multiplatform-library"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"X.Y.Z"</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#8f5902;font-style:italic">// or api
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>            <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">commonTest</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">getting</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>            <span style="color:#000">dependencies</span> <span style="color:#000;font-weight:bold">{</span>
@@ -331,10 +355,10 @@
 </span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">jvmMain</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">getting</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>            <span style="color:#000">dependencies</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>                <span style="color:#000">api</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">kotlin</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"stdlib-jdk8"</span><span style="color:#000;font-weight:bold">))</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#000">implementation</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"ordinaryGroupID"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"ordinaryArtifactID"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"X.Y.Z"</span><span style="color:#000;font-weight:bold">)</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#000">implementation</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"group.of"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"jvm-library"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"X.Y.Z"</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#8f5902;font-style:italic">// or api
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>            <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">jsTest</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">getting</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">jvmTest</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">getting</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>            <span style="color:#000">dependencies</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>                <span style="color:#000">implementation</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">kotlin</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"test-junit"</span><span style="color:#000;font-weight:bold">))</span>
 </span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span>
@@ -342,8 +366,8 @@
 </span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">jsMain</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">getting</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>            <span style="color:#000">dependencies</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>                <span style="color:#000">api</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">kotlin</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"stdlib-js"</span><span style="color:#000;font-weight:bold">))</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#000">api</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">npm</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"npmProjectName"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"npmProjectVersion"</span><span style="color:#000;font-weight:bold">))</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#000">implementation</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">npm</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"npm-module"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"X.Y.Z"</span><span style="color:#000;font-weight:bold">))</span> <span style="color:#8f5902;font-style:italic">// lookup on https://www.npmjs.com
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>            <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">jsTest</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">getting</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>            <span style="color:#000">dependencies</span> <span style="color:#000;font-weight:bold">{</span>
@@ -352,15 +376,165 @@
 </span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>        <span style="color:#000">all</span> <span style="color:#000;font-weight:bold">{</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#000">languageVersion</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">"1.8"</span> <span style="color:#8f5902;font-style:italic">// possible values: "1.4", "1.5", "1.6", "1.7", "1.8", "1.9"
-</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>            <span style="color:#000">apiVersion</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">"1.8"</span> <span style="color:#8f5902;font-style:italic">// possible values: "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9"
-</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>            <span style="color:#000">enableLanguageFeature</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"InlineClasses"</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#8f5902;font-style:italic">// language feature name
-</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>            <span style="color:#000">optIn</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"kotlin.ExperimentalUnsignedTypes"</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#8f5902;font-style:italic">// annotation FQ-name
-</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>            <span style="color:#000">progressiveMode</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">true</span> <span style="color:#8f5902;font-style:italic">// false by default
+</span></span><span style="display:flex;"><span>            <span style="color:#000">languageVersion</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">"1.8"</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000">apiVersion</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">"1.8"</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000">enableLanguageFeature</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"InlineClasses"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000">optIn</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"kotlin.ExperimentalUnsignedTypes"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000">progressiveMode</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">true</span> <span style="color:#8f5902;font-style:italic">// false by default
 </span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>        <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
-</span></span></code></pre></div></section>
+</span></span></code></pre></div></section><section>
+<h2 id="gradle-tasks-for-multi-platform-projects">Gradle tasks for multi-platform projects</h2>
+<p>Let <code>T</code> denote the target name (e.g. <code>jvm</code>, <code>js</code>, etc.)</p>
+<ul>
+<li>
+<p><code>&lt;T&gt;MainClasses</code> compiles the main code for platform <code>T</code></p>
+<ul>
+<li>e.g. <code>jvmMainClasses</code>, <code>jsMainClasses</code></li>
+</ul>
+</li>
+<li>
+<p><code>&lt;T&gt;TestClasses</code> compiles the test code for platform <code>T</code></p>
+<ul>
+<li>e.g. <code>jvmTestClasses</code>, <code>jsTestClasses</code></li>
+</ul>
+</li>
+<li>
+<p><code>&lt;T&gt;Jar</code> compiles the main code for platform <code>T</code> and produces a JAR out of it</p>
+<ul>
+<li>e.g. <code>jvmJar</code>, <code>jsJar</code></li>
+<li>depends on (hence implies) <code>&lt;T&gt;MainClasses</code>, but NOT <code>&lt;T&gt;TestClasses</code></li>
+</ul>
+</li>
+<li>
+<p><code>&lt;T&gt;Test</code> executes tests for platform <code>T</code></p>
+<ul>
+<li>e.g. <code>jvmTest</code>, <code>jsTest</code></li>
+<li>depends on (hence implies) <code>&lt;T&gt;MainClasses</code>, AND on <code>&lt;T&gt;TestClasses</code></li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="gradle-tasks-for-multi-platform-projects-1">Gradle tasks for multi-platform projects</h2>
+<ul>
+<li>
+<p><code>assemble</code> creates all JARs (hence compiling for main code for all platforms)</p>
+<ul>
+<li>it also generates documentation and sources JAR
+<ul>
+<li>if publishing is configured</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><code>test</code> executes tests for all platforms</p>
+</li>
+<li>
+<p><code>check</code> like <code>test</code> but it may also include other checks (e.g. style) if configured</p>
+</li>
+<li>
+<p><code>build</code> $\approx$ <code>check</code> + <code>assemble</code></p>
+</li>
+</ul>
+</section><section>
+<h2 id="multi-platform-kotlin-sources">Multi-platform Kotlin sources</h2>
+<ul>
+<li>
+<p>Ordinary Kotlin sources</p>
+</li>
+<li>
+<p>When in <code>common</code>:</p>
+<ul>
+<li>only the platform-agnostic std-lib can be used
+<ul>
+<li>API reference <a href="https://kotlinlang.org/api/latest/jvm/stdlib/">here</a> (recall to disable all targets except <code>Common</code>)</li>
+</ul>
+</li>
+<li>one may use third-party libraries, as long as they are <strong>multi-platform</strong> too</li>
+<li>one may use the <a href="https://kotlinlang.org/docs/multiplatform-connect-to-apis.html"><code>expect</code> keyword</a></li>
+<li>one may use platform-specific annotations
+<ul>
+<li>e.g. <code>@JvmStatic</code>, <code>@JsName</code>, etc.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="multi-platform-kotlin-sources-1">Multi-platform Kotlin sources</h2>
+<p>Let <code>T</code> denote some target platform</p>
+<ul>
+<li>
+<p>When in <code>T</code>-specific source sets</p>
+<ul>
+<li>one may use the <code>T</code>-specific std-lib</li>
+<li>one may use the <code>T</code>-specific Kotlin libraries</li>
+<li>one may use the <code>T</code>-specific libraries</li>
+<li>one may use the <a href="https://kotlinlang.org/docs/multiplatform-connect-to-apis.html"><code>actual</code> keyword</a></li>
+</ul>
+</li>
+<li>
+<p>Each platform <code>T</code> may allow for specific keywords</p>
+<ul>
+<li>e.g. the <a href="https://kotlinlang.org/docs/js-interop.html#external-modifier"><code>external</code> modifier</a></li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="the-expectactual-mechanism-for-specialising-common-api">The <code>expect</code>/<code>actual</code> mechanism for specialising common API</h2>
+<ul>
+<li>
+<p>Declaring an <code>expect</code>ed function / type <strong>declaration</strong> in common code…</p>
+</li>
+<li>
+<p>… enforces the existence of a corresponding <code>actual</code> <strong>definition</strong> for <em>all</em> platforms</p>
+<ul>
+<li>compiler won’t succeed until an actual definition is provided <em>for each target</em></li>
+</ul>
+</li>
+</ul>
+<figure><img src="expect-actual.png" width="50%">
+</figure>
+
+</section><section>
+<h2 id="workflow-top-down">Workflow (top-down)</h2>
+<ol>
+<li>
+<p>Draw a platform-agnostic design for your domain entities</p>
+<ul>
+<li>keep in mind that you can only rely on a very small std-lib / runtime</li>
+<li>keep in mind that some API may be missing in the common std-lib:
+<ul>
+<li>e.g. file system API</li>
+</ul>
+</li>
+<li>try to reason in a platform-agnostic way
+<ul>
+<li>e.g. file system makes no sense for in-browser JS</li>
+</ul>
+</li>
+<li>separate interfaces from classes</li>
+<li>rely on abstract classes with <a href="https://en.wikipedia.org/wiki/Template_method_pattern">template methods</a> to maximise common code</li>
+<li>use <code>expect</code> keyword to declare platform-agnostic factories</li>
+</ul>
+</li>
+<li>
+<p>Assess the <em>abstraction gap</em>, <strong>for each target platform</strong></p>
+</li>
+<li>
+<p>For each target platform:</p>
+<ul>
+<li>draw a platform-specific design extending the platform-agnostic one</li>
+<li>… and filling the abstraction gap for that target</li>
+<li>implement interfaces via platform-specific classes</li>
+<li>implement platform-specific concrete classes for common abstract classes</li>
+<li>use <code>actual</code> keyword to implement platform-specific factories</li>
+</ul>
+</li>
+</ol>
+</section>
 
   
 
