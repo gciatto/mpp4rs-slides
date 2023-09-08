@@ -81,6 +81,8 @@ Reference: https://kotlinlang.org/docs/reference/mpp-dsl-reference.html
 
 ## Kotlin multi-platform project structure
 
+Kotlin enforces strong segregation of the platform-agnostic and platform-specific parts
+
 - __common *main* code__: platform-agnostic code which only depends on:
     * the Kotlin std-lib 
     * plus other third-party Kotlin multi-platform libraries
@@ -145,35 +147,44 @@ Defines several aspects of the project:
 - which version of the Kotlin compiler to adopt
     ```kotlin
     plugins {
-        kotlin("multiplatform") version "1.9.10"
+        kotlin("multiplatform") version "1.9.10" // defines plugin and compiler version
     }
     ```
 
 - which repositories should Gradle use when looking for dependencies
     ```kotlin
     repositories { 
-        mavenCentral() 
-        // custom repository here
+        mavenCentral() // use MCR for downloading dependencies (recommneded)
+
+        // other custom repositories here (discouraged)
     } 
     ```
 
 - which platforms to target (reference [here](https://kotlinlang.org/docs/multiplatform-dsl-reference.html#targets))
     ```kotlin
     kotlin {
+        // declares JVM as target
         jvm {
-            withJava()
+            withJava() // jvm-specific targets may include java sources
         }
+        // declares JavaScript as target
         js {
+            // the target will consist of a Node project (with NodeJS's stdlib)
             nodejs {
-                runTask { /* ... */ }
-                testRuns { /* ... */ }
+                runTask { /* configure project running in Node here */ }
+                testRuns { /* configure Node's testing frameworks */ }
             }
             // alternatively, or additionally to nodejs:
             browser { /* ... */ } 
         }
+
         // other targets here
     }
     ```
+
+    Other admissible targets:
+        * `android`
+        * various native sub-targets (details [here](https://kotlinlang.org/docs/native-target-support.html))
 
 ---
 
@@ -186,6 +197,7 @@ Defines several aspects of the project:
             val commonMain by getting {
                 dependencies {
                     api(kotlin("stdlib-common"))
+                    implementation("group.of", "multiplatform-library", "X.Y.Z") // or api
                 }
             }
             val commonTest by getting {
@@ -196,10 +208,10 @@ Defines several aspects of the project:
             val jvmMain by getting {
                 dependencies {
                     api(kotlin("stdlib-jdk8"))
-                    implementation("ordinaryGroupID", "ordinaryArtifactID", "X.Y.Z")
+                    implementation("group.of", "jvm-library", "X.Y.Z") // or api
                 }
             }
-            val jsTest by getting {
+            val jvmTest by getting {
                 dependencies {
                     implementation(kotlin("test-junit"))
                 }
@@ -207,7 +219,7 @@ Defines several aspects of the project:
             val jsMain by getting {
                 dependencies {
                     api(kotlin("stdlib-js"))
-                    api(npm("npmProjectName", "npmProjectVersion"))
+                    implementation(npm("npm-module", "X.Y.Z")) // lookup on https://www.npmjs.com
                 }
             }
             val jsTest by getting {
@@ -228,19 +240,32 @@ Defines several aspects of the project:
     kotlin {
         sourceSets.all {
             languageSettings.apply {
+                // provides source compatibility with the specified version of Kotlin.
                 languageVersion = "1.8" // possible values: "1.4", "1.5", "1.6", "1.7", "1.8", "1.9"
+
+                // allows using declarations only from the specified version of Kotlin bundled libraries.
                 apiVersion = "1.8" // possible values: "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9"
+
+                // enables the specified language feature
                 enableLanguageFeature("InlineClasses") // language feature name
+
+                // allow using the specified opt-in
                 optIn("kotlin.ExperimentalUnsignedTypes") // annotation FQ-name
+
+                // enables/disable progressive mode
                 progressiveMode = true // false by default
             }
         }
     }
     ```
+    
+    Details about:
+        * progressive mode [here](https://kotlinlang.org/docs/whatsnew13.html#progressive-mode)
+        * opt-ins [here](https://kotlinlang.org/docs/opt-in-requirements.html#opt-in-to-using-api)
 
 ---
 
-## Fuild configuration: full example
+## Build configuration: full example
 
 
 ```kotlin
@@ -270,6 +295,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(kotlin("stdlib-common"))
+                implementation("group.of", "multiplatform-library", "X.Y.Z") // or api
             }
         }
         val commonTest by getting {
@@ -280,10 +306,10 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 api(kotlin("stdlib-jdk8"))
-                implementation("ordinaryGroupID", "ordinaryArtifactID", "X.Y.Z")
+                implementation("group.of", "jvm-library", "X.Y.Z") // or api
             }
         }
-        val jsTest by getting {
+        val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
             }
@@ -291,7 +317,7 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 api(kotlin("stdlib-js"))
-                api(npm("npmProjectName", "npmProjectVersion"))
+                implementation(npm("npm-module", "X.Y.Z")) // lookup on https://www.npmjs.com
             }
         }
         val jsTest by getting {
@@ -301,14 +327,110 @@ kotlin {
         }
 
         all {
-            languageVersion = "1.8" // possible values: "1.4", "1.5", "1.6", "1.7", "1.8", "1.9"
-            apiVersion = "1.8" // possible values: "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9"
-            enableLanguageFeature("InlineClasses") // language feature name
-            optIn("kotlin.ExperimentalUnsignedTypes") // annotation FQ-name
+            languageVersion = "1.8"
+            apiVersion = "1.8"
+            enableLanguageFeature("InlineClasses")
+            optIn("kotlin.ExperimentalUnsignedTypes")
             progressiveMode = true // false by default
         }
     }
 }
-
-
 ```
+
+---
+
+## Gradle tasks for multi-platform projects 
+
+Let `T` denote the target name (e.g. `jvm`, `js`, etc.)
+
+- `<T>MainClasses` compiles the main code for platform `T`
+    + e.g. `jvmMainClasses`, `jsMainClasses`
+
+- `<T>TestClasses` compiles the test code for platform `T`
+    + e.g. `jvmTestClasses`, `jsTestClasses`
+
+- `<T>Jar` compiles the main code for platform `T` and produces a JAR out of it
+    + e.g. `jvmJar`, `jsJar`
+    + depends on (hence implies) `<T>MainClasses`, but NOT `<T>TestClasses`
+
+- `<T>Test` executes tests for platform `T`
+    + e.g. `jvmTest`, `jsTest`
+    + depends on (hence implies) `<T>MainClasses`, AND on `<T>TestClasses`
+
+---
+
+## Gradle tasks for multi-platform projects 
+
+- `assemble` creates all JARs (hence compiling for main code for all platforms)
+    + it also generates documentation and sources JAR
+        * if publishing is configured
+
+- `test` executes tests for all platforms
+
+- `check` like `test` but it may also include other checks (e.g. style) if configured
+
+- `build` $\approx$ `check` + `assemble`
+
+---
+
+## Multi-platform Kotlin sources
+
+- Ordinary Kotlin sources
+
+- When in `common`:
+    + only the platform-agnostic std-lib can be used
+        * API reference [here](https://kotlinlang.org/api/latest/jvm/stdlib/) (recall to disable all targets except `Common`)
+    + one may use third-party libraries, as long as they are __multi-platform__ too
+    + one may use the [`expect` keyword](https://kotlinlang.org/docs/multiplatform-connect-to-apis.html)
+    + one may use platform-specific annotations 
+        * e.g. `@JvmStatic`, `@JsName`, etc.
+
+---
+
+## Multi-platform Kotlin sources
+
+Let `T` denote some target platform
+
+- When in `T`-specific source sets
+    + one may use the `T`-specific std-lib
+    + one may use the `T`-specific Kotlin libraries
+    + one may use the `T`-specific libraries
+    + one may use the [`actual` keyword](https://kotlinlang.org/docs/multiplatform-connect-to-apis.html)
+
+- Each platform `T` may allow for specific keywords
+    * e.g. the [`external` modifier](https://kotlinlang.org/docs/js-interop.html#external-modifier)
+
+---
+
+## The `expect`/`actual` mechanism for specialising common API
+
+- Declaring an `expect`ed function / type __declaration__ in common code...
+
+- ... enforces the existence of a corresponding `actual` __definition__ for _all_ platforms
+    * compiler won't succeed until an actual definition is provided _for each target_
+
+{{< figure src="expect-actual.png" width="50%" >}}
+
+---
+
+## Workflow (top-down)
+
+1. Draw a platform-agnostic design for your domain entities
+    + keep in mind that you can only rely on a very small std-lib / runtime
+    + keep in mind that some API may be missing in the common std-lib:
+        - e.g. file system API 
+    + try to reason in a platform-agnostic way
+        - e.g. file system makes no sense for in-browser JS
+    + separate interfaces from classes
+    + rely on abstract classes with [template methods](https://en.wikipedia.org/wiki/Template_method_pattern) to maximise common code
+    + use `expect` keyword to declare platform-agnostic factories
+
+2. Assess the _abstraction gap_, __for each target platform__
+
+3. For each target platform:
+    + draw a platform-specific design extending the platform-agnostic one
+    + ... and filling the abstraction gap for that target
+    + implement interfaces via platform-specific classes
+    + implement platform-specific concrete classes for common abstract classes
+    + use `actual` keyword to implement platform-specific factories
+
