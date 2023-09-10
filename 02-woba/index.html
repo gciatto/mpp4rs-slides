@@ -131,6 +131,7 @@
 </ul>
 </section><section>
 <h2 id="kotlin-multi-platform-project-structure">Kotlin multi-platform project structure</h2>
+<h3 id="common">Common</h3>
 <p>Kotlin enforces strong segregation of the platform-agnostic and platform-specific parts</p>
 <ul>
 <li>
@@ -147,8 +148,12 @@
 <li>some Kotlin multi-platform testing library (e.g. <a href="https://kotlinlang.org/api/latest/kotlin.test/"><code>kotlin.test</code></a> or <a href="https://kotest.io/">Kotest</a>)</li>
 </ul>
 </li>
-<li>
-<p>for each target platform <code>T</code> (e.g. <code>jvm</code>, <code>js</code>, etc.)</p>
+</ul>
+</section><section>
+<h2 id="kotlin-multi-platform-project-structure-1">Kotlin multi-platform project structure</h2>
+<h3 id="platform-specific">Platform-specific</h3>
+<ul>
+<li>for each target platform <code>T</code> (e.g. <code>jvm</code>, <code>js</code>, etc.)
 <ul>
 <li>
 <p><strong><code>T</code>-specific <em>main</em> code</strong>: main Kotlin code targeting the <code>T</code> platform, depending on:</p>
@@ -238,15 +243,20 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// other targets here
 </span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000;font-weight:bold">}</span>
-</span></span></code></pre></div><p>Other admissible targets:
-* <code>android</code>
-* various native sub-targets (details <a href="https://kotlinlang.org/docs/native-target-support.html">here</a>)</p>
-</li>
+</span></span></code></pre></div></li>
 </ul>
 </section><section>
 <h2 id="kotlin-multi-platform-build-configuration-pt-2">Kotlin multi-platform build configuration (pt. 2)</h2>
 <ul>
-<li>which third-party library should each target depend upon
+<li>
+<p>other admissible targets:</p>
+<ul>
+<li><code>android</code></li>
+<li>various native sub-targets (details <a href="https://kotlinlang.org/docs/native-target-support.html">here</a>)</li>
+</ul>
+</li>
+<li>
+<p>which third-party library should each target depend upon</p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#000">kotlin</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#000">sourceSets</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">commonMain</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">getting</span> <span style="color:#000;font-weight:bold">{</span>
@@ -311,9 +321,13 @@
 </span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>        <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
-</span></span></code></pre></div><p>Details about:
-* progressive mode <a href="https://kotlinlang.org/docs/whatsnew13.html#progressive-mode">here</a>
-* opt-ins <a href="https://kotlinlang.org/docs/opt-in-requirements.html#opt-in-to-using-api">here</a></p>
+</span></span></code></pre></div></li>
+<li>
+<p>details about:</p>
+<ul>
+<li>progressive mode <a href="https://kotlinlang.org/docs/whatsnew13.html#progressive-mode">here</a></li>
+<li>opt-ins <a href="https://kotlinlang.org/docs/opt-in-requirements.html#opt-in-to-using-api">here</a></li>
+</ul>
 </li>
 </ul>
 </section><section>
@@ -534,6 +548,114 @@
 </ul>
 </li>
 </ol>
+</section><section>
+
+
+<section data-shortcode-section="">
+<h1 id="running-example">Running example</h1>
+<h2 id="multi-platform-csv-parsing-lib">Multi-platform CSV parsing lib</h2>
+<ul>
+<li>
+<p>CSV (comma-separated values) files, e.g.:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"># HEADER_1, HEADER_2, HEADER_3, ...</span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"># character '#' denotes the beginning of a single-line comment</span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"># first line conventionally denotes columns names (headers)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>field1, filed2, field3, ...
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"># character ',' acts as field separator</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#4e9a06">"field with spaces"</span>, <span style="color:#4e9a06">"another field, with comma"</span>, <span style="color:#4e9a06">"yet another field"</span>, ...
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"># character '"' acts as field delimiter</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"># other characters may be used to denote comments, separators, or delimiters</span>
+</span></span></code></pre></div></li>
+<li>
+<p>JVM and JS std-lib do not provide direct support for CSV</p>
+</li>
+<li>
+<p>Requirements:</p>
+<ul>
+<li>library for parsing / manipulating CSV files</li>
+<li>parsing = loading from file</li>
+<li>manipulating = creating / editing / saving CSV files, programmatically</li>
+<li>support for both JVM and JS</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="domain-entities">Domain entities</h2>
+<figure>
+  <img src="https://g.gravizo.com/svg?%0a%40startuml%0atop%20to%20bottom%20direction%0apackage%20%22kotlin%22%20%7b%0ainterface%20Iterable%3cT%3e%0a%7d%0apackage%20%22io.github.gciatto.csv%22%20%7b%0ainterface%20Row%20%7b%0a%2b%20get%28index%3a%20Int%29%3a%20String%0a%2b%20size%3a%20Int%0a%7d%0aRow%20-up-%7c%3e%20Iterable%3a%20%2f%2fT%2f%2f%20%3d%20String%0ainterface%20Header%20%7b%0a%2b%20columns%3a%20List%3cString%3e%0a%2b%20contains%28column%3a%20String%29%3a%20Boolean%0a%2b%20indexOf%28column%3a%20String%29%3a%20Int%0a%7d%0aRow%20%3c%7c--%20Header%0ainterface%20Record%20%7b%0a%2b%20header%3a%20Header%0a%2b%20values%3a%20List%3cString%3e%0a%2b%20contains%28value%3a%20String%29%3a%20Boolean%0a%2b%20get%28column%3a%20String%29%3a%20String%0a%7d%0aRow%20%3c%7c--%20Record%0aRecord%20%221%22%20%2a-right-%20%22%2a%22%20Header%0ainterface%20Table%20%7b%0a%2b%20header%3a%20Header%0a%2b%20records%3a%20List%3cRecord%3e%0a%2b%20get%28row%3a%20Int%29%3a%20Row%0a%2b%20size%3a%20Int%0a%7d%0aTable%20%221%22%20%2a-u-%20%22%2a%22%20Header%0aTable%20%22%2a%22%20o-u-%20%22%2a%22%20Record%0aTable%20-u----%7c%3e%20Iterable%3a%20%2f%2fT%2f%2f%20%3d%20Row%0aclass%20Configuration%20%7b%0a%2b%20separator%3a%20Char%0a%2b%20delimiter%3a%20Char%0a%2b%20comment%3a%20Char%0a%7d%0a%7d%0a%40enduml%0a" alt="" width="100%">
+    <figcaption></figcaption>
+</figure>
+</section><section>
+<h2 id="the-row-interface">The <code>Row</code> interface</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// Represents a single row in a CSV file.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">interface</span> <span style="color:#000">Row</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Iterable</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">&gt;</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Gets the value of the field at the given index.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">operator</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">get</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">index</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Int</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">String</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Gets the number of fields in this row.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">size</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Int</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></section><section>
+<h2 id="the-header-interface">The <code>Header</code> interface</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// Represents the header of a CSV file.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// A header is a special row containing the names of the columns.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">interface</span> <span style="color:#000">Header</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Row</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Gets the names of the columns.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">columns</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">List</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Checks whether the given column name is present in this header.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">operator</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">contains</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">column</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">Boolean</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Gets the index of the given column name.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">indexOf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">column</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">Int</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></section><section>
+<h2 id="the-record-interface">The <code>Record</code> interface</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// Represents a record in a CSV file.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">interface</span> <span style="color:#000">Record</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Row</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Gets the header of this record (useful to know column names).
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">header</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Header</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Gets the values of the fields in this record.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">values</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">List</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Checks whether the given value is present in this record.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">operator</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">contains</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">value</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">Boolean</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Gets the value of the field in the given column.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">operator</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">get</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">column</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">String</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></section><section>
+<h2 id="the-table-interface">The <code>Table</code> interface</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// Represents a table (i.e. an in-memory representation of a CSV file).
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">interface</span> <span style="color:#000">Table</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Iterable</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">Row</span><span style="color:#000;font-weight:bold">&gt;</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Gets the header of this table (useful to know column names).
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">header</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Header</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Gets the records in this table.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">records</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">List</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">Record</span><span style="color:#000;font-weight:bold">&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Gets the row at the given index.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">operator</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">get</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">row</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Int</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">Row</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Gets the number of rows in this table.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">size</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Int</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></section><section>
+<h2 id="common-implementations-of-domain-entities">Common implementations of domain entities</h2>
+<figure>
+  <img src="https://g.gravizo.com/svg?%0a%40startuml%0atop%20to%20bottom%20direction%0apackage%20%22io.github.gciatto.csv.%2a%2aimpl%2a%2a%22%20%7b%0ainterface%20Row%0aclass%20AbstractRow%20%7b%0a%23%20constructor%28values%3a%20List%3cString%3e%29%0a%23%20toString%28type%3a%20String%3f%29%3a%20String%0a%7d%0aRow%20%3c%7c--%20AbstractRow%0ainterface%20Header%0aclass%20DefaultHeader%20%7b%0a-%20indexesByName%3a%20Map%3cString%2c%20Int%3e%0a%2b%20constructor%28columns%3a%20Iterable%3cString%3e%29%0a%7d%0aRow%20%3c%7c--%20Header%0aHeader%20%3c%7c--%20DefaultHeader%0aAbstractRow%20%3c%7c--%20DefaultHeader%0ainterface%20Record%0aclass%20DefaultRecord%20%7b%0a%23%20constructor%28header%3a%20Header%2c%20values%3a%20Iterable%3cString%3e%29%0a%7d%0aRow%20%3c%7c--%20Record%0aRecord%20%3c%7c--%20DefaultRecord%0aAbstractRow%20%3c%7c--%20DefaultRecord%0aclass%20DefaultTable%20%7b%0a%23%20constructor%28header%3a%20Header%2c%20records%3a%20Iterable%3cRecord%3e%29%0a%7d%0aTable%20%3c%7c--%20DefaultTable%0a%7d%0a%40enduml%0a" alt="" width="100%">
+    <figcaption></figcaption>
+</figure>
+
+</section>
 </section>
 
   
