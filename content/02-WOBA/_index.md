@@ -838,16 +838,22 @@ internal class DefaultTable(override val header: Header, records: Iterable<Recor
 ## The `Csv.kt` file
 
 ```kotlin
+// Headers creation from columns names
 fun headerOf(columns: Iterable<String>): Header = DefaultHeader(columns)
 fun headerOf(vararg columns: String): Header = headerOf(columns.asIterable())
 
+// Creates anonymous headers, with columns named after their index
 fun anonymousHeader(size: Int): Header = headerOf((0 ..< size).map { it.toString() })
 
+// Records creation from header and values
 fun recordOf(header: Header, columns: Iterable<String>): Record = DefaultRecord(header, columns)
 fun recordOf(header: Header, vararg columns: String): Record = recordOf(header, columns.asIterable())
 
+// Tables creation from header and records
 fun tableOf(header: Header, records: Iterable<Record>): Table = DefaultTable(header, records)
 fun tableOf(header: Header, vararg records: Record): Table = tableOf(header, records.asIterable())
+
+// Tables creation from rows (anonymous header if none is provided)
 fun tableOf(rows: Iterable<Row>): Table {
     val records = mutableListOf<Record>()
     var header: Header? = null
@@ -1111,6 +1117,333 @@ package io.github.gciatto.csv.impl {
 @enduml
 {{< /gravizo >}}
 
+---
 
+## The `DefaultFormatter` class
+
+```kotlin
+class DefaultFormatter(override val source: Iterable<Row>, override val configuration: Configuration) : Formatter {
+
+    // Lazily converts each row from the source into a string, according to the configuration.
+    override fun format(): Iterable<String> = source.asSequence().map(this::formatRow).asIterable()
+
+    // Converts the given row into a string, according to the configuration.
+    private fun formatRow(row: Row): String = when (row) {
+        is Header -> formatAsHeader(row)
+        else -> formatAsRecord(row)
+    }
+
+    // Formats the given row as a header (putting the comment character at the beginning).
+    private fun formatAsHeader(row: Row): String = "${configuration.comment} ${formatAsRecord(row)}"
+
+    // Formats the given row as a record (using the separator and delimiter characters accordingly).
+    private fun formatAsRecord(row: Row): String =
+        row.joinToString("${configuration.separator} ") {
+            val delimiter = configuration.delimiter
+            "$delimiter$it$delimiter"
+        }
+}
+```
+
+---
+
+## The `AbstractParser` class
+
+```kotlin
+class AbstractParser(override val source: Any, override val configuration: Configuration) : Parser {
+
+    // Empty methods to be overridden by sub-classes to initialize/finalise parsing.
+    protected open fun beforeParsing() { /* does nothing by default */ }
+    protected open fun afterParsing() { /* does nothing by default */ }
+
+    // Template method that parses the source into a sequence of strings (one per line).
+    protected abstract fun sourceAsLines(): Sequence<String>
+
+    // Parses the source into a sequence of rows (skipping comments, looking for at most 1 header).
+    override fun parse(): Iterable<Row> = sequence {
+        beforeParsing()
+        var header: Header? = null
+        var i = 0
+        for (line in sourceAsLines()) {
+            if (line.isBlank()) {
+                continue
+            } else if (configuration.isHeader(line)) {
+                if (header == null) {
+                    header = headerOf(configuration.getColumnNames(line))
+                    yield(header)
+                }
+            } else if (configuration.isComment(line)) {
+                continue
+            } else if (configuration.isRecord(line)) {
+                val fields = configuration.getFields(line)
+                if (header == null) {
+                    header = anonymousHeader(fields.size)
+                    yield(header)
+                }
+                try {
+                    yield(recordOf(header, fields))
+                } catch (e: IllegalArgumentException) {
+                    throw IllegalStateException("Invalid CSV at line $i: $line", e)
+                }
+            } else {
+                error("Invalid CSV line at $i: $line")
+            }
+            i++
+        }
+        afterParsing()
+    }.asIterable()
+}
+```
+
+---
+
+## The `StringParser` class
+
+```kotlin
+class StringParser(override val source: String, configuration: Configuration) 
+    : AbstractParser(source, configuration) {
+
+    // Splits the source string into lines.
+    override fun sourceAsLines(): Sequence<String> = source.lineSequence()
+}
+```
+
+--- 
+
+## Providing functionalities via extension methods
+
+- Additions to the `Csv.kt` file:
+
+    ```kotlin
+    const val DEFAULT_SEPARATOR = ','
+    const val DEFAULT_DELIMITER = '"'
+    const val DEFAULT_COMMENT = '#'
+
+    // Converts the current container of rows into a CSV string, using the given characters.
+    fun Iterable<Row>.formatAsCSV(
+        separator: Char = DEFAULT_SEPARATOR,
+        delimiter: Char = DEFAULT_DELIMITER,
+        comment: Char = DEFAULT_COMMENT
+    ): String = DefaultFormatter(this, Configuration(separator, delimiter, comment)).format().joinToString("\n")
+
+    // Parses the current CSV string into a table, using the given characters.
+    fun String.parseAsCSV(
+        separator: Char = DEFAULT_SEPARATOR,
+        delimiter: Char = DEFAULT_DELIMITER,
+        comment: Char = DEFAULT_COMMENT
+    ): Table = StringParser(this, Configuration(separator, delimiter, comment)).parse().let(::tableOf)
+    ```
+
+---
+
+## Unit tests and usage examples
+
+- Dummy instances for testing:
+    ```kotlin
+    object CsvStrings {
+        val iris: String = """
+        |# sepal_length, sepal_width, petal_length, petal_width, class
+        |5.1,3.5,1.4,0.2,Iris-setosa
+        |4.9,3.0,1.4,0.2,Iris-setosa
+        |4.7,3.2,1.3,0.2,Iris-setosa
+        """.trimMargin()
+
+        val irisWellFormatted: String = """
+        |# "sepal_length", "sepal_width", "petal_length", "petal_width", "class"
+        |"5.1", "3.5", "1.4", "0.2", "Iris-setosa"
+        |"4.9", "3.0", "1.4", "0.2", "Iris-setosa"
+        |"4.7", "3.2", "1.3", "0.2", "Iris-setosa"
+        """.trimMargin()
+
+        // other dummy constants here
+    }
+    ```
+
+- Tests involving parsing be like:
+    ```kotlin
+    @Test
+    fun parsingFromCleanString() {
+        val parsed: Table = CsvStrings.iris.parseAsCSV()
+        assertEquals(
+            expected = Tables.iris(Tables.irisShortHeader),
+            actual = parsed
+        )
+    }
+    ```
+
+- Tests involving formatting be like:
+    ```kotlin
+    @Test
+    fun formattingToString() {
+        val iris: Table = Tables.iris(Tables.irisShortHeader)
+        assertEquals(
+            expected = CsvStrings.irisWellFormatted,
+            actual = iris.formatAsCSV()
+        )
+    }
+    ```
+
+--- 
+
+## Time to go platform-specific
+
+- Further additions to the `Csv.kt` file:
+    ```kotlin
+    // Reads and parses a CSV file from the given path, using the given characters.
+    expect fun parseCsvFile(
+        path: String,
+        separator: Char = DEFAULT_SEPARATOR,
+        delimiter: Char = DEFAULT_DELIMITER,
+        comment: Char = DEFAULT_COMMENT
+    ): Table
+    ```
+
+    * notice the `expect` keyword, and the the lack of function body
+    * we're just declaring the signature of a platform-specific function
+    * there is no type for representing paths is Kotlin's common std-lib
+        + hence we're using `String` as a platform-agnostic representation of paths
+            - this is suboptimal choice
+
+--- 
+
+## Time to go platform-specific on the JVM (pt. 1)
+
+- I/O (over textual files) is mainly supported by means of the following classes:
+    * [`java.io.File`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/File.html)
+    * [`java.io.BufferedReader`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/BufferedReader.html)
+    * [`java.io.BufferedWriter`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/BufferedWriter.html)
+
+- Buffered readers support reading a file __line-by-line__
+
+- On Kotlin/JVM, Java's std-lib is available as Kotlin's std-lib
+    * hence, we may use Java's std-lib directly
+    * the abstraction gap is close to 0
+
+- We may simply create a new sub-type of `AbstractParser`
+    * using `File`s as sources
+    * creating a `BufferedReader` behind the scenes to read files line-by-line
+
+--- 
+
+## Time to go platform-specific on the JVM (pt. 2)
+
+In the `jvmMain` source set
+
+- let's define the following JVM-specific class:
+    ```kotlin
+    class FileParser(
+        override val source: File, // source is now forced to be a File
+        configuration: Configuration
+    ) : AbstractParser(source, configuration) {
+
+        // Lately initialised reader, corresponding to source
+        private lateinit var reader: BufferedReader
+
+        // Opens the source file, hence initialising the reader, before each parsing
+        override fun beforeParsing() { reader = source.bufferedReader() }
+
+        // Closes the reader, after each parsing
+        override fun afterParsing() { reader.close() }
+
+        // Lazily reads the source file line-by-line
+        override fun sourceAsLines(): Sequence<String> = reader.lines().asSequence()
+    }
+    ```
+
+- let's create the `Csv.jvm.kt` file containing:
+    ```kotlin
+    actual fun parseCsvFile(
+        path: String,
+        separator: Char,
+        delimiter: Char,
+        comment: Char
+    ): Table = FileParser(File(path), Configuration(separator, delimiter, comment)).parse().let(::tableOf)
+    ```
+
+    * this is how the `parseCsvFile` is implemented __on the JVM__
+    * notice the `actual` keyword, and the presence of a function body
+    * notice the usage of `FileParser` in the function body
+        + class `FileParser` is internal class for filling the abstraction gap on the JVM
+
+--- 
+
+## Time to go platform-specific on the JS (pt. 1)
+
+- I/O (over textual files) is mainly supported by means of the following things:
+    * the [`fs` module](https://nodejs.org/docs/latest-v20.x/api/fs.html)
+    * the [`fs.readFileSync` function](https://nodejs.org/api/fs.html#fsreadfilesyncpath-options)
+    * the [`fs.writeFileSync` function](https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options)
+
+- These function supports reading / writing a file __in one shot__
+    * i.e. they return / generate the _whole_ content of the file as a string
+    * quite inefficient if the file is big
+
+- On Kotlin/JS, Node's std-lib is __not__ directly available
+    * one must instruct the compiler about
+        1. __where__ to look up for std-lib function (module name)
+        2. __how__ to map JS functions to Kotlin functions (`external` declarations)
+    * the abstraction gap is non-negligible
+
+- To-do list for Kotlin/JS:
+    1. create `external` declarations for the Node's std-lib functions to be used
+    2. implement JS-specific code via the `StringParser` (after reading the whole file)
+
+--- 
+
+## Time to go platform-specific on the JS (pt. 2)
+
+In the `jsMain` source set
+
+1. let's create the `NodeFs.kt` file (containing `external` declarations for the `fs` module):
+    ```kotlin
+    @file:JsModule("fs")
+    @file:JsNonModule
+
+    package io.github.gciatto.csv
+
+    // Kotlin mapping for: https://nodejs.org/api/fs.html#fsreadfilesyncpath-options
+    external fun readFileSync(path: String, options: dynamic = definedExternally): String
+
+    // Kotlin mapping for: https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options
+    external fun writeFileSync(file: String, data: String, options: dynamic = definedExternally)
+    ```
+
+    * the `@JsModule` annotation instructs the compiler about where to look up for the `fs` module
+    * `external` declarations are Kotlin signatures of JS function
+    * `dynamic` is a special type that can be used to represent any JS object
+        + it overrides Kotlin's type system, hence it should be used with care
+        + it prevents developers from declaring too much `external` stuff
+        + good to use when the JS API is not known in advance or uses union types
+    * `definedExternally` is stating that a parameter is optional (default value is defined in JS)
+
+--- 
+
+## Time to go platform-specific on the JS (pt. 3)
+
+2. let's create the `Csv.js.kt` file containing:
+    ```kotlin
+    actual fun parseCsvFile(
+        path: String,
+        separator: Char,
+        delimiter: Char,
+        comment: Char
+    ): Table = readFileSync(path, js("{encoding: 'utf8'}")).parseAsCSV(separator, delimiter, comment)
+    ```
+
+    * this is how the `parseCsvFile` is implemented __on JS__
+    * notice the `actual` keyword, and the presence of a function body
+    * notice the usage of `readFileSync` to read a file as a string in one shot
+    * notice the exploitation of common code for parsing the string into a `Table` (namely, `parseAsCSV`)
+    * notice the `js("...")` magic function
+        + it allows to write JS code directly in Kotlin
+        + the provided string should contain bare JS code, the compiler will output "as-is"
+        + it's a way to fill the abstraction gap on JS
+        + we use it to create a JS object on the fly, to provide optional parameters to `readFileSync`
+
+---
+
+## Platform-specific testing
+
+TBD
 
 {{% /section %}}
