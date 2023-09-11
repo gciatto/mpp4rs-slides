@@ -475,10 +475,32 @@ Let `T` denote some target platform
 
 ---
 
+## About the example
+
+- We'll follow a domain-driven approach:
+    1. focus on designing / implementing the domain entities
+    2. then, we'll add functionalities for manipulating them
+    3. finally, we'll write unit and integration tests
+
+- Domain entities (can be realised as common code):
+    - `Table`: in-memory representation of a CSV file
+    - `Row`: generic row in a CSV file
+    - `Header`: special row containing the names of the columns
+    - `Record`: special row containing the values of a line in a CSV file
+
+- Main functionalities (require platform specific code):
+    1. creating a `Table` programmatically
+    2. reading columns, rows, and values from a `Table`
+    3. parsing a CSV file into a `Table`
+    4. saving a `Table` into a CSV file
+
+---
+
 ## Domain entities
 
 {{< gravizo >}}
 @startuml
+skinparam monochrome false
 top to bottom direction
 
 package "kotlin" {
@@ -522,12 +544,6 @@ package "io.github.gciatto.csv" {
     Table "1" *-u- "*" Header
     Table "*" o-u- "*" Record
     Table -u----|> Iterable: //T// = Row
-
-    class Configuration {
-        + separator: Char
-        + delimiter: Char
-        + comment: Char
-    }
 }
 @enduml
 {{< /gravizo >}}
@@ -618,12 +634,14 @@ interface Table : Iterable<Row> {
 
 {{< gravizo >}}
 @startuml
+skinparam monochrome false
 top to bottom direction
 
 package "io.github.gciatto.csv.**impl**" {
     interface Row
 
-    class AbstractRow {
+    abstract class AbstractRow {
+        - values: List<String>
         # constructor(values: List<String>)
         # toString(type: String?): String
     }
@@ -644,7 +662,7 @@ package "io.github.gciatto.csv.**impl**" {
     interface Record
 
     class DefaultRecord {
-        # constructor(header: Header, values: Iterable<String>)
+        + constructor(header: Header, values: Iterable<String>)
     }
 
     Row <|-- Record
@@ -652,12 +670,447 @@ package "io.github.gciatto.csv.**impl**" {
     AbstractRow <|-- DefaultRecord
 
     class DefaultTable {
-        # constructor(header: Header, records: Iterable<Record>)
+        + constructor(header: Header, records: Iterable<Record>)
     }
 
     Table <|-- DefaultTable
 }
 @enduml
 {{< /gravizo >}}
+
+---
+
+## The `AbstractRow` class
+
+```kotlin
+// Base implementation for the Row interface.
+internal abstract class AbstractRow(protected open val values: List<String>) : Row {
+    override val size: Int
+        get() = values.size
+
+    override fun get(index: Int): String = values[index]
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+        return values == (other as AbstractRow).values
+    }
+
+    override fun hashCode(): Int = values.hashCode()
+
+    // Returns a string representation of this row as "<type>(field1, field2, ...)".
+    protected fun toString(type: String?): String {
+        var prefix = ""
+        var suffix = ""
+        if (type != null) {
+            prefix = "$type("
+            suffix = ")"
+        }
+        return values.joinToString(", ", prefix, suffix) { "\"$it\"" }
+    }
+
+    // Returns a string representation of this row as "Row(field1, field2, ...)".
+    override fun toString(): String = toString("Row")
+
+    // Makes it possible to iterate over the fields of this row, via for-each loops.
+    override fun iterator(): Iterator<String> = values.iterator()
+}
+```
+
+---
+
+## The `DefaultHeader` class
+
+```kotlin
+// Default implementation for the Header interface.
+internal class DefaultHeader(columns: Iterable<String>) : Header, AbstractRow(columns.toList()) {
+
+    // Cache of column indexes, for faster lookup.
+    private val indexesByName = columns.mapIndexed { index, name -> name to index }.toMap()
+
+    override val columns: List<String>
+        get() = values
+
+    override fun contains(column: String): Boolean = column in indexesByName.keys
+
+    override fun indexOf(column: String): Int = indexesByName[column] ?: -1
+
+    override fun iterator(): Iterator<String> = values.iterator()
+
+    override fun toString(): String = toString("Header")
+}
+```
+
+---
+
+## The `DefaultRecord` class
+
+```kotlin
+internal class DefaultRecord(override val header: Header, values: Iterable<String>) : Record, AbstractRow(values.toList()) {
+
+    init {
+        require(header.size == super.values.size) {
+            "Inconsistent amount of values (${super.values.size}) w.r.t. to header size (${header.size})"
+        }
+    }
+
+    override fun contains(value: String): Boolean = values.contains(value)
+
+    override val values: List<String>
+        get() = super.values
+
+    override fun get(column: String): String =
+        header.indexOf(column).takeIf { it in 0..< size }?.let { values[it] }
+            ?: throw NoSuchElementException("No such column: $column")
+
+    override fun toString(): String = toString("Record")
+}
+```
+
+---
+
+## The `DefaultTable` class
+
+```kotlin
+internal class DefaultTable(override val header: Header, records: Iterable<Record>) : Table {
+
+    // Lazy, defensive copy of the records.
+    override val records: List<Record> by lazy { records.toList() }
+
+    override fun get(row: Int): Row = if (row == 0) header else records[row - 1]
+
+    override val size: Int
+        get() = records.size + 1
+
+    override fun iterator(): Iterator<Row> = (sequenceOf(header) + records.asSequence()).iterator()
+    
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || other !is DefaultTable) return false
+        if (header != other.header) return false
+        if (records != other.records) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = header.hashCode()
+        result = 31 * result + records.hashCode()
+        return result
+    }
+
+    override fun toString(): String = this.joinToString(", ", "Table(", ")")
+}
+```
+
+---
+
+## Need for factory methods
+
+- To enforce separation among API and implementation code, it's better:
+    * to keep interfaces public, and classes internal
+    * to provide factory methods for creating instances of the interfaces
+
+- Convention in Kotlin is to create factory methods as package-level `fun`ctions
+    * e.g. contained into the `io/github/gciatto/csv/Csv.kt` file
+
+- Factory methods may be named after the concept they create: `<concept>Of(args...)`
+    * e.g. `headerOf(columns...)`, `recordOf(header, values...)`, etc.
+
+- Class diagram:
+    
+    {{< gravizo width="30%">}}
+    @startuml
+    skinparam monochrome false
+    class Csv{
+        + headerOf(columns): Header
+        + anonymousHeader(size: Int): Header
+        ..
+        + recordOf(header, values): Record
+        ..
+        + tableOf(header, records): Table
+        + tableOf(rows): Table
+    }
+    @enduml
+    {{< /gravizo >}}
+
+---
+
+## The `Csv.kt` file
+
+```kotlin
+fun headerOf(columns: Iterable<String>): Header = DefaultHeader(columns)
+fun headerOf(vararg columns: String): Header = headerOf(columns.asIterable())
+
+fun anonymousHeader(size: Int): Header = headerOf((0 ..< size).map { it.toString() })
+
+fun recordOf(header: Header, columns: Iterable<String>): Record = DefaultRecord(header, columns)
+fun recordOf(header: Header, vararg columns: String): Record = recordOf(header, columns.asIterable())
+
+fun tableOf(header: Header, records: Iterable<Record>): Table = DefaultTable(header, records)
+fun tableOf(header: Header, vararg records: Record): Table = tableOf(header, records.asIterable())
+fun tableOf(rows: Iterable<Row>): Table {
+    val records = mutableListOf<Record>()
+    var header: Header? = null
+    for (row in rows) {
+        when (row) {
+            is Header -> header = row
+            is Record -> records.add(row)
+        }
+    }
+    require(header != null || records.isNotEmpty())
+    return tableOf(header ?: anonymousHeader(records[0].size), records)
+}
+```
+
+- Notice that each factory method is __overloaded__
+    + to support both `Iterable` and `vararg` arguments
+    + this is convenient for Kotlin programmers that will use our library
+
+---
+
+## Time for unit testing
+
+- Dummy instances object:
+    ```kotlin
+    object Tables {
+        val irisShortHeader = headerOf("sepal_length", "sepal_width", "petal_length", "petal_width", "class")
+
+        val irisLongHeader = headerOf("sepal length in cm", "sepal width, in cm", "petal length", "petal width", "class")
+
+        fun iris(header: Header): Table = tableOf(
+            header,
+            recordOf(header, "5.1", "3.5", "1.4", "0.2", "Iris-setosa"),
+            recordOf(header, "4.9", "3.0", "1.4", "0.2", "Iris-setosa"),
+            recordOf(header, "4.7", "3.2", "1.3", "0.2", "Iris-setosa")
+        )
+    }
+    ```
+
+- Some basic tests in file `TestCSV.kt`, e.g. (bad way of writing test methods, don't do this at home)
+    ```kotlin
+    @Test
+    fun recordBasics() {
+        val record = Tables.iris(Tables.irisShortHeader).records[0]
+        assertEquals("5.1", record[0])
+        assertEquals("5.1", record["sepal_length"])
+        assertEquals("3.5", record[1])
+        assertEquals("3.5", record["sepal_width"])
+        assertEquals("1.4", record[2])
+        assertEquals("1.4", record["petal_length"])
+        assertEquals("0.2", record[3])
+        assertEquals("0.2", record["petal_width"])
+        assertEquals("Iris-setosa", record[4])
+        assertEquals("Iris-setosa", record["class"])
+        assertFailsWith<IndexOutOfBoundsException> { record[5] }
+        assertFailsWith<NoSuchElementException> { record["missing"] }
+    }
+    ```
+    
+- Run tests via Gradle task `test`
+    + also try to run tests for specific platforms, e.g. `jvmTest` or `jsTest`
+
+--- 
+
+## Summary of what we did so far
+
+1. We designed a set of domain entities
+    * `Row`, `Header`, `Record`, `Table`
+    * we provided a set of factory methods for creating instances of those entities
+
+2. We implemented the domain entities as common code
+
+3. We wrote some unit tests for the domain entities
+    * again as common code
+
+4. Let's focus now on more complex functionalities
+    * e.g. parsing a CSV file into a `Table`
+    * e.g. saving a `Table` into a CSV file
+    * all such features require I/O functionalities
+
+> I/O is platform-specific, hence we need platform-specific code
+
+---
+
+## How much platform-specific code is needed?
+
+- I/O functionalities are supported by fairly different API in JVM and JS
+    * e.g. JVM's [`java.io` package](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/package-summary.html) vs. JS' [`fs` module](https://nodejs.org/docs/latest-v20.x/api/fs.html)
+    * sadly, Kotlin std-lib does not provide a common API for I/O
+
+- Do we need to rewrite the same business logic twice? (once for JVM, once for JS)
+    * yes, but we can minimise the amount of code to be rewritten
+
+- Let's try to decompose the problem as follows:
+    * parsing CSV into `Table`: file $\rightarrow$ string(s) $\rightarrow$ `Table`
+    * saving `Table` as CSV file: `Table` $\rightarrow$ string(s) $\rightarrow$ file
+
+- Remarks:
+    1. only the "file $\leftrightarrow$ string(s)" part is platform-specific
+    2. conversely, the "string(s) $\leftrightarrow$ `Table`" part is platform-agnostic
+        + let's realise this one first, as common code
+
+---
+
+## Three more entities to be modelled
+
+- `Configuration`: set of characters to be used to parse / represent CSV files
+    * e.g. separator, delimiter, comment, etc.
+
+- `Formatter`: converts `Rows` into strings, according to some `Configuration`
+
+- `Parser`: converts some source into a `Table`, according to some `Configuration`
+    * source $\approx$ anything that can be interpreted as a string to be parsed (e.g. file, string, etc.)
+
+{{< gravizo width="40%">}}
+@startuml
+skinparam monochrome false
+
+package io.github.gciatto.csv {
+
+    class Configuration {
+        + separator: Char
+        + delimiter: Char
+        + comment: Char
+        --
+        + isComment(string: String): Boolean
+        + isRecord(string: String): Boolean
+        + isHeader(string: String): Boolean
+        ..
+        + getComment(string: String): String?
+        + getFields(string: String): List<String>
+        + getColumnNames(string: String): List<String>
+    }
+
+    interface Formatter {
+        + source: Iterable<Row>
+        + configuration: Configuration
+        + format(): Iterable<String>
+    }
+
+    interface Parser {
+        + source: Any
+        + configuration: Configuration
+        + parse(): Iterable<Row>
+    }
+
+    Formatter "1" o-- "1" Configuration
+    Parser "1" o-- "1" Configuration
+
+}
+@enduml
+{{< /gravizo >}}
+
+---
+
+## The `Configuration` class
+
+```kotlin
+data class Configuration(val separator: Char, val delimiter: Char, val comment: Char) {
+
+    // Checks whether the given string is a comment (i.e. starts with the comment character).
+    fun isComment(string: String): Boolean = // ...
+
+    // Gets the content of the comment line (i.e. removes the initial comment character).
+    fun getComment(string: String): String? = // ...
+
+    // Checks whether the given string is a record (i.e. it contains the delimiter character)
+    fun isRecord(string: String): Boolean = // ...
+
+    // Retrieves the fields in the given record (i.e. splits the string at the separator character)
+    fun getFields(string: String): List<String> = // ...
+
+    // Checks whether the given string is a header (i.e. simultaneously a record and a comment)
+    fun isHeader(string: String): Boolean = // ...
+
+    // Retrieves the column names in the given header
+    fun getColumnNames(string: String): List<String> = // ...
+}
+```
+* implementation of methods is long and boring, but straightforward
+    - it relies on regular expressions, which are supported by Kotlin's common std-lib
+    - details [here](https://github.com/gciatto/mpp4rs-code)
+
+---
+
+## The `Formatter` interface
+
+```kotlin
+interface Formatter {
+    
+    // The source of this formatter (i.e. the rows to be formatted).
+    val source: Iterable<Row>
+
+    // The configuration of this formatter (i.e. the characters to be used).
+    val configuration: Configuration
+
+    // Formats the source of this formatter into a sequence of strings (one per each row in the source)
+    fun format(): Iterable<String>
+}
+```
+
+---
+
+## The `Parser` interface
+
+```kotlin
+interface Parser {
+    // The source to be parsed by this parser (must be interpretable as string)
+    val source: Any
+
+    // The configuration of this parser (i.e. the characters to be used).
+    val configuration: Configuration
+
+    // Parses the source of this parser into a sequence of rows (one per each row in the source)
+    fun parse(): Iterable<Row>
+}
+```
+
+--- 
+
+## Common implementation of novel entities
+
+{{< gravizo >}}
+@startuml
+skinparam monochrome false
+
+package io.github.gciatto.csv.impl {
+
+    class Configuration
+    interface Formatter
+    interface Parser
+
+    DefaultFormatter "1" o-- "1" Configuration
+    AbstractParser "1" o-- "1" Configuration
+
+    class DefaultFormatter {
+        + constructor(source: Iterable<Row>, configuration: Configuration)
+        - formatRow(row: Row): String
+        - formatAsHeader(row: Row): String
+        - formatAsRecord(row: Row): String
+    }
+
+    Formatter <|-- DefaultFormatter
+
+    abstract class AbstractParser {
+        # constructor(source: Any, configuration: Configuration)
+        # beforeParsing()
+        # afterParsing()
+        # {abstract} sourceAsLines(): Sequence<String>
+    }
+
+    Parser <|-- AbstractParser
+
+    class StringParser {
+        + source: String
+        + constructor(source: String, configuration: Configuration)
+        + sourceAsLines(): Sequence<String>
+    }
+
+    AbstractParser <|-- StringParser
+}
+@enduml
+{{< /gravizo >}}
+
+
 
 {{% /section %}}
