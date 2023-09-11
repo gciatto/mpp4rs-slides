@@ -820,17 +820,23 @@
 </figure>
 </section><section>
 <h2 id="the-csvkt-file">The <code>Csv.kt</code> file</h2>
-<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">headerOf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">columns</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Iterable</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">&gt;):</span> <span style="color:#000">Header</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">DefaultHeader</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">columns</span><span style="color:#000;font-weight:bold">)</span>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// Headers creation from columns names
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">headerOf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">columns</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Iterable</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">&gt;):</span> <span style="color:#000">Header</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">DefaultHeader</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">columns</span><span style="color:#000;font-weight:bold">)</span>
 </span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">headerOf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">vararg</span> <span style="color:#000">columns</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">Header</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">headerOf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">columns</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">asIterable</span><span style="color:#000;font-weight:bold">())</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">anonymousHeader</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">size</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Int</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">Header</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">headerOf</span><span style="color:#000;font-weight:bold">((</span><span style="color:#0000cf;font-weight:bold">0</span> <span style="color:#ce5c00;font-weight:bold">..</span><span style="color:#000;font-weight:bold">&lt;</span> <span style="color:#000">size</span><span style="color:#000;font-weight:bold">).</span><span style="color:#000">map</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">it</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">toString</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">})</span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// Creates anonymous headers, with columns named after their index
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">anonymousHeader</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">size</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Int</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">Header</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">headerOf</span><span style="color:#000;font-weight:bold">((</span><span style="color:#0000cf;font-weight:bold">0</span> <span style="color:#ce5c00;font-weight:bold">..</span><span style="color:#000;font-weight:bold">&lt;</span> <span style="color:#000">size</span><span style="color:#000;font-weight:bold">).</span><span style="color:#000">map</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">it</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">toString</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">})</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">recordOf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">header</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Header</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">columns</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Iterable</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">&gt;):</span> <span style="color:#000">Record</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">DefaultRecord</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">header</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">columns</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// Records creation from header and values
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">recordOf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">header</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Header</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">columns</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Iterable</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">&gt;):</span> <span style="color:#000">Record</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">DefaultRecord</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">header</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">columns</span><span style="color:#000;font-weight:bold">)</span>
 </span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">recordOf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">header</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Header</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">vararg</span> <span style="color:#000">columns</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">Record</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">recordOf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">header</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">columns</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">asIterable</span><span style="color:#000;font-weight:bold">())</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">tableOf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">header</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Header</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">records</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Iterable</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">Record</span><span style="color:#000;font-weight:bold">&gt;):</span> <span style="color:#000">Table</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">DefaultTable</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">header</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">records</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// Tables creation from header and records
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">tableOf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">header</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Header</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">records</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Iterable</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">Record</span><span style="color:#000;font-weight:bold">&gt;):</span> <span style="color:#000">Table</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">DefaultTable</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">header</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">records</span><span style="color:#000;font-weight:bold">)</span>
 </span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">tableOf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">header</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Header</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">vararg</span> <span style="color:#000">records</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Record</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">Table</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">tableOf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">header</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">records</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">asIterable</span><span style="color:#000;font-weight:bold">())</span>
-</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">tableOf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">rows</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Iterable</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">Row</span><span style="color:#000;font-weight:bold">&gt;):</span> <span style="color:#000">Table</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// Tables creation from rows (anonymous header if none is provided)
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">tableOf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">rows</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Iterable</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">Row</span><span style="color:#000;font-weight:bold">&gt;):</span> <span style="color:#000">Table</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">records</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">mutableListOf</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">Record</span><span style="color:#000;font-weight:bold">&gt;()</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">header</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Header</span><span style="color:#000;font-weight:bold">?</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">null</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000">row</span> <span style="color:#204a87;font-weight:bold">in</span> <span style="color:#000">rows</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
@@ -1044,6 +1050,349 @@
   <img src="https://g.gravizo.com/svg?%0a%40startuml%0askinparam%20monochrome%20false%0apackage%20io.github.gciatto.csv.impl%20%7b%0aclass%20Configuration%0ainterface%20Formatter%0ainterface%20Parser%0aDefaultFormatter%20%221%22%20o--%20%221%22%20Configuration%0aAbstractParser%20%221%22%20o--%20%221%22%20Configuration%0aclass%20DefaultFormatter%20%7b%0a%2b%20constructor%28source%3a%20Iterable%3cRow%3e%2c%20configuration%3a%20Configuration%29%0a-%20formatRow%28row%3a%20Row%29%3a%20String%0a-%20formatAsHeader%28row%3a%20Row%29%3a%20String%0a-%20formatAsRecord%28row%3a%20Row%29%3a%20String%0a%7d%0aFormatter%20%3c%7c--%20DefaultFormatter%0aabstract%20class%20AbstractParser%20%7b%0a%23%20constructor%28source%3a%20Any%2c%20configuration%3a%20Configuration%29%0a%23%20beforeParsing%28%29%0a%23%20afterParsing%28%29%0a%23%20%7babstract%7d%20sourceAsLines%28%29%3a%20Sequence%3cString%3e%0a%7d%0aParser%20%3c%7c--%20AbstractParser%0aclass%20StringParser%20%7b%0a%2b%20source%3a%20String%0a%2b%20constructor%28source%3a%20String%2c%20configuration%3a%20Configuration%29%0a%2b%20sourceAsLines%28%29%3a%20Sequence%3cString%3e%0a%7d%0aAbstractParser%20%3c%7c--%20StringParser%0a%7d%0a%40enduml%0a" alt="" width="100%">
     <figcaption></figcaption>
 </figure>
+</section><section>
+<h2 id="the-defaultformatter-class">The <code>DefaultFormatter</code> class</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">DefaultFormatter</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">override</span> <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">source</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Iterable</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">Row</span><span style="color:#000;font-weight:bold">&gt;,</span> <span style="color:#204a87;font-weight:bold">override</span> <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Configuration</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Formatter</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Lazily converts each row from the source into a string, according to the configuration.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">override</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">format</span><span style="color:#000;font-weight:bold">():</span> <span style="color:#000">Iterable</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">&gt;</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">source</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">asSequence</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">map</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">this</span><span style="color:#ce5c00;font-weight:bold">::</span><span style="color:#000">formatRow</span><span style="color:#000;font-weight:bold">).</span><span style="color:#000">asIterable</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Converts the given row into a string, according to the configuration.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">private</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">formatRow</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">row</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Row</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">String</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">when</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000">row</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">is</span> <span style="color:#000">Header</span> <span style="color:#ce5c00;font-weight:bold">-&gt;</span> <span style="color:#000">formatAsHeader</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">row</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">else</span> <span style="color:#ce5c00;font-weight:bold">-&gt;</span> <span style="color:#000">formatAsRecord</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">row</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Formats the given row as a header (putting the comment character at the beginning).
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">private</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">formatAsHeader</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">row</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Row</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">String</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">"</span><span style="color:#4e9a06">${configuration.comment}</span><span style="color:#4e9a06"> </span><span style="color:#4e9a06">${formatAsRecord(row)}</span><span style="color:#4e9a06">"</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Formats the given row as a record (using the separator and delimiter characters accordingly).
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">private</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">formatAsRecord</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">row</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Row</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">String</span> <span style="color:#000;font-weight:bold">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000">row</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">joinToString</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"</span><span style="color:#4e9a06">${configuration.separator}</span><span style="color:#4e9a06"> "</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">delimiter</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">delimiter</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#4e9a06">"</span><span style="color:#4e9a06">$delimiter$it$delimiter</span><span style="color:#4e9a06">"</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></section><section>
+<h2 id="the-abstractparser-class">The <code>AbstractParser</code> class</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">AbstractParser</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">override</span> <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">source</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Any</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">override</span> <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Configuration</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Parser</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Empty methods to be overridden by sub-classes to initialize/finalise parsing.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">protected</span> <span style="color:#204a87;font-weight:bold">open</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">beforeParsing</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#8f5902;font-style:italic">/* does nothing by default */</span> <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">protected</span> <span style="color:#204a87;font-weight:bold">open</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">afterParsing</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#8f5902;font-style:italic">/* does nothing by default */</span> <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Template method that parses the source into a sequence of strings (one per line).
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">protected</span> <span style="color:#204a87;font-weight:bold">abstract</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">sourceAsLines</span><span style="color:#000;font-weight:bold">():</span> <span style="color:#000">Sequence</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Parses the source into a sequence of rows (skipping comments, looking for at most 1 header).
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">override</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">parse</span><span style="color:#000;font-weight:bold">():</span> <span style="color:#000">Iterable</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">Row</span><span style="color:#000;font-weight:bold">&gt;</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">sequence</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000">beforeParsing</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">header</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Header</span><span style="color:#000;font-weight:bold">?</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">null</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">i</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#0000cf;font-weight:bold">0</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000">line</span> <span style="color:#204a87;font-weight:bold">in</span> <span style="color:#000">sourceAsLines</span><span style="color:#000;font-weight:bold">())</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000">line</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">isBlank</span><span style="color:#000;font-weight:bold">())</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#204a87;font-weight:bold">continue</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span> <span style="color:#204a87;font-weight:bold">else</span> <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">isHeader</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">line</span><span style="color:#000;font-weight:bold">))</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000">header</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#000">header</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">headerOf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">getColumnNames</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">line</span><span style="color:#000;font-weight:bold">))</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#000">yield</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">header</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span> <span style="color:#204a87;font-weight:bold">else</span> <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">isComment</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">line</span><span style="color:#000;font-weight:bold">))</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#204a87;font-weight:bold">continue</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span> <span style="color:#204a87;font-weight:bold">else</span> <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">isRecord</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">line</span><span style="color:#000;font-weight:bold">))</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">fields</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">getFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">line</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000">header</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#000">header</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">anonymousHeader</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">fields</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">size</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#000">yield</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">header</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#204a87;font-weight:bold">try</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#000">yield</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">recordOf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">header</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">fields</span><span style="color:#000;font-weight:bold">))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#000;font-weight:bold">}</span> <span style="color:#204a87;font-weight:bold">catch</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000">e</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">IllegalArgumentException</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#204a87;font-weight:bold">throw</span> <span style="color:#000">IllegalStateException</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"Invalid CSV at line </span><span style="color:#4e9a06">$i</span><span style="color:#4e9a06">: </span><span style="color:#4e9a06">$line</span><span style="color:#4e9a06">"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">e</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span> <span style="color:#204a87;font-weight:bold">else</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#000">error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"Invalid CSV line at </span><span style="color:#4e9a06">$i</span><span style="color:#4e9a06">: </span><span style="color:#4e9a06">$line</span><span style="color:#4e9a06">"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000">i</span><span style="color:#ce5c00;font-weight:bold">++</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000">afterParsing</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}.</span><span style="color:#000">asIterable</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></section><section>
+<h2 id="the-stringparser-class">The <code>StringParser</code> class</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">StringParser</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">override</span> <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">source</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Configuration</span><span style="color:#000;font-weight:bold">)</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">:</span> <span style="color:#000">AbstractParser</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">source</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Splits the source string into lines.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">override</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">sourceAsLines</span><span style="color:#000;font-weight:bold">():</span> <span style="color:#000">Sequence</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">&gt;</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">source</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">lineSequence</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></section><section>
+<h2 id="providing-functionalities-via-extension-methods">Providing functionalities via extension methods</h2>
+<ul>
+<li>
+<p>Additions to the <code>Csv.kt</code> file:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">const</span> <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">DEFAULT</span><span style="color:#000">_SEPARATOR</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">','</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">const</span> <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">DEFAULT</span><span style="color:#000">_DELIMITER</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">'"'</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">const</span> <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">DEFAULT</span><span style="color:#000">_COMMENT</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">'#'</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// Converts the current container of rows into a CSV string, using the given characters.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">Iterable</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">Row</span><span style="color:#000;font-weight:bold">&gt;.</span><span style="color:#000">formatAsCSV</span><span style="color:#000;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">separator</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Char</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">DEFAULT_SEPARATOR</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">delimiter</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Char</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">DEFAULT_DELIMITER</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">comment</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Char</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">DEFAULT_COMMENT</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">String</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">DefaultFormatter</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">this</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">Configuration</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">separator</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">delimiter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">comment</span><span style="color:#000;font-weight:bold">)).</span><span style="color:#000">format</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">joinToString</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"</span><span style="color:#4e9a06">\n</span><span style="color:#4e9a06">"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// Parses the current CSV string into a table, using the given characters.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">parseAsCSV</span><span style="color:#000;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">separator</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Char</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">DEFAULT_SEPARATOR</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">delimiter</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Char</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">DEFAULT_DELIMITER</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">comment</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Char</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">DEFAULT_COMMENT</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">Table</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">StringParser</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">this</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">Configuration</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">separator</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">delimiter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">comment</span><span style="color:#000;font-weight:bold">)).</span><span style="color:#000">parse</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">let</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">::</span><span style="color:#000">tableOf</span><span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></div></li>
+</ul>
+</section><section>
+<h2 id="unit-tests-and-usage-examples">Unit tests and usage examples</h2>
+<ul>
+<li>
+<p>Dummy instances for testing:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">object</span> <span style="color:#000">CsvStrings</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">iris</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">"""
+</span></span></span><span style="display:flex;"><span><span style="color:#4e9a06">    |# sepal_length, sepal_width, petal_length, petal_width, class
+</span></span></span><span style="display:flex;"><span><span style="color:#4e9a06">    |5.1,3.5,1.4,0.2,Iris-setosa
+</span></span></span><span style="display:flex;"><span><span style="color:#4e9a06">    |4.9,3.0,1.4,0.2,Iris-setosa
+</span></span></span><span style="display:flex;"><span><span style="color:#4e9a06">    |4.7,3.2,1.3,0.2,Iris-setosa
+</span></span></span><span style="display:flex;"><span><span style="color:#4e9a06">    """</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">trimMargin</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">irisWellFormatted</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">"""
+</span></span></span><span style="display:flex;"><span><span style="color:#4e9a06">    |# "sepal_length", "sepal_width", "petal_length", "petal_width", "class"
+</span></span></span><span style="display:flex;"><span><span style="color:#4e9a06">    |"5.1", "3.5", "1.4", "0.2", "Iris-setosa"
+</span></span></span><span style="display:flex;"><span><span style="color:#4e9a06">    |"4.9", "3.0", "1.4", "0.2", "Iris-setosa"
+</span></span></span><span style="display:flex;"><span><span style="color:#4e9a06">    |"4.7", "3.2", "1.3", "0.2", "Iris-setosa"
+</span></span></span><span style="display:flex;"><span><span style="color:#4e9a06">    """</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">trimMargin</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// other dummy constants here
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Tests involving parsing be like:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@Test</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">parsingFromCleanString</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">parsed</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Table</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">CsvStrings</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">iris</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">parseAsCSV</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">assertEquals</span><span style="color:#000;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000">expected</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">Tables</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">iris</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">Tables</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">irisShortHeader</span><span style="color:#000;font-weight:bold">),</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">actual</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">parsed</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Tests involving formatting be like:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@Test</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">formattingToString</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">iris</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Table</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">Tables</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">iris</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">Tables</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">irisShortHeader</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">assertEquals</span><span style="color:#000;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000">expected</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">CsvStrings</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">irisWellFormatted</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">actual</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">iris</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">formatAsCSV</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></li>
+</ul>
+</section><section>
+<h2 id="time-to-go-platform-specific">Time to go platform-specific</h2>
+<ul>
+<li>
+<p>Further additions to the <code>Csv.kt</code> file:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// Reads and parses a CSV file from the given path, using the given characters.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">expect</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">parseCsvFile</span><span style="color:#000;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">path</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">separator</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Char</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">DEFAULT_SEPARATOR</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">delimiter</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Char</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">DEFAULT_DELIMITER</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">comment</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Char</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">DEFAULT_COMMENT</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">Table</span>
+</span></span></code></pre></div><ul>
+<li>notice the <code>expect</code> keyword, and the the lack of function body</li>
+<li>we’re just declaring the signature of a platform-specific function</li>
+<li>there is no type for representing paths is Kotlin’s common std-lib
+<ul>
+<li>hence we’re using <code>String</code> as a platform-agnostic representation of paths
+<ul>
+<li>this is suboptimal choice</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="time-to-go-platform-specific-on-the-jvm-pt-1">Time to go platform-specific on the JVM (pt. 1)</h2>
+<ul>
+<li>
+<p>I/O (over textual files) is mainly supported by means of the following classes:</p>
+<ul>
+<li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/File.html"><code>java.io.File</code></a></li>
+<li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/BufferedReader.html"><code>java.io.BufferedReader</code></a></li>
+<li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/BufferedWriter.html"><code>java.io.BufferedWriter</code></a></li>
+</ul>
+</li>
+<li>
+<p>Buffered readers support reading a file <strong>line-by-line</strong></p>
+</li>
+<li>
+<p>On Kotlin/JVM, Java’s std-lib is available as Kotlin’s std-lib</p>
+<ul>
+<li>hence, we may use Java’s std-lib directly</li>
+<li>the abstraction gap is close to 0</li>
+</ul>
+</li>
+<li>
+<p>We may simply create a new sub-type of <code>AbstractParser</code></p>
+<ul>
+<li>using <code>File</code>s as sources</li>
+<li>creating a <code>BufferedReader</code> behind the scenes to read files line-by-line</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="time-to-go-platform-specific-on-the-jvm-pt-2">Time to go platform-specific on the JVM (pt. 2)</h2>
+<p>In the <code>jvmMain</code> source set</p>
+<ul>
+<li>
+<p>let’s define the following JVM-specific class:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">FileParser</span><span style="color:#000;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">override</span> <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">source</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">File</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#8f5902;font-style:italic">// source is now forced to be a File
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000">AbstractParser</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">source</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Lately initialised reader, corresponding to source
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">private</span> <span style="color:#204a87;font-weight:bold">lateinit</span> <span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">reader</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">BufferedReader</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Opens the source file, hence initialising the reader, before each parsing
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">override</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">beforeParsing</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#000">reader</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">source</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">bufferedReader</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Closes the reader, after each parsing
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">override</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">afterParsing</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#000">reader</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">close</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Lazily reads the source file line-by-line
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">override</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">sourceAsLines</span><span style="color:#000;font-weight:bold">():</span> <span style="color:#000">Sequence</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">&gt;</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">reader</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">lines</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">asSequence</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></li>
+<li>
+<p>let’s create the <code>Csv.jvm.kt</code> file containing:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">actual</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">parseCsvFile</span><span style="color:#000;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">path</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">separator</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Char</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">delimiter</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Char</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">comment</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Char</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">Table</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">FileParser</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">File</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">path</span><span style="color:#000;font-weight:bold">),</span> <span style="color:#000">Configuration</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">separator</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">delimiter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">comment</span><span style="color:#000;font-weight:bold">)).</span><span style="color:#000">parse</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">let</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">::</span><span style="color:#000">tableOf</span><span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></div><ul>
+<li>this is how the <code>parseCsvFile</code> is implemented <strong>on the JVM</strong></li>
+<li>notice the <code>actual</code> keyword, and the presence of a function body</li>
+<li>notice the usage of <code>FileParser</code> in the function body
+<ul>
+<li>class <code>FileParser</code> is internal class for filling the abstraction gap on the JVM</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="time-to-go-platform-specific-on-the-js-pt-1">Time to go platform-specific on the JS (pt. 1)</h2>
+<ul>
+<li>
+<p>I/O (over textual files) is mainly supported by means of the following things:</p>
+<ul>
+<li>the <a href="https://nodejs.org/docs/latest-v20.x/api/fs.html"><code>fs</code> module</a></li>
+<li>the <a href="https://nodejs.org/api/fs.html#fsreadfilesyncpath-options"><code>fs.readFileSync</code> function</a></li>
+<li>the <a href="https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options"><code>fs.writeFileSync</code> function</a></li>
+</ul>
+</li>
+<li>
+<p>These function supports reading / writing a file <strong>in one shot</strong></p>
+<ul>
+<li>i.e. they return / generate the <em>whole</em> content of the file as a string</li>
+<li>quite inefficient if the file is big</li>
+</ul>
+</li>
+<li>
+<p>On Kotlin/JS, Node’s std-lib is <strong>not</strong> directly available</p>
+<ul>
+<li>one must instruct the compiler about
+<ol>
+<li><strong>where</strong> to look up for std-lib function (module name)</li>
+<li><strong>how</strong> to map JS functions to Kotlin functions (<code>external</code> declarations)</li>
+</ol>
+</li>
+<li>the abstraction gap is non-negligible</li>
+</ul>
+</li>
+<li>
+<p>To-do list for Kotlin/JS:</p>
+<ol>
+<li>create <code>external</code> declarations for the Node’s std-lib functions to be used</li>
+<li>implement JS-specific code via the <code>StringParser</code> (after reading the whole file)</li>
+</ol>
+</li>
+</ul>
+</section><section>
+<h2 id="time-to-go-platform-specific-on-the-js-pt-2">Time to go platform-specific on the JS (pt. 2)</h2>
+<p>In the <code>jsMain</code> source set</p>
+<ol>
+<li>
+<p>let’s create the <code>NodeFs.kt</code> file (containing <code>external</code> declarations for the <code>fs</code> module):</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@file</span><span style="color:#000;font-weight:bold">:</span><span style="color:#000">JsModule</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"fs"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@file</span><span style="color:#000;font-weight:bold">:</span><span style="color:#000">JsNonModule</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">package</span> <span style="color:#000">io.github.gciatto.csv</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// Kotlin mapping for: https://nodejs.org/api/fs.html#fsreadfilesyncpath-options
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">external</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">readFileSync</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">path</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">options</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">dynamic</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">definedExternally</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">String</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// Kotlin mapping for: https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">external</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">writeFileSync</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">file</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">data</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">options</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">dynamic</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">definedExternally</span><span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></div><ul>
+<li>the <code>@JsModule</code> annotation instructs the compiler about where to look up for the <code>fs</code> module</li>
+<li><code>external</code> declarations are Kotlin signatures of JS function</li>
+<li><code>dynamic</code> is a special type that can be used to represent any JS object
+<ul>
+<li>it overrides Kotlin’s type system, hence it should be used with care</li>
+<li>it prevents developers from declaring too much <code>external</code> stuff</li>
+<li>good to use when the JS API is not known in advance or uses union types</li>
+</ul>
+</li>
+<li><code>definedExternally</code> is stating that a parameter is optional (default value is defined in JS)</li>
+</ul>
+</li>
+</ol>
+</section><section>
+<h2 id="time-to-go-platform-specific-on-the-js-pt-3">Time to go platform-specific on the JS (pt. 3)</h2>
+<ol start="2">
+<li>
+<p>let’s create the <code>Csv.js.kt</code> file containing:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">actual</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">parseCsvFile</span><span style="color:#000;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">path</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">separator</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Char</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">delimiter</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Char</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">comment</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Char</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">Table</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">readFileSync</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">path</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">js</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"{encoding: 'utf8'}"</span><span style="color:#000;font-weight:bold">)).</span><span style="color:#000">parseAsCSV</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">separator</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">delimiter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">comment</span><span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></div><ul>
+<li>this is how the <code>parseCsvFile</code> is implemented <strong>on JS</strong></li>
+<li>notice the <code>actual</code> keyword, and the presence of a function body</li>
+<li>notice the usage of <code>readFileSync</code> to read a file as a string in one shot</li>
+<li>notice the exploitation of common code for parsing the string into a <code>Table</code> (namely, <code>parseAsCSV</code>)</li>
+<li>notice the <code>js("...")</code> magic function
+<ul>
+<li>it allows to write JS code directly in Kotlin</li>
+<li>the provided string should contain bare JS code, the compiler will output “as-is”</li>
+<li>it’s a way to fill the abstraction gap on JS</li>
+<li>we use it to create a JS object on the fly, to provide optional parameters to <code>readFileSync</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+</section><section>
+<h2 id="platform-specific-testing">Platform-specific testing</h2>
+<p>TBD</p>
 
 </section>
 </section>
