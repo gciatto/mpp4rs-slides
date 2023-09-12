@@ -232,7 +232,10 @@
 </span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// declares JavaScript as target
 </span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000">js</span> <span style="color:#000;font-weight:bold">{</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#8f5902;font-style:italic">// the target will consist of a Node project (with NodeJS's stdlib)
+</span></span><span style="display:flex;"><span>        <span style="color:#000">useCommonJs</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#8f5902;font-style:italic">// use CommonJS for JS depenencies management
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>        <span style="color:#8f5902;font-style:italic">// or useEsModules() 
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>        <span style="color:#000">binaries</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">executable</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#8f5902;font-style:italic">// enables tasks for Node packages generation
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>        <span style="color:#8f5902;font-style:italic">// the target will consist of a Node project (with NodeJS's stdlib)
 </span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>        <span style="color:#000">nodejs</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>            <span style="color:#000">runTask</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#8f5902;font-style:italic">/* configure project running in Node here */</span> <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>            <span style="color:#000">testRuns</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#8f5902;font-style:italic">/* configure Node's testing frameworks */</span> <span style="color:#000;font-weight:bold">}</span>
@@ -399,7 +402,7 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
 </span></span></code></pre></div></section><section>
-<h2 id="gradle-tasks-for-multi-platform-projects">Gradle tasks for multi-platform projects</h2>
+<h2 id="gradle-tasks-for-multi-platform-projects-pt-1">Gradle tasks for multi-platform projects (pt. 1)</h2>
 <p>Let <code>T</code> denote the target name (e.g. <code>jvm</code>, <code>js</code>, etc.)</p>
 <ul>
 <li>
@@ -430,8 +433,15 @@
 </li>
 </ul>
 </section><section>
-<h2 id="gradle-tasks-for-multi-platform-projects-1">Gradle tasks for multi-platform projects</h2>
+<h2 id="gradle-tasks-for-multi-platform-projects-pt-2">Gradle tasks for multi-platform projects (pt. 2)</h2>
 <ul>
+<li>
+<p><code>compileProductionExecutableKotlinJs</code> compiles the JS main code into a Node project</p>
+<ul>
+<li>requires the <code>js</code> target to be enabled</li>
+<li>requires the <code>binaries.executable()</code> configuration to be enabled</li>
+</ul>
+</li>
 <li>
 <p><code>assemble</code> creates all JARs (hence compiling for main code for all platforms)</p>
 <ul>
@@ -1391,7 +1401,277 @@
 </li>
 </ol>
 </section><section>
-<h2 id="platform-specific-testing">Platform-specific testing</h2>
+<h2 id="platform-agnostic-testing-strategy">Platform-agnostic testing (strategy)</h2>
+<ul>
+<li>
+<p>We may test our CSV library in common-code</p>
+<ul>
+<li>so as to avoid repeating testing code</li>
+</ul>
+</li>
+<li>
+<p>The test suite may:</p>
+<ol>
+<li>create temporary files with known paths, containing known CSV data</li>
+<li>read those paths, and parse them as CSV</li>
+<li>assert that the parsed tables are as expected</li>
+</ol>
+</li>
+<li>
+<p>The hard part is <strong>step 1</strong>: two platform-specific steps</p>
+<ol>
+<li>discovering the temp directory of the current system</li>
+<li>writing a file</li>
+</ol>
+</li>
+</ul>
+</section><section>
+<h2 id="multi-platform-testing-preliminaries">Multi-platform testing (preliminaries)</h2>
+<ul>
+<li>
+<p>file <code>Utils.kt</code> in <code>commonTest</code>:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// Creates a temporary file with the given name, extension, and content, and returns its path.
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">expect</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">createTempFile</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">name</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">extension</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">content</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">String</span>
+</span></span></code></pre></div><p>notice the <code>expect</code>ed function</p>
+</li>
+<li>
+<p>file <code>Utils.jvm.kt</code> in <code>jvmTest</code>:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">java.io.File</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">actual</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">createTempFile</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">name</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">extension</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">content</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">String</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">file</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">File</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">createTempFile</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">name</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">extension</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">file</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">writeText</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">content</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">file</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">absolutePath</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><ul>
+<li>cf. documentation of method <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/File.html#createTempFile(java.lang.String,java.lang.String)"><code>File.createTempFile</code></a></li>
+</ul>
+</li>
+<li>
+<p>file <code>Utils.js.kt</code> in <code>jsTest</code>:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">private</span> <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">Math</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">dynamic</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">lazy</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#000">js</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"Math"</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@JsModule</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"os"</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#5c35cc;font-weight:bold">@JsNonModule</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">external</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">tmpdir</span><span style="color:#000;font-weight:bold">():</span> <span style="color:#000">String</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">actual</span> <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">createTempFile</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">name</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">extension</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">content</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">String</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">tag</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">Math</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">random</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">toString</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">replace</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"."</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">""</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">path</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">"</span><span style="color:#4e9a06">$tmpDirectory</span><span style="color:#4e9a06">/</span><span style="color:#4e9a06">$name</span><span style="color:#4e9a06">-</span><span style="color:#4e9a06">$tag</span><span style="color:#4e9a06">.</span><span style="color:#4e9a06">$extension</span><span style="color:#4e9a06">"</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">writeFileSync</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">path</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">content</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">path</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div><ul>
+<li>cf. documentation of <a href="https://nodejs.org/docs/latest-v20.x/api/os.html#ostmpdir"><code>os.tmpdir</code></a> and <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math"><code>Math</code></a></li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="multi-platform-testing-actual-tests">Multi-platform testing (actual tests)</h2>
+<ul>
+<li>
+<p>file <code>CsvFiles.kt</code> in <code>commonMain</code>:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">object</span> <span style="color:#000">CsvFiles</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Path of the temporary file containing the string CsvStrings.iris
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#8f5902;font-style:italic">// (file lazily created upon first usage).
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">iris</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">lazy</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#000">createTempFile</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"iris.csv"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">CsvStrings</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">iris</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// Path of the temporary file containing the string CsvStrings.irisWellFormatted
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#8f5902;font-style:italic">// (file lazily created upon first usage).
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">irisWellFormatted</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">lazy</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000">createTempFile</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"irisWellFormatted.csv"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">CsvStrings</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">irisWellFormatted</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// other paths here, corresponding to other constants in CsvStrings
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></li>
+<li>
+<p>tests for parsing be like:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@Test</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">testParseIris</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">parsedFromString</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">CsvStrings</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">iris</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">parseAsCSV</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">readFromFile</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">parseCsvFile</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">CsvFiles</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">iris</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">assertEquals</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">parsedFromString</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">readFromFile</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></li>
+</ul>
+
+</section>
+</section><section>
+
+
+<section data-shortcode-section="">
+<h2 id="output-of-a-multi-platform-build">Output of a multi-platform build</h2>
+<ul>
+<li>
+<p>Kotlin multi-platform projects can be assembled as JARs</p>
+<ul>
+<li>enabling importing the project as dependency in other multi-platform projects</li>
+</ul>
+</li>
+<li>
+<p>The <code>jvmMain</code> source set is compiled into a JVM-compliant JARs</p>
+<ul>
+<li>enabling importing the project as dependency in JVM projects</li>
+<li>enabling the creation of runnable JARs</li>
+<li>via the various <code>*Jar</code> or <code>assemble</code> tasks</li>
+</ul>
+</li>
+<li>
+<p>The <code>jsMain</code> source set is compiled into either</p>
+<ul>
+<li>a Kotlin library (<code>.klib</code>), enabling imporing the project tas dependency in Kotlin/JS projects
+<ul>
+<li>via the various <code>*Jar</code> or <code>assemble</code> tasks</li>
+</ul>
+</li>
+<li>a NodeJS project
+<ul>
+<li>via the <code>compileProductionExecutableKotlinJs</code> task</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="output-of-jvm-compilation">Output of JVM compilation</h2>
+<ul>
+<li>
+<p>Task for JVM-only compilation of re-usable packages: <code>jvmJar</code></p>
+</li>
+<li>
+<p>Effect:</p>
+<ol>
+<li>compile the project as JVM bytecode</li>
+<li>pack the bytecode into a JAR file</li>
+<li>move the JAR file into <code>$PROJ_DIR/build/libs/$PROJ_NAME-jvm-$PROJ_VERSION</code></li>
+</ol>
+</li>
+<li>
+<p>The JAR does not contain dependencies</p>
+</li>
+<li>
+<p>Ad-hoc Gradle plugins/code is needed for creating <a href="https://www.baeldung.com/gradle-fat-jar">fat Jar</a></p>
+</li>
+</ul>
+</section><section>
+<h2 id="output-of-js-compilation">Output of JS compilation</h2>
+<ul>
+<li>
+<p>Task for JS-only compilation of re-usable packages: <code>compileProductionExecutableKotlinJs</code></p>
+</li>
+<li>
+<p>Effect:</p>
+<ol>
+<li>Generate Node project into <code>$ROOT_PROJ_DIR/build/js/packages/$ROOT_PROJ_NAME-$PROJ_NAME</code>:
+<ul>
+<li>JS code</li>
+<li><code>package.json</code> file</li>
+</ul>
+</li>
+<li><a href="https://kotlinlang.org/docs/javascript-dce.html">Dead code elimination</a> (DCE) removing unused code
+<ul>
+<li>i.e. code not (indirectly) called by main</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p>Support for packing as NPM package via the <a href="https://npm-publish.petuska.dev/3.4/"><code>npm-publish</code></a> Gradle plugin</p>
+</li>
+</ul>
+
+</section>
+</section><section>
+
+
+<section data-shortcode-section="">
+<h2 id="calling-kotlin-from-other-platforms">Calling Kotlin from other platforms</h2>
+<ul>
+<li>
+<p>Kotlin code can be called from the target platforms’ main languages</p>
+<ul>
+<li>e.g. Java, JavaScript, etc.</li>
+</ul>
+</li>
+<li>
+<p>Understading the mapping among Kotlin and other languages is key</p>
+<ul>
+<li>it impacts the usability of Kotlin libraries for ordinary platform users</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>How are Kotlin’s syntactical categories mapped to other platforms/languages?</p>
+</blockquote>
+<ul>
+<li>the answer varies on a per-platform basis</li>
+</ul>
+</section><section>
+<h2 id="kotlin--java-mapping-pt-1">Kotlin–Java Mapping (pt. 1)</h2>
+<ul>
+<li>
+<p>Kotlin class $\equiv$ Java class</p>
+</li>
+<li>
+<p>No syntactical difference among primitive and reference types</p>
+<ul>
+<li><code>Int</code> $\leftrightarrow$ <code>int</code> / <code>Integer</code>, <code>Short</code> $\leftrightarrow$ <code>short</code> / <code>Short</code>, etc.</li>
+</ul>
+</li>
+<li>
+<p>Some Kotlin types are replaced by Java types at compile time</p>
+<ul>
+<li>e.g. <code>Any</code> $\rightarrow$ <code>Object</code>, <code>kotlin.collections.List</code> $\rightarrow$ <code>java.util.List</code>, etc.</li>
+</ul>
+</li>
+<li>
+<p>Other Kotlin types are mapped to homonymous Java types</p>
+</li>
+<li>
+<p>Kotlin properties are mapped to getter / setter methods</p>
+<ul>
+<li>unless <code>@JvmField</code> is exploited</li>
+</ul>
+</li>
+<li>
+<p>Kotlin’s variadic functions are mapped to Java’s variadic methods</p>
+</li>
+</ul>
+</section><section>
+<h2 id="kotlin--java-mapping-pt-2">Kotlin–Java Mapping (pt. 2)</h2>
+<ul>
+<li>
+<p>Kotlin’s package functions in file <code>X.kt</code> are mapped to static methods of class <code>XKt</code></p>
+</li>
+<li>
+<p>Kotlin’s <code>object X</code> is mapped to Java class <code>X</code> with</p>
+<ul>
+<li>private constructor</li>
+<li>public static final field named <code>INSTANCE</code> to access</li>
+</ul>
+</li>
+<li>
+<p>Class <code>X</code>’s companion object is mapped to public static final field named <code>Companion</code> on class <code>X</code></p>
+</li>
+<li>
+<p>Class <code>X</code>’s companion object’s member <code>M</code> tagged with <code>@JvmStatic</code> is mapped to static member <code>M</code> on class <code>X</code></p>
+</li>
+</ul>
+</section><section>
+<h2 id="kotlin--java-mapping-example">Kotlin–Java Mapping Example</h2>
+<ul>
+<li>
+<p>Compile our CSV lib and import it as a dependency in a novel Java library</p>
+</li>
+<li>
+<p>Alternatively, add Java sources to the <code>jvmTest</code> source set, and use the library</p>
+</li>
+<li>
+<p>Listen to the teacher presenting key points</p>
+</li>
+</ul>
+</section><section>
+<h2 id="kotlin--javascript-mapping-pt-1">Kotlin–JavaScript Mapping (pt. 1)</h2>
 <p>TBD</p>
 
 </section>
