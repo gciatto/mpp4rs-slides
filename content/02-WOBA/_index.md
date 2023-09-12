@@ -177,6 +177,9 @@ Defines several aspects of the project:
         }
         // declares JavaScript as target
         js {
+            useCommonJs() // use CommonJS for JS depenencies management
+            // or useEsModules() 
+            binaries.executable() // enables tasks for Node packages generation
             // the target will consist of a Node project (with NodeJS's stdlib)
             nodejs {
                 runTask { /* configure project running in Node here */ }
@@ -347,7 +350,7 @@ kotlin {
 
 ---
 
-## Gradle tasks for multi-platform projects 
+## Gradle tasks for multi-platform projects (pt. 1)
 
 Let `T` denote the target name (e.g. `jvm`, `js`, etc.)
 
@@ -367,7 +370,11 @@ Let `T` denote the target name (e.g. `jvm`, `js`, etc.)
 
 ---
 
-## Gradle tasks for multi-platform projects 
+## Gradle tasks for multi-platform projects (pt. 2)
+
+- `compileProductionExecutableKotlinJs` compiles the JS main code into a Node project
+    * requires the `js` target to be enabled
+    * requires the `binaries.executable()` configuration to be enabled
 
 - `assemble` creates all JARs (hence compiling for main code for all platforms)
     + it also generates documentation and sources JAR
@@ -1442,7 +1449,206 @@ In the `jsMain` source set
 
 ---
 
-## Platform-specific testing
+## Platform-agnostic testing (strategy)
+
+- We may test our CSV library in common-code
+    + so as to avoid repeating testing code
+
+- The test suite may:   
+    1. create temporary files with known paths, containing known CSV data
+    2. read those paths, and parse them as CSV
+    3. assert that the parsed tables are as expected
+
+- The hard part is __step 1__: two platform-specific steps
+    1. discovering the temp directory of the current system
+    2. writing a file
+
+--- 
+
+## Multi-platform testing (preliminaries)
+
+- file `Utils.kt` in `commonTest`:
+    ```kotlin
+    // Creates a temporary file with the given name, extension, and content, and returns its path.
+    expect fun createTempFile(name: String, extension: String, content: String): String
+    ```
+
+    notice the `expect`ed function
+
+- file `Utils.jvm.kt` in `jvmTest`:
+    ```kotlin
+    import java.io.File
+
+    actual fun createTempFile(name: String, extension: String, content: String): String
+        val file = File.createTempFile(name, extension)
+        file.writeText(content)
+        return file.absolutePath
+    }
+    ```
+    + cf. documentation of method [`File.createTempFile`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/File.html#createTempFile(java.lang.String,java.lang.String)) 
+
+- file `Utils.js.kt` in `jsTest`:
+    ```kotlin
+    private val Math: dynamic by lazy { js("Math") }
+
+    @JsModule("os") @JsNonModule
+    external fun tmpdir(): String
+
+    actual fun createTempFile(name: String, extension: String, content: String): String {
+        val tag = Math.random().toString().replace(".", "")
+        val path = "$tmpDirectory/$name-$tag.$extension"
+        writeFileSync(path, content)
+        return path
+    }
+    ```
+    + cf. documentation of [`os.tmpdir`](https://nodejs.org/docs/latest-v20.x/api/os.html#ostmpdir) and [`Math`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math) 
+
+---
+
+## Multi-platform testing (actual tests)
+
+- file `CsvFiles.kt` in `commonMain`:
+    ```kotlin
+    object CsvFiles {
+        // Path of the temporary file containing the string CsvStrings.iris
+        // (file lazily created upon first usage).
+        val iris: String by lazy { createTempFile("iris.csv", CsvStrings.iris) }
+
+        // Path of the temporary file containing the string CsvStrings.irisWellFormatted
+        // (file lazily created upon first usage).
+        val irisWellFormatted: String by lazy {
+            createTempFile("irisWellFormatted.csv", CsvStrings.irisWellFormatted)
+        }
+
+        // other paths here, corresponding to other constants in CsvStrings
+    }
+    ```
+
+- tests for parsing be like:
+    ```kotlin
+    @Test
+    fun testParseIris() {
+        val parsedFromString = CsvStrings.iris.parseAsCSV()
+        val readFromFile = parseCsvFile(CsvFiles.iris)
+        assertEquals(parsedFromString, readFromFile)
+    }
+    ```
+
+{{% /section %}}
+
+---
+
+{{% section %}}
+
+## Output of a multi-platform build
+
+- Kotlin multi-platform projects can be assembled as JARs
+    * enabling importing the project as dependency in other multi-platform projects
+
+- The `jvmMain` source set is compiled into a JVM-compliant JARs
+    * enabling importing the project as dependency in JVM projects
+    * enabling the creation of runnable JARs
+    * via the various `*Jar` or `assemble` tasks
+
+- The `jsMain` source set is compiled into either
+    * a Kotlin library (`.klib`), enabling imporing the project tas dependency in Kotlin/JS projects
+        + via the various `*Jar` or `assemble` tasks
+    * a NodeJS project
+        + via the `compileProductionExecutableKotlinJs` task
+
+--- 
+
+## Output of JVM compilation
+
+- Task for JVM-only compilation of re-usable packages: `jvmJar`
+
+- Effect: 
+    1. compile the project as JVM bytecode 
+    2. pack the bytecode into a JAR file
+    3. move the JAR file into `$PROJ_DIR/build/libs/$PROJ_NAME-jvm-$PROJ_VERSION`
+
+- The JAR does not contain dependencies
+
+- Ad-hoc Gradle plugins/code is needed for creating [fat Jar](https://www.baeldung.com/gradle-fat-jar)
+
+--- 
+
+## Output of JS compilation
+
+- Task for JS-only compilation of re-usable packages: `compileProductionExecutableKotlinJs`
+
+- Effect: 
+    1. Generate Node project into `$ROOT_PROJ_DIR/build/js/packages/$ROOT_PROJ_NAME-$PROJ_NAME`:
+        - JS code
+        - `package.json` file
+    2. [Dead code elimination](https://kotlinlang.org/docs/javascript-dce.html) (DCE) removing unused code
+        - i.e. code not (indirectly) called by main
+
+- Support for packing as NPM package via the [`npm-publish`](https://npm-publish.petuska.dev/3.4/) Gradle plugin
+
+{{% /section %}}
+
+---
+
+{{% section %}}
+
+## Calling Kotlin from other platforms
+
+- Kotlin code can be called from the target platforms' main languages
+    + e.g. Java, JavaScript, etc.
+
+- Understading the mapping among Kotlin and other languages is key
+    + it impacts the usability of Kotlin libraries for ordinary platform users
+
+> How are Kotlin's syntactical categories mapped to other platforms/languages?
+
++ the answer varies on a per-platform basis
+
+---
+
+## Kotlin--Java Mapping (pt. 1)
+
+- Kotlin class $\equiv$ Java class
+
+- No syntactical difference among primitive and reference types
+    + `Int` $\leftrightarrow$ `int` / `Integer`, `Short` $\leftrightarrow$ `short` / `Short`, etc.
+
+- Some Kotlin types are replaced by Java types at compile time
+    + e.g. `Any` $\rightarrow$ `Object`, `kotlin.collections.List` $\rightarrow$ `java.util.List`, etc.
+
+- Other Kotlin types are mapped to homonymous Java types
+
+- Kotlin properties are mapped to getter / setter methods
+    - unless `@JvmField` is exploited
+
+- Kotlin's variadic functions are mapped to Java's variadic methods
+
+---
+
+## Kotlin--Java Mapping (pt. 2)
+
+- Kotlin's package functions in file `X.kt` are mapped to static methods of class `XKt`
+
+- Kotlin's `object X` is mapped to Java class `X` with 
+    * private constructor
+    * public static final field named `INSTANCE` to access
+
+- Class `X`'s companion object is mapped to public static final field named `Companion` on class `X`
+
+- Class `X`'s companion object's member `M` tagged with `@JvmStatic` is mapped to static member `M` on class `X`
+
+---
+
+## Kotlin--Java Mapping Example
+
+- Compile our CSV lib and import it as a dependency in a novel Java library
+
+- Alternatively, add Java sources to the `jvmTest` source set, and use the library
+
+- Listen to the teacher presenting key points
+--- 
+
+## Kotlin--JavaScript Mapping (pt. 1)
 
 TBD
 
