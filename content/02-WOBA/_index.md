@@ -1996,16 +1996,97 @@ void f() { f(1, 2, 3); }
     + not all syntactical constructs or types are currently exportable
         * you should ignore the warning explicitly
 
-- Kotlin supports overloading, JS does not
+{{% multicol %}}
+{{% col %}}
+```kotlin
+@file:Suppress("NON_EXPORTABLE_TYPE")
+
+package my.package
+
+import kotlin.js.JsExport
+import kotlin.js.JsName
+
+@JsExport
+class MyType {
+    val nonExportableType: Long
+}
+
+@JsExport
+fun myFunction() = // ...
+```
+{{% /col %}}
+{{% col %}}
+```js
+var module = require("project-name");
+var MyType = module.my.package.MyType;
+var myFunction = module.my.package.myFunction;
+```
+{{% /col %}}
+{{% /multicol %}}
+
+--- 
+
+## Kotlin--JavaScript Mapping (pt. 2)
+
+- Kotlin supports __overloading__, JS does not
     + class / interface members names are __mengled__ to avoid clashes
     + the `@JsName` annotation can be used to control the name of a member 
         * to be used on API types and functions
 
+{{% multicol %}}
+{{% col %}}
+```kotlin
+package my.package
+
+@JsName("sumNumbers")
+fun sum(vararg numbers: Int): Int = // ...
+
+@JsName("sumIterableOfNumbers")
+fun sum(numbers: Iterable<Int>): Int = // ...
+
+@JsName("sumSequenceOfNumbers")
+fun sum(numbers: Sequence<Int>): Int = // ...
+```
+{{% /col %}}
+{{% col %}}
+```js
+var module = require("project-name");
+var sumNumbers = module.my.package.sumNumbers;
+var sumIterableOfNumbers = module.my.package.sumIterableOfNumbers;
+var sumSequenceOfNumbers = module.my.package.sumSequenceOfNumbers;
+```
+{{% /col %}}
+{{% /multicol %}}
+
 - Kotlin class $\equiv$ [JS prototype](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object_prototypes)
+
+{{% multicol %}}
+{{% col %}}
+```kotlin
+class MyClass(private val argument: String) {
+    @JsName("method")
+    fun method(): String = argument + "!"
+}
+```
+{{% /col %}}
+{{% col %}}
+```js
+function MyClass(argument) {
+    this.randomName_1 = argument
+}
+MyClass.prototype.method = function () {
+    return this.randomName_1 + "!"
+}
+```
+{{% /col %}}
+{{% /multicol %}}
+
+--- 
+
+## Kotlin--JavaScript Mapping (pt. 3)
 
 - Primitive type mappings are non-trivial (cf. [documentation](https://kotlinlang.org/docs/js-to-kotlin-interop.html#kotlin-types-in-javascript))
     + Kotlin numeric types, except for `kotlin.Long`, are mapped to JavaScript `Number`
-        * hence, there is no way to distinguish numbers by type
     
     + `kotlin.Char` is mapped to JS `Number` representing character code.
 
@@ -2023,10 +2104,34 @@ void f() { f(1, 2, 3); }
 
     + `kotlin.Throwable` is mapped to JS `Error`
 
+--- 
+
+## Kotlin--JavaScript Mapping (pt. 4)
+
+- practical consequence: no way to distinguish numbers by type
+
+    ```kotlin
+    val x: Int = 23
+    val y: Any = x
+    println(y as Float) // fails on JVM, works on JS
+    ```
+
 - Kotlin's `dynamic` overrides the type system, and it is translated "1-to-1"
+
+```kotlin
+val string1: String = "some string"
+string1.missingMethod() // compilation error
+
+val string2: dynamic = "some string"
+string2.missingMethod() // compilation ok, runtime error
+```
 
 - Kotlin's common std-lib is implemented in JS
     * cf. NPM package [`kotlin`](https://www.npmjs.com/package/kotlin)
+
+--- 
+
+## Kotlin--JavaScript Mapping (pt. 5)
 
 - Companion objects are treated similarly to Kotlin/JVM
 
@@ -2034,5 +2139,26 @@ void f() { f(1, 2, 3); }
 
 - Variadic functions are compiled to JS functions accepting an array
     + which are not really variadic in JS
+
+{{% multicol %}}
+{{% col %}}
+```kotlin
+fun f(vararg xs: String) = // ...
+
+// usage:
+f("a")
+f("a", "b")
+f("a", "b", "c")
+```
+{{% /col %}}
+{{% col %}}
+```js
+// usage:
+f(["a"])
+f(["a", "b"])
+f(["a", "b", "c"])
+```
+{{% /col %}}
+{{% /multicol %}}
 
 {{% /section %}}
