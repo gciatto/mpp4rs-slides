@@ -14,6 +14,7 @@
 <link href="https://fonts.googleapis.com/css?family=Ubuntu Mono" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
 <script src="https://kit.fontawesome.com/81ac037be0.js" crossorigin="anonymous"></script>
+<script src="https://gciatto.github.io/mpp4rs-slides/plantuml.js"></script>
 
   </head>
   <body>
@@ -625,9 +626,50 @@
 </ul>
 </section><section>
 <h2 id="domain-entities">Domain entities</h2>
-<figure>
-  <img src="https://g.gravizo.com/svg?%0a%40startuml%0askinparam%20monochrome%20false%0atop%20to%20bottom%20direction%0apackage%20%22kotlin%22%20%7b%0ainterface%20Iterable%3cT%3e%0a%7d%0apackage%20%22io.github.gciatto.csv%22%20%7b%0ainterface%20Row%20%7b%0a%2b%20get%28index%3a%20Int%29%3a%20String%0a%2b%20size%3a%20Int%0a%7d%0aRow%20-up-%7c%3e%20Iterable%3a%20%2f%2fT%2f%2f%20%3d%20String%0ainterface%20Header%20%7b%0a%2b%20columns%3a%20List%3cString%3e%0a%2b%20contains%28column%3a%20String%29%3a%20Boolean%0a%2b%20indexOf%28column%3a%20String%29%3a%20Int%0a%7d%0aRow%20%3c%7c--%20Header%0ainterface%20Record%20%7b%0a%2b%20header%3a%20Header%0a%2b%20values%3a%20List%3cString%3e%0a%2b%20contains%28value%3a%20String%29%3a%20Boolean%0a%2b%20get%28column%3a%20String%29%3a%20String%0a%7d%0aRow%20%3c%7c--%20Record%0aRecord%20%221%22%20%2a-right-%20%22%2a%22%20Header%0ainterface%20Table%20%7b%0a%2b%20header%3a%20Header%0a%2b%20records%3a%20List%3cRecord%3e%0a%2b%20get%28row%3a%20Int%29%3a%20Row%0a%2b%20size%3a%20Int%0a%7d%0aTable%20%221%22%20%2a-u-%20%22%2a%22%20Header%0aTable%20%22%2a%22%20o-u-%20%22%2a%22%20Record%0aTable%20-u----%7c%3e%20Iterable%3a%20%2f%2fT%2f%2f%20%3d%20Row%0a%7d%0a%40enduml%0a" alt="" width="100%">
-    <figcaption></figcaption>
+<figure class="plantuml" alt="" onload="handlePlantumlFigure(this);" style="width: 100%;max-width: 95vw;max-height: 80vh;">
+<p>top to bottom direction</p>
+<p>package “kotlin” {
+interface Iterable<t>
+}</t></p>
+<p>package “io.github.gciatto.csv” {</p>
+<pre><code>interface Row {
+    + get(index: Int): String
+    + size: Int
+}
+
+Row -up-|&gt; Iterable: //T// = String
+
+interface Header {
+    + columns: List&lt;String&gt;
+    + contains(column: String): Boolean
+    + indexOf(column: String): Int
+}
+
+Row &lt;|-- Header
+
+interface Record {
+    + header: Header
+    + values: List&lt;String&gt;
+    + contains(value: String): Boolean
+    + get(column: String): String
+}
+
+Row &lt;|-- Record
+
+Record "1" *-right- "*" Header
+
+interface Table {
+    + header: Header
+    + records: List&lt;Record&gt;
+    + get(row: Int): Row
+    + size: Int
+}
+
+Table "1" *-u- "*" Header
+Table "*" o-u- "*" Record
+Table -u----|&gt; Iterable: //T// = Row
+</code></pre>
+<p>}</p>
 </figure>
 </section><section>
 <h2 id="the-row-interface">The <code>Row</code> interface</h2>
@@ -1946,22 +1988,50 @@
 <li>
 <p>Kotlin supports overloading, JS does not</p>
 <ul>
-<li>class / interface</li>
+<li>class / interface members names are <strong>mengled</strong> to avoid clashes</li>
+<li>the <code>@JsName</code> annotation can be used to control the name of a member
+<ul>
+<li>to be used on API types and functions</li>
+</ul>
+</li>
 </ul>
 </li>
 <li>
 <p>Kotlin class $\equiv$ <a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object_prototypes">JS prototype</a></p>
 </li>
 <li>
-<p>Primitive type mappings are non-trivial</p>
+<p>Primitive type mappings are non-trivial (cf. <a href="https://kotlinlang.org/docs/js-to-kotlin-interop.html#kotlin-types-in-javascript">documentation</a>)</p>
 <ul>
-<li>cf. <a href="https://kotlinlang.org/docs/js-to-kotlin-interop.html#kotlin-types-in-javascript">https://kotlinlang.org/docs/js-to-kotlin-interop.html#kotlin-types-in-javascript</a></li>
+<li>
+<p>Kotlin numeric types, except for <code>kotlin.Long</code>, are mapped to JavaScript <code>Number</code></p>
+<ul>
+<li>hence, there is no way to distinguish numbers by type</li>
 </ul>
 </li>
 <li>
-<p>Numeric types except long are mapped to <code>number</code> type</p>
-<ul>
-<li>except <code>Long</code></li>
+<p><code>kotlin.Char</code> is mapped to JS <code>Number</code> representing character code.</p>
+</li>
+<li>
+<p>Kotlin preserves overflow semantics for <code>kotlin.Int</code>, <code>kotlin.Byte</code>, <code>kotlin.Short</code>, <code>kotlin.Char</code> and <code>kotlin.Long</code></p>
+</li>
+<li>
+<p><code>kotlin.Long</code> is not mapped to any JS object, as there is no 64-bit integer number type in JS. It is emulated by a Kotlin class</p>
+</li>
+<li>
+<p><code>kotlin.String</code> is mapped to JS <code>String</code></p>
+</li>
+<li>
+<p><code>kotlin.Any</code> is mapped to JS <code>Object</code> (<code>new Object()</code>, <code>{}</code>, and so on)</p>
+</li>
+<li>
+<p><code>kotlin.Array</code> is mapped to JS <code>Array</code></p>
+</li>
+<li>
+<p>Kotlin collections (<code>List</code>, <code>Set</code>, <code>Map</code>, and so on) are not mapped to any specific JS type</p>
+</li>
+<li>
+<p><code>kotlin.Throwable</code> is mapped to JS <code>Error</code></p>
+</li>
 </ul>
 </li>
 <li>
@@ -1971,6 +2041,18 @@
 <p>Kotlin’s common std-lib is implemented in JS</p>
 <ul>
 <li>cf. NPM package <a href="https://www.npmjs.com/package/kotlin"><code>kotlin</code></a></li>
+</ul>
+</li>
+<li>
+<p>Companion objects are treated similarly to Kotlin/JVM</p>
+</li>
+<li>
+<p>Extension methods are treated similarly to Kotlin/JVM</p>
+</li>
+<li>
+<p>Variadic functions are compiled to JS functions accepting an array</p>
+<ul>
+<li>which are not really variadic in JS</li>
 </ul>
 </li>
 </ul>
