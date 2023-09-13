@@ -1661,11 +1661,7 @@
 </section><section>
 <h2 id="kotlin--java-mapping-pt-2">Kotlin–Java Mapping (pt. 2)</h2>
 <ul>
-<li>Kotlin properties are mapped to getter / setter methods
-<ul>
-<li>unless <code>@JvmField</code> is exploited</li>
-</ul>
-</li>
+<li>Kotlin properties are mapped to getter / setter methods</li>
 </ul>
 <div class="container w-100 m-0 p-0">
     <div class="row "><div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">interface</span> <span style="color:#000">MyType</span> <span style="color:#000;font-weight:bold">{</span>
@@ -1681,26 +1677,243 @@
 </div>
 </div>
 <ul>
-<li>
-<p>Kotlin’s variadic functions are mapped to Java’s variadic methods</p>
-</li>
-<li>
-<p>Kotlin’s package functions in file <code>X.kt</code> are mapped to static methods of class <code>XKt</code></p>
-</li>
-<li>
-<p>Kotlin’s <code>object X</code> is mapped to Java class <code>X</code> with</p>
+<li>… unless the <code>JvmField</code> annotation is adopted</li>
+</ul>
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">kotlin.jvm.JvmField</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">MyType</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#5c35cc;font-weight:bold">@JvmField</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">x</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Int</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#0000cf;font-weight:bold">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#5c35cc;font-weight:bold">@JvmField</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">y</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">""</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></div>
+<div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">public</span> <span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">MyType</span> <span style="color:#ce5c00;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">public</span> <span style="color:#204a87;font-weight:bold">final</span> <span style="color:#204a87;font-weight:bold">int</span> <span style="color:#000">x</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">0</span><span style="color:#ce5c00;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">public</span> <span style="color:#000">String</span> <span style="color:#000">y</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#4e9a06">""</span><span style="color:#ce5c00;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ce5c00;font-weight:bold">}</span>
+</span></span></code></pre></div></div>
+</div>
+</div>
+<ul>
+<li>Kotlin’s package functions in file <code>X.kt</code> are mapped to static methods of class <code>XKt</code></li>
+</ul>
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// file MyFile.kt
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">f</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{}</span>
+</span></span></code></pre></div></div>
+<div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">public</span> <span style="color:#204a87;font-weight:bold">static</span> <span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">MyFileKt</span> <span style="color:#ce5c00;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">public</span> <span style="color:#204a87;font-weight:bold">static</span> <span style="color:#204a87;font-weight:bold">void</span> <span style="color:#000">f</span><span style="color:#ce5c00;font-weight:bold">()</span> <span style="color:#ce5c00;font-weight:bold">{}</span>
+</span></span><span style="display:flex;"><span><span style="color:#ce5c00;font-weight:bold">}</span>
+</span></span></code></pre></div></div>
+</div>
+</div>
+<ul>
+<li>… unless the <code>JvmName</code> annotation is exploited</li>
+</ul>
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@file</span><span style="color:#000;font-weight:bold">:</span><span style="color:#000">JvmName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"MyModule"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">kotlin.jvm.JvmName</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">f</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{}</span>
+</span></span></code></pre></div></div>
+<div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">public</span> <span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">MyModule</span> <span style="color:#ce5c00;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">public</span> <span style="color:#204a87;font-weight:bold">static</span> <span style="color:#204a87;font-weight:bold">void</span> <span style="color:#000">f</span><span style="color:#ce5c00;font-weight:bold">()</span> <span style="color:#ce5c00;font-weight:bold">{}</span>
+</span></span><span style="display:flex;"><span><span style="color:#ce5c00;font-weight:bold">}</span>
+</span></span></code></pre></div></div>
+</div>
+</div>
+</section><section>
+<h2 id="kotlin--java-mapping-pt-3">Kotlin–Java Mapping (pt. 3)</h2>
+<ul>
+<li>Kotlin’s <code>object X</code> is mapped to Java class <code>X</code> with
 <ul>
 <li>private constructor</li>
 <li>public static final field named <code>INSTANCE</code> to access</li>
 </ul>
 </li>
-<li>
-<p>Class <code>X</code>’s companion object is mapped to public static final field named <code>Companion</code> on class <code>X</code></p>
-</li>
-<li>
-<p>Class <code>X</code>’s companion object’s member <code>M</code> tagged with <code>@JvmStatic</code> is mapped to static member <code>M</code> on class <code>X</code></p>
+</ul>
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">object</span> <span style="color:#000">MySingleton</span> <span style="color:#000;font-weight:bold">{}</span>
+</span></span></code></pre></div></div>
+<div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">public</span> <span style="color:#204a87;font-weight:bold">static</span> <span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">MySingleton</span> <span style="color:#ce5c00;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">private</span> <span style="color:#000">MySingleton</span><span style="color:#ce5c00;font-weight:bold">()</span> <span style="color:#ce5c00;font-weight:bold">{}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">public</span> <span style="color:#204a87;font-weight:bold">static</span> <span style="color:#204a87;font-weight:bold">final</span> <span style="color:#000">MySingleton</span> <span style="color:#000">INSTANCE</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">new</span> <span style="color:#000">MySingleton</span><span style="color:#ce5c00;font-weight:bold">();</span>
+</span></span><span style="display:flex;"><span><span style="color:#ce5c00;font-weight:bold">}</span>
+</span></span></code></pre></div></div>
+</div>
+</div>
+<ul>
+<li>Class <code>X</code>’s companion object is mapped to public static final field named <code>Companion</code> on class <code>X</code></li>
+</ul>
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">MyType</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">private</span> <span style="color:#204a87;font-weight:bold">constructor</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">companion</span> <span style="color:#204a87;font-weight:bold">object</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">of</span><span style="color:#000;font-weight:bold">():</span> <span style="color:#000">MyType</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">MyType</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// usage:
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">x</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">MyType</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">MyType</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">of</span><span style="color:#000;font-weight:bold">()</span>
+</span></span></code></pre></div></div>
+<div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">public</span> <span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">MyType</span> <span style="color:#ce5c00;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">private</span> <span style="color:#000">MyType</span><span style="color:#ce5c00;font-weight:bold">()</span> <span style="color:#ce5c00;font-weight:bold">{}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">public</span> <span style="color:#204a87;font-weight:bold">static</span> <span style="color:#204a87;font-weight:bold">final</span> <span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">Companion</span> <span style="color:#ce5c00;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">public</span> <span style="color:#000">MyType</span> <span style="color:#000">of</span><span style="color:#ce5c00;font-weight:bold">()</span> <span style="color:#ce5c00;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">new</span> <span style="color:#000">MyType</span><span style="color:#ce5c00;font-weight:bold">();</span> <span style="color:#ce5c00;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ce5c00;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">public</span> <span style="color:#204a87;font-weight:bold">static</span> <span style="color:#204a87;font-weight:bold">final</span> <span style="color:#000">Companion</span> <span style="color:#000">Companion</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">new</span> <span style="color:#000">Companion</span><span style="color:#ce5c00;font-weight:bold">();</span>
+</span></span><span style="display:flex;"><span><span style="color:#ce5c00;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// usage:
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">MyType</span> <span style="color:#000">x</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">MyType</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#c4a000">Companion</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#c4a000">of</span><span style="color:#ce5c00;font-weight:bold">();</span>
+</span></span></code></pre></div></div>
+</div>
+</div>
+</section><section>
+<h2 id="kotlin--java-mapping-pt-4">Kotlin–Java Mapping (pt. 4)</h2>
+<ul>
+<li>Class <code>X</code>’s companion object’s member <code>M</code> tagged with <code>@JvmStatic</code> is mapped to static member <code>M</code> on class <code>X</code></li>
+</ul>
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">kotlin.jvm.JvmStatic</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">MyType</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">private</span> <span style="color:#204a87;font-weight:bold">constructor</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">companion</span> <span style="color:#204a87;font-weight:bold">object</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#5c35cc;font-weight:bold">@JvmStatic</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">of</span><span style="color:#000;font-weight:bold">():</span> <span style="color:#000">MyType</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">MyType</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// usage:
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">x</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">MyType</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">MyType</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">of</span><span style="color:#000;font-weight:bold">()</span>
+</span></span></code></pre></div></div>
+<div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">public</span> <span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">MyType</span> <span style="color:#ce5c00;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">private</span> <span style="color:#000">MyType</span><span style="color:#ce5c00;font-weight:bold">()</span> <span style="color:#ce5c00;font-weight:bold">{}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">public</span> <span style="color:#204a87;font-weight:bold">static</span> <span style="color:#000">MyType</span> <span style="color:#000">of</span><span style="color:#ce5c00;font-weight:bold">()</span> <span style="color:#ce5c00;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">new</span> <span style="color:#000">MyType</span><span style="color:#ce5c00;font-weight:bold">();</span> <span style="color:#ce5c00;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#ce5c00;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// usage:
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">MyType</span> <span style="color:#000">x</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">MyType</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#c4a000">of</span><span style="color:#ce5c00;font-weight:bold">();</span>
+</span></span></code></pre></div></div>
+</div>
+</div>
+<ul>
+<li>Kotlin’s variadic functions are mapped to Java’s variadic methods</li>
+</ul>
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">f</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">vararg</span> <span style="color:#000">xs</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Int</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">ys</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Array</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">Int</span><span style="color:#000;font-weight:bold">&gt;</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">xs</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></div>
+<div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">void</span> <span style="color:#000">f</span><span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">int</span><span style="color:#ce5c00;font-weight:bold">...</span> <span style="color:#000">xs</span><span style="color:#ce5c00;font-weight:bold">)</span> <span style="color:#ce5c00;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">Integer</span><span style="color:#ce5c00;font-weight:bold">[]</span> <span style="color:#000">ys</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">xs</span><span style="color:#ce5c00;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ce5c00;font-weight:bold">}</span>
+</span></span></code></pre></div></div>
+</div>
+</div>
+<ul>
+<li>Kotlin’s extension methods are mapped to ordinary Java methods with one more argument</li>
+</ul>
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">MyType</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">MyType</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">myMethod</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// usage:
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">x</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">MyType</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">x</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">myMethod</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#8f5902;font-style:italic">// postfix
+</span></span></span></code></pre></div></div>
+<div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">public</span> <span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">MyType</span> <span style="color:#ce5c00;font-weight:bold">{}</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">public</span> <span style="color:#204a87;font-weight:bold">void</span> <span style="color:#000">myMethod</span><span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#000">MyType</span> <span style="color:#000">self</span><span style="color:#ce5c00;font-weight:bold">)</span> <span style="color:#ce5c00;font-weight:bold">{}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// usage:
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">MyType</span> <span style="color:#000">x</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">new</span> <span style="color:#000">MyType</span><span style="color:#ce5c00;font-weight:bold">();</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">myMethod</span><span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#000">x</span><span style="color:#ce5c00;font-weight:bold">);</span> <span style="color:#8f5902;font-style:italic">// prefix
+</span></span></span></code></pre></div></div>
+</div>
+</div>
+</section><section>
+<h2 id="kotlin--java-mapping-pt-5">Kotlin–Java Mapping (pt. 5)</h2>
+<ul>
+<li>practical consequence: usability of fluent chains, in Java, is suboptimal
+<ul>
+<li>e.g. <a href="https://kotlinlang.org/docs/sequences.html">sequence operations</a> are implemented as extension methods</li>
+</ul>
 </li>
 </ul>
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">kotlin.sequences.*</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">x</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">0</span> <span style="color:#ce5c00;font-weight:bold">..</span><span style="color:#000;font-weight:bold">&lt;</span> <span style="color:#0000cf;font-weight:bold">10</span><span style="color:#000;font-weight:bold">).</span><span style="color:#000">asSequence</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#8f5902;font-style:italic">// 0, 1, 2, ..., 9
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000;font-weight:bold">.</span><span style="color:#000">filter</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">it</span> <span style="color:#000;font-weight:bold">%</span> <span style="color:#0000cf;font-weight:bold">2</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#0000cf;font-weight:bold">0</span> <span style="color:#000;font-weight:bold">}</span> <span style="color:#8f5902;font-style:italic">// 0, 2, 4, ..., 8
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000;font-weight:bold">.</span><span style="color:#000">map</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">it</span> <span style="color:#000;font-weight:bold">+</span> <span style="color:#0000cf;font-weight:bold">1</span> <span style="color:#000;font-weight:bold">}</span> <span style="color:#8f5902;font-style:italic">// 1, 3, 5, ..., 9
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000;font-weight:bold">.</span><span style="color:#000">sum</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#8f5902;font-style:italic">// 25
+</span></span></span></code></pre></div></div>
+<div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import static</span> <span style="color:#000">kotlin.sequences.SequencesKt.*</span><span style="color:#ce5c00;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">int</span> <span style="color:#000">x</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">sumOfInt</span><span style="color:#ce5c00;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000">map</span><span style="color:#ce5c00;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#000">filter</span><span style="color:#ce5c00;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#000">asSequence</span><span style="color:#ce5c00;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>                            <span style="color:#204a87;font-weight:bold">new</span> <span style="color:#000">IntRange</span><span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#000">0</span><span style="color:#ce5c00;font-weight:bold">,</span> <span style="color:#000">9</span><span style="color:#ce5c00;font-weight:bold">).</span><span style="color:#c4a000">iterator</span><span style="color:#ce5c00;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#ce5c00;font-weight:bold">),</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#000">it</span> <span style="color:#ce5c00;font-weight:bold">-&gt;</span> <span style="color:#000">it</span> <span style="color:#ce5c00;font-weight:bold">%</span> <span style="color:#000">2</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#000">0</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#ce5c00;font-weight:bold">),</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#000">it</span> <span style="color:#ce5c00;font-weight:bold">-&gt;</span> <span style="color:#000">it</span> <span style="color:#ce5c00;font-weight:bold">+</span> <span style="color:#000">1</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ce5c00;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ce5c00;font-weight:bold">);</span>
+</span></span></code></pre></div></div>
+</div>
+</div>
+<ul>
+<li>optional arguments exist in Kotlin but they do not exist in Java</li>
+</ul>
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">f</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">a</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Int</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#0000cf;font-weight:bold">1</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">b</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Int</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#0000cf;font-weight:bold">2</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">c</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Int</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#0000cf;font-weight:bold">3</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#8f5902;font-style:italic">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// usage:
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">f</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">b</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#0000cf;font-weight:bold">5</span><span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></div></div>
+<div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">void</span> <span style="color:#000">f</span><span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">int</span> <span style="color:#000">a</span><span style="color:#ce5c00;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">int</span> <span style="color:#000">b</span><span style="color:#ce5c00;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">int</span> <span style="color:#000">c</span><span style="color:#ce5c00;font-weight:bold">)</span> <span style="color:#ce5c00;font-weight:bold">{</span> <span style="color:#8f5902;font-style:italic">/* ... */</span> <span style="color:#ce5c00;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// usage:
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">f</span><span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#000">1</span><span style="color:#ce5c00;font-weight:bold">,</span> <span style="color:#000">5</span><span style="color:#ce5c00;font-weight:bold">,</span> <span style="color:#000">3</span><span style="color:#ce5c00;font-weight:bold">);</span>
+</span></span></code></pre></div></div>
+</div>
+</div>
+</section><section>
+<h2 id="kotlin--java-mapping-pt-6">Kotlin–Java Mapping (pt. 6)</h2>
+<ul>
+<li>practical consequence:
+<ul>
+<li>arguments are handy in Kotlin, but…</li>
+<li>… they are painful to use in Java</li>
+<li>mitigation strategy: use <code>@JvmOverloads</code> to generate overloaded methods for Java
+<ul>
+<li>sadly, the does not take into account all possible ordered combinations of arguments</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">kotlin.jvm.JvmOverloads</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@JvmOverloads</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">f</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">a</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Int</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#0000cf;font-weight:bold">1</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">b</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Int</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#0000cf;font-weight:bold">2</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">c</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Int</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#0000cf;font-weight:bold">3</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#8f5902;font-style:italic">// ...
+</span></span></span></code></pre></div></div>
+<div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">void</span> <span style="color:#000">f</span><span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">int</span> <span style="color:#000">a</span><span style="color:#ce5c00;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">int</span> <span style="color:#000">b</span><span style="color:#ce5c00;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">int</span> <span style="color:#000">c</span><span style="color:#ce5c00;font-weight:bold">)</span> <span style="color:#ce5c00;font-weight:bold">{</span> <span style="color:#8f5902;font-style:italic">/* ... */</span> <span style="color:#ce5c00;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">void</span> <span style="color:#000">f</span><span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">int</span> <span style="color:#000">a</span><span style="color:#ce5c00;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">int</span> <span style="color:#000">b</span><span style="color:#ce5c00;font-weight:bold">)</span> <span style="color:#ce5c00;font-weight:bold">{</span> <span style="color:#000">f</span><span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#000">a</span><span style="color:#ce5c00;font-weight:bold">,</span> <span style="color:#000">b</span><span style="color:#ce5c00;font-weight:bold">,</span> <span style="color:#000">3</span><span style="color:#ce5c00;font-weight:bold">);</span> <span style="color:#ce5c00;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">void</span> <span style="color:#000">f</span><span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">int</span> <span style="color:#000">a</span><span style="color:#ce5c00;font-weight:bold">)</span> <span style="color:#ce5c00;font-weight:bold">{</span> <span style="color:#000">f</span><span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#000">a</span><span style="color:#ce5c00;font-weight:bold">,</span> <span style="color:#000">2</span><span style="color:#ce5c00;font-weight:bold">,</span> <span style="color:#000">3</span><span style="color:#ce5c00;font-weight:bold">);</span> <span style="color:#ce5c00;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">void</span> <span style="color:#000">f</span><span style="color:#ce5c00;font-weight:bold">()</span> <span style="color:#ce5c00;font-weight:bold">{</span> <span style="color:#000">f</span><span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#000">1</span><span style="color:#ce5c00;font-weight:bold">,</span> <span style="color:#000">2</span><span style="color:#ce5c00;font-weight:bold">,</span> <span style="color:#000">3</span><span style="color:#ce5c00;font-weight:bold">);</span> <span style="color:#ce5c00;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// missing overloads:
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// void f(int a, int c) { f(a, 2, c); }
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// void f(int b, int c) { f(1, b, c); }
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// void f(int c) { f(1, 2, c); }
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// void f(int b) { f(1, b, 3); }
+</span></span></span></code></pre></div></div>
+</div>
+</div>
 </section><section>
 <h2 id="kotlin--java-mapping-example">Kotlin–Java Mapping Example</h2>
 <ul>
