@@ -1670,7 +1670,6 @@ java.util.List<String> z = java.util.List.of("a", "b", "c");
 ## Kotlin--Java Mapping (pt. 2)
 
 - Kotlin properties are mapped to getter / setter methods
-    - unless `@JvmField` is exploited
 
 {{% multicol %}}
 {{% col %}}
@@ -1691,17 +1690,294 @@ public interface MyType {
 {{% /col %}}
 {{% /multicol %}}
 
-- Kotlin's variadic functions are mapped to Java's variadic methods
+- ... unless the `JvmField` annotation is adopted
+
+{{% multicol %}}
+{{% col %}}
+```kotlin
+import kotlin.jvm.JvmField
+class MyType {
+    @JvmField
+    val x: Int = 0
+    @JvmField
+    var y: String = ""
+}
+```
+{{% /col %}}
+{{% col %}}
+```java
+public class MyType {
+    public final int x = 0;
+    public String y = "";
+}
+```
+{{% /col %}}
+{{% /multicol %}}
 
 - Kotlin's package functions in file `X.kt` are mapped to static methods of class `XKt`
+
+{{% multicol %}}
+{{% col %}}
+```kotlin
+// file MyFile.kt
+fun f() {}
+```
+{{% /col %}}
+{{% col %}}
+```java
+public static class MyFileKt {
+    public static void f() {}
+}
+```
+{{% /col %}}
+{{% /multicol %}}
+
+- ... unless the `JvmName` annotation is exploited
+
+{{% multicol %}}
+{{% col %}}
+```kotlin
+@file:JvmName("MyModule")
+import kotlin.jvm.JvmName
+fun f() {}
+```
+{{% /col %}}
+{{% col %}}
+```java
+public class MyModule {
+    public static void f() {}
+}
+```
+{{% /col %}}
+{{% /multicol %}}
+
+---
+
+## Kotlin--Java Mapping (pt. 3)
 
 - Kotlin's `object X` is mapped to Java class `X` with 
     * private constructor
     * public static final field named `INSTANCE` to access
 
+{{% multicol %}}
+{{% col %}}
+```kotlin
+object MySingleton {}
+```
+{{% /col %}}
+{{% col %}}
+```java
+public static class MySingleton {
+    private MySingleton() {}
+    public static final MySingleton INSTANCE = new MySingleton();
+}
+```
+{{% /col %}}
+{{% /multicol %}}
+
 - Class `X`'s companion object is mapped to public static final field named `Companion` on class `X`
 
+{{% multicol %}}
+{{% col %}}
+```kotlin
+class MyType {
+    private constructor()
+    companion object {
+        fun of(): MyType = MyType()
+    }
+}
+
+// usage:
+val x: MyType = MyType.of()
+```
+{{% /col %}}
+{{% col %}}
+```java
+public class MyType {
+    private MyType() {}
+    public static final class Companion {
+        public MyType of() { return new MyType(); }
+    }
+    public static final Companion Companion = new Companion();
+}
+
+// usage:
+MyType x = MyType.Companion.of();
+```
+{{% /col %}}
+{{% /multicol %}}
+
+---
+
+## Kotlin--Java Mapping (pt. 4)
+
 - Class `X`'s companion object's member `M` tagged with `@JvmStatic` is mapped to static member `M` on class `X`
+
+{{% multicol %}}
+{{% col %}}
+```kotlin
+import kotlin.jvm.JvmStatic
+class MyType {
+    private constructor()
+    companion object {
+        @JvmStatic
+        fun of(): MyType = MyType()
+    }
+}
+
+// usage:
+val x: MyType = MyType.of()
+```
+{{% /col %}}
+{{% col %}}
+```java
+public class MyType {
+    private MyType() {}
+    public static MyType of() { return new MyType(); }
+}
+
+// usage:
+MyType x = MyType.of();
+```
+{{% /col %}}
+{{% /multicol %}}
+
+- Kotlin's variadic functions are mapped to Java's variadic methods
+
+{{% multicol %}}
+{{% col %}}
+```kotlin
+fun f(vararg xs: Int) {
+    val ys: Array<Int> = xs
+}
+```
+{{% /col %}}
+{{% col %}}
+```java
+void f(int... xs) {
+    Integer[] ys = xs;
+}
+```
+{{% /col %}}
+{{% /multicol %}}
+
+- Kotlin's extension methods are mapped to ordinary Java methods with one more argument
+
+{{% multicol %}}
+{{% col %}}
+```kotlin
+class MyType { }
+fun MyType.myMethod() {}
+
+// usage:
+val x = MyType()
+x.myMethod() // postfix
+```
+{{% /col %}}
+{{% col %}}
+```java
+public class MyType {}
+public void myMethod(MyType self) {}
+
+// usage:
+MyType x = new MyType();
+myMethod(x); // prefix
+```
+{{% /col %}}
+{{% /multicol %}}
+
+---
+
+## Kotlin--Java Mapping (pt. 5)
+
+- practical consequence: usability of fluent chains, in Java, is suboptimal
+    + e.g. [sequence operations](https://kotlinlang.org/docs/sequences.html) are implemented as extension methods
+
+{{% multicol %}}
+{{% col %}}
+```kotlin
+import kotlin.sequences.*
+
+val x = (0 ..< 10).asSequence() // 0, 1, 2, ..., 9
+    .filter { it % 2 == 0 } // 0, 2, 4, ..., 8
+    .map { it + 1 } // 1, 3, 5, ..., 9
+    .sum() // 25
+```
+{{% /col %}}
+{{% col %}}
+```java
+import static kotlin.sequences.SequencesKt.*;
+
+int x = sumOfInt(
+            map(
+                filter(
+                    asSequence(
+                            new IntRange(0, 9).iterator()
+                    ),
+                    it -> it % 2 == 0
+                ),
+                it -> it + 1
+            )
+        );
+```
+{{% /col %}}
+{{% /multicol %}}
+
+- optional arguments exist in Kotlin but they do not exist in Java
+
+{{% multicol %}}
+{{% col %}}
+```kotlin
+fun f(a: Int = 1, b: Int = 2, c: Int = 3) = // ...
+
+// usage:
+f(b = 5)
+```
+{{% /col %}}
+{{% col %}}
+```java
+void f(int a, int b, int c) { /* ... */ }
+
+// usage:
+f(1, 5, 3);
+```
+{{% /col %}}
+{{% /multicol %}}
+
+---
+
+## Kotlin--Java Mapping (pt. 6)
+
+- practical consequence: 
+    + arguments are handy in Kotlin, but...
+    + ... they are painful to use in Java
+    + mitigation strategy: use `@JvmOverloads` to generate overloaded methods for Java
+        * sadly, the does not take into account all possible ordered combinations of arguments
+
+{{% multicol %}}
+{{% col %}}
+```kotlin
+import kotlin.jvm.JvmOverloads
+
+@JvmOverloads
+fun f(a: Int = 1, b: Int = 2, c: Int = 3) = // ...
+```
+{{% /col %}}
+{{% col %}}
+```java
+void f(int a, int b, int c) { /* ... */ }
+void f(int a, int b) { f(a, b, 3); }
+void f(int a) { f(a, 2, 3); }
+void f() { f(1, 2, 3); }
+
+// missing overloads:
+// void f(int a, int c) { f(a, 2, c); }
+// void f(int b, int c) { f(1, b, c); }
+// void f(int c) { f(1, 2, c); }
+// void f(int b) { f(1, b, 3); }
+```
+{{% /col %}}
+{{% /multicol %}}
 
 ---
 
@@ -1712,6 +1988,7 @@ public interface MyType {
 - Alternatively, add Java sources to the `jvmTest` source set, and use the library
 
 - Listen to the teacher presenting key points
+
 --- 
 
 ## Kotlin--JavaScript Mapping (pt. 1)
