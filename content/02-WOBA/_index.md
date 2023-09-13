@@ -505,9 +505,7 @@ Let `T` denote some target platform
 
 ## Domain entities
 
-{{< gravizo >}}
-@startuml
-skinparam monochrome false
+{{< plantuml >}}
 top to bottom direction
 
 package "kotlin" {
@@ -515,6 +513,7 @@ package "kotlin" {
 }
 
 package "io.github.gciatto.csv" {
+
     interface Row {
         + get(index: Int): String
         + size: Int
@@ -547,13 +546,12 @@ package "io.github.gciatto.csv" {
         + get(row: Int): Row
         + size: Int
     }
-
+    
     Table "1" *-u- "*" Header
     Table "*" o-u- "*" Record
     Table -u----|> Iterable: //T// = Row
 }
-@enduml
-{{< /gravizo >}}
+{{< /plantuml >}}
 
 ---
 
@@ -1999,19 +1997,42 @@ void f() { f(1, 2, 3); }
         * you should ignore the warning explicitly
 
 - Kotlin supports overloading, JS does not
-    + class / interface 
+    + class / interface members names are __mengled__ to avoid clashes
+    + the `@JsName` annotation can be used to control the name of a member 
+        * to be used on API types and functions
 
 - Kotlin class $\equiv$ [JS prototype](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object_prototypes)
 
-- Primitive type mappings are non-trivial
-    + cf. https://kotlinlang.org/docs/js-to-kotlin-interop.html#kotlin-types-in-javascript
+- Primitive type mappings are non-trivial (cf. [documentation](https://kotlinlang.org/docs/js-to-kotlin-interop.html#kotlin-types-in-javascript))
+    + Kotlin numeric types, except for `kotlin.Long`, are mapped to JavaScript `Number`
+        * hence, there is no way to distinguish numbers by type
+    
+    + `kotlin.Char` is mapped to JS `Number` representing character code.
 
-- Numeric types except long are mapped to `number` type
-    * except `Long`
+    + Kotlin preserves overflow semantics for `kotlin.Int`, `kotlin.Byte`, `kotlin.Short`, `kotlin.Char` and `kotlin.Long`
+
+    + `kotlin.Long` is not mapped to any JS object, as there is no 64-bit integer number type in JS. It is emulated by a Kotlin class
+
+    + `kotlin.String` is mapped to JS `String`
+
+    + `kotlin.Any` is mapped to JS `Object` (`new Object()`, `{}`, and so on)
+
+    + `kotlin.Array` is mapped to JS `Array`
+
+    + Kotlin collections (`List`, `Set`, `Map`, and so on) are not mapped to any specific JS type
+
+    + `kotlin.Throwable` is mapped to JS `Error`
 
 - Kotlin's `dynamic` overrides the type system, and it is translated "1-to-1"
 
 - Kotlin's common std-lib is implemented in JS
     * cf. NPM package [`kotlin`](https://www.npmjs.com/package/kotlin)
+
+- Companion objects are treated similarly to Kotlin/JVM
+
+- Extension methods are treated similarly to Kotlin/JVM
+
+- Variadic functions are compiled to JS functions accepting an array
+    + which are not really variadic in JS
 
 {{% /section %}}
