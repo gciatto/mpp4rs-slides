@@ -906,10 +906,6 @@ fun tableOf(rows: Iterable<Row>): Table {
         val record = Tables.iris(Tables.irisShortHeader).records[0]
         assertEquals("5.1", record[0])
         assertEquals("5.1", record["sepal_length"])
-        assertEquals("3.5", record[1])
-        assertEquals("3.5", record["sepal_width"])
-        assertEquals("1.4", record[2])
-        assertEquals("1.4", record["petal_length"])
         assertEquals("0.2", record[3])
         assertEquals("0.2", record["petal_width"])
         assertEquals("Iris-setosa", record[4])
@@ -919,8 +915,7 @@ fun tableOf(rows: Iterable<Row>): Table {
     }
     ```
     
-- Run tests via Gradle task `test`
-    + also try to run tests for specific platforms, e.g. `jvmTest` or `jsTest`
+- Run tests via Gradle task `test` (also try to run tests for specific platforms, e.g. `jvmTest` or `jsTest`)
 
 --- 
 
@@ -1992,5 +1987,31 @@ void f() { f(1, 2, 3); }
 --- 
 
 ## Kotlin--JavaScript Mapping (pt. 1)
+
+> __Disclaimer__: the generated JS code is not really meant to be read by humans
+
+- DCE will eliminate unused code
+    + "unused" $\equiv$ "not explicitly labelled as exported"
+    + code is exported by means of the `@JsExport` annotation
+        * to be used on API types and functions
+        * requires the `kotlin.js.ExperimentalJsExport` __opt-in__
+    + not all syntactical constructs or types are currently exportable
+        * you should ignore the warning explicitly
+
+- Kotlin supports overloading, JS does not
+    + class / interface 
+
+- Kotlin class $\equiv$ [JS prototype](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object_prototypes)
+
+- Primitive type mappings are non-trivial
+    + cf. https://kotlinlang.org/docs/js-to-kotlin-interop.html#kotlin-types-in-javascript
+
+- Numeric types except long are mapped to `number` type
+    * except `Long`
+
+- Kotlin's `dynamic` overrides the type system, and it is translated "1-to-1"
+
+- Kotlin's common std-lib is implemented in JS
+    * cf. NPM package [`kotlin`](https://www.npmjs.com/package/kotlin)
 
 {{% /section %}}
