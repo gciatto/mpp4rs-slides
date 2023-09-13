@@ -892,10 +892,6 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">record</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">Tables</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">iris</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">Tables</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">irisShortHeader</span><span style="color:#000;font-weight:bold">).</span><span style="color:#000">records</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0</span><span style="color:#000;font-weight:bold">]</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#000">assertEquals</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"5.1"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">record</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0</span><span style="color:#000;font-weight:bold">])</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#000">assertEquals</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"5.1"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">record</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">"sepal_length"</span><span style="color:#000;font-weight:bold">])</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#000">assertEquals</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"3.5"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">record</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">1</span><span style="color:#000;font-weight:bold">])</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#000">assertEquals</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"3.5"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">record</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">"sepal_width"</span><span style="color:#000;font-weight:bold">])</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#000">assertEquals</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"1.4"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">record</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">2</span><span style="color:#000;font-weight:bold">])</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#000">assertEquals</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"1.4"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">record</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">"petal_length"</span><span style="color:#000;font-weight:bold">])</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#000">assertEquals</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"0.2"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">record</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">3</span><span style="color:#000;font-weight:bold">])</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#000">assertEquals</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"0.2"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">record</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">"petal_width"</span><span style="color:#000;font-weight:bold">])</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#000">assertEquals</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"Iris-setosa"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">record</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">4</span><span style="color:#000;font-weight:bold">])</span>
@@ -905,10 +901,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
 </span></span></code></pre></div></li>
 <li>
-<p>Run tests via Gradle task <code>test</code></p>
-<ul>
-<li>also try to run tests for specific platforms, e.g. <code>jvmTest</code> or <code>jsTest</code></li>
-</ul>
+<p>Run tests via Gradle task <code>test</code> (also try to run tests for specific platforms, e.g. <code>jvmTest</code> or <code>jsTest</code>)</p>
 </li>
 </ul>
 </section><section>
@@ -1929,6 +1922,58 @@
 </ul>
 </section><section>
 <h2 id="kotlin--javascript-mapping-pt-1">Kotlin–JavaScript Mapping (pt. 1)</h2>
+<blockquote>
+<p><strong>Disclaimer</strong>: the generated JS code is not really meant to be read by humans</p>
+</blockquote>
+<ul>
+<li>
+<p>DCE will eliminate unused code</p>
+<ul>
+<li>“unused” $\equiv$ “not explicitly labelled as exported”</li>
+<li>code is exported by means of the <code>@JsExport</code> annotation
+<ul>
+<li>to be used on API types and functions</li>
+<li>requires the <code>kotlin.js.ExperimentalJsExport</code> <strong>opt-in</strong></li>
+</ul>
+</li>
+<li>not all syntactical constructs or types are currently exportable
+<ul>
+<li>you should ignore the warning explicitly</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Kotlin supports overloading, JS does not</p>
+<ul>
+<li>class / interface</li>
+</ul>
+</li>
+<li>
+<p>Kotlin class $\equiv$ <a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object_prototypes">JS prototype</a></p>
+</li>
+<li>
+<p>Primitive type mappings are non-trivial</p>
+<ul>
+<li>cf. <a href="https://kotlinlang.org/docs/js-to-kotlin-interop.html#kotlin-types-in-javascript">https://kotlinlang.org/docs/js-to-kotlin-interop.html#kotlin-types-in-javascript</a></li>
+</ul>
+</li>
+<li>
+<p>Numeric types except long are mapped to <code>number</code> type</p>
+<ul>
+<li>except <code>Long</code></li>
+</ul>
+</li>
+<li>
+<p>Kotlin’s <code>dynamic</code> overrides the type system, and it is translated “1-to-1”</p>
+</li>
+<li>
+<p>Kotlin’s common std-lib is implemented in JS</p>
+<ul>
+<li>cf. NPM package <a href="https://www.npmjs.com/package/kotlin"><code>kotlin</code></a></li>
+</ul>
+</li>
+</ul>
 
 </section>
 </section>
