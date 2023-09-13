@@ -1968,8 +1968,7 @@ Table -u----|&gt; Iterable: //T// = Row
 <p><strong>Disclaimer</strong>: the generated JS code is not really meant to be read by humans</p>
 </blockquote>
 <ul>
-<li>
-<p>DCE will eliminate unused code</p>
+<li>DCE will eliminate unused code
 <ul>
 <li>“unused” $\equiv$ “not explicitly labelled as exported”</li>
 <li>code is exported by means of the <code>@JsExport</code> annotation
@@ -1985,8 +1984,33 @@ Table -u----|&gt; Iterable: //T// = Row
 </li>
 </ul>
 </li>
-<li>
-<p>Kotlin supports overloading, JS does not</p>
+</ul>
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@file</span><span style="color:#000;font-weight:bold">:</span><span style="color:#000">Suppress</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"NON_EXPORTABLE_TYPE"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">package</span> <span style="color:#000">my.package</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">kotlin.js.JsExport</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">kotlin.js.JsName</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@JsExport</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">MyType</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">nonExportableType</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Long</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@JsExport</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">myFunction</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#8f5902;font-style:italic">// ...
+</span></span></span></code></pre></div></div>
+<div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">module</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">require</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"project-name"</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">MyType</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">module</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">my</span><span style="color:#000;font-weight:bold">.</span><span style="color:#204a87;font-weight:bold">package</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">MyType</span><span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">myFunction</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">module</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">my</span><span style="color:#000;font-weight:bold">.</span><span style="color:#204a87;font-weight:bold">package</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">myFunction</span><span style="color:#000;font-weight:bold">;</span>
+</span></span></code></pre></div></div>
+</div>
+</div>
+</section><section>
+<h2 id="kotlin--javascript-mapping-pt-2">Kotlin–JavaScript Mapping (pt. 2)</h2>
+<ul>
+<li>Kotlin supports <strong>overloading</strong>, JS does not
 <ul>
 <li>class / interface members names are <strong>mengled</strong> to avoid clashes</li>
 <li>the <code>@JsName</code> annotation can be used to control the name of a member
@@ -1996,17 +2020,51 @@ Table -u----|&gt; Iterable: //T// = Row
 </li>
 </ul>
 </li>
-<li>
-<p>Kotlin class $\equiv$ <a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object_prototypes">JS prototype</a></p>
-</li>
-<li>
-<p>Primitive type mappings are non-trivial (cf. <a href="https://kotlinlang.org/docs/js-to-kotlin-interop.html#kotlin-types-in-javascript">documentation</a>)</p>
+</ul>
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">package</span> <span style="color:#000">my.package</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@JsName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"sumNumbers"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">sum</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">vararg</span> <span style="color:#000">numbers</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Int</span><span style="color:#000;font-weight:bold">):</span> <span style="color:#000">Int</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#8f5902;font-style:italic">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@JsName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"sumIterableOfNumbers"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">sum</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">numbers</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Iterable</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">Int</span><span style="color:#000;font-weight:bold">&gt;):</span> <span style="color:#000">Int</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#8f5902;font-style:italic">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@JsName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"sumSequenceOfNumbers"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">sum</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">numbers</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Sequence</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">Int</span><span style="color:#000;font-weight:bold">&gt;):</span> <span style="color:#000">Int</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#8f5902;font-style:italic">// ...
+</span></span></span></code></pre></div></div>
+<div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">module</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">require</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"project-name"</span><span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">sumNumbers</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">module</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">my</span><span style="color:#000;font-weight:bold">.</span><span style="color:#204a87;font-weight:bold">package</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">sumNumbers</span><span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">sumIterableOfNumbers</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">module</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">my</span><span style="color:#000;font-weight:bold">.</span><span style="color:#204a87;font-weight:bold">package</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">sumIterableOfNumbers</span><span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">sumSequenceOfNumbers</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">module</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">my</span><span style="color:#000;font-weight:bold">.</span><span style="color:#204a87;font-weight:bold">package</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">sumSequenceOfNumbers</span><span style="color:#000;font-weight:bold">;</span>
+</span></span></code></pre></div></div>
+</div>
+</div>
+<ul>
+<li>Kotlin class $\equiv$ <a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object_prototypes">JS prototype</a></li>
+</ul>
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">MyClass</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">private</span> <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">argument</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#5c35cc;font-weight:bold">@JsName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"method"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">method</span><span style="color:#000;font-weight:bold">():</span> <span style="color:#000">String</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">argument</span> <span style="color:#000;font-weight:bold">+</span> <span style="color:#4e9a06">"!"</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></div>
+<div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">function</span> <span style="color:#000">MyClass</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">argument</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">this</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">randomName_1</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">argument</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">MyClass</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">prototype</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">method</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">function</span> <span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">this</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">randomName_1</span> <span style="color:#ce5c00;font-weight:bold">+</span> <span style="color:#4e9a06">"!"</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></div>
+</div>
+</div>
+</section><section>
+<h2 id="kotlin--javascript-mapping-pt-3">Kotlin–JavaScript Mapping (pt. 3)</h2>
+<ul>
+<li>Primitive type mappings are non-trivial (cf. <a href="https://kotlinlang.org/docs/js-to-kotlin-interop.html#kotlin-types-in-javascript">documentation</a>)
 <ul>
 <li>
 <p>Kotlin numeric types, except for <code>kotlin.Long</code>, are mapped to JavaScript <code>Number</code></p>
-<ul>
-<li>hence, there is no way to distinguish numbers by type</li>
-</ul>
 </li>
 <li>
 <p><code>kotlin.Char</code> is mapped to JS <code>Number</code> representing character code.</p>
@@ -2034,15 +2092,35 @@ Table -u----|&gt; Iterable: //T// = Row
 </li>
 </ul>
 </li>
+</ul>
+</section><section>
+<h2 id="kotlin--javascript-mapping-pt-4">Kotlin–JavaScript Mapping (pt. 4)</h2>
+<ul>
+<li>
+<p>practical consequence: no way to distinguish numbers by type</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">x</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Int</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#0000cf;font-weight:bold">23</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">y</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Any</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">x</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">println</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">y</span> <span style="color:#204a87;font-weight:bold">as</span> <span style="color:#000">Float</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#8f5902;font-style:italic">// fails on JVM, works on JS
+</span></span></span></code></pre></div></li>
 <li>
 <p>Kotlin’s <code>dynamic</code> overrides the type system, and it is translated “1-to-1”</p>
 </li>
-<li>
-<p>Kotlin’s common std-lib is implemented in JS</p>
+</ul>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">string1</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">"some string"</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">string1</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">missingMethod</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#8f5902;font-style:italic">// compilation error
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">string2</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">dynamic</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">"some string"</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">string2</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">missingMethod</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#8f5902;font-style:italic">// compilation ok, runtime error
+</span></span></span></code></pre></div><ul>
+<li>Kotlin’s common std-lib is implemented in JS
 <ul>
 <li>cf. NPM package <a href="https://www.npmjs.com/package/kotlin"><code>kotlin</code></a></li>
 </ul>
 </li>
+</ul>
+</section><section>
+<h2 id="kotlin--javascript-mapping-pt-5">Kotlin–JavaScript Mapping (pt. 5)</h2>
+<ul>
 <li>
 <p>Companion objects are treated similarly to Kotlin/JVM</p>
 </li>
@@ -2056,6 +2134,21 @@ Table -u----|&gt; Iterable: //T// = Row
 </ul>
 </li>
 </ul>
+<div class="container w-100 m-0 p-0">
+    <div class="row "><div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">fun</span> <span style="color:#000">f</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">vararg</span> <span style="color:#000">xs</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#8f5902;font-style:italic">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// usage:
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">f</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"a"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">f</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"a"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"b"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">f</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"a"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"b"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"c"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></div></div>
+<div class="col "><div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// usage:
+</span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">f</span><span style="color:#000;font-weight:bold">([</span><span style="color:#4e9a06">"a"</span><span style="color:#000;font-weight:bold">])</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">f</span><span style="color:#000;font-weight:bold">([</span><span style="color:#4e9a06">"a"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"b"</span><span style="color:#000;font-weight:bold">])</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">f</span><span style="color:#000;font-weight:bold">([</span><span style="color:#4e9a06">"a"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"b"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"c"</span><span style="color:#000;font-weight:bold">])</span>
+</span></span></code></pre></div></div>
+</div>
+</div>
 
 </section>
 </section>
