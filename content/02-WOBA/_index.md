@@ -1610,22 +1610,88 @@ In the `jsMain` source set
 
 - Kotlin class $\equiv$ Java class
 
+{{% multicol %}}
+{{% col %}}
+```kotlin
+class MyClass {}
+interface MyType {}
+```
+{{% /col %}}
+{{% col %}}
+```java
+public class MyClass {}
+public interface MyType {}
+```
+{{% /col %}}
+{{% /multicol %}}
+
 - No syntactical difference among primitive and reference types
     + `Int` $\leftrightarrow$ `int` / `Integer`, `Short` $\leftrightarrow$ `short` / `Short`, etc.
+
+{{% multicol %}}
+{{% col %}}
+```kotlin
+val x: Int = 0
+val y: Int? = null
+```
+{{% /col %}}
+{{% col %}}
+```java
+int x = 0;
+Integer y = null;
+```
+{{% /col %}}
+{{% /multicol %}}
 
 - Some Kotlin types are replaced by Java types at compile time
     + e.g. `Any` $\rightarrow$ `Object`, `kotlin.collections.List` $\rightarrow$ `java.util.List`, etc.
 
+{{% multicol %}}
+{{% col %}}
+```kotlin
+val x: Any = "ciao"
+val y: kotlin.collections.List<Int> = listOf(1, 2, 3)
+val z: kotlin.collections.MutableList<String> = mutableListOf("a", "b", "c")
+```
+{{% /col %}}
+{{% col %}}
+```java
+Object x = "ciao";
+java.util.List<Integer> y = java.util.Arrays.asList(1, 2, 3);
+java.util.List<String> z = java.util.List.of("a", "b", "c");
+```
+{{% /col %}}
+{{% /multicol %}}
+
 - Other Kotlin types are mapped to homonymous Java types
-
-- Kotlin properties are mapped to getter / setter methods
-    - unless `@JvmField` is exploited
-
-- Kotlin's variadic functions are mapped to Java's variadic methods
 
 ---
 
 ## Kotlin--Java Mapping (pt. 2)
+
+- Kotlin properties are mapped to getter / setter methods
+    - unless `@JvmField` is exploited
+
+{{% multicol %}}
+{{% col %}}
+```kotlin
+interface MyType {
+    val x: Int
+    var y: String
+}
+```
+{{% /col %}}
+{{% col %}}
+```java
+public interface MyType {
+    int getX();
+    String getY(); void setY(String y);
+}
+```
+{{% /col %}}
+{{% /multicol %}}
+
+- Kotlin's variadic functions are mapped to Java's variadic methods
 
 - Kotlin's package functions in file `X.kt` are mapped to static methods of class `XKt`
 
@@ -1649,7 +1715,5 @@ In the `jsMain` source set
 --- 
 
 ## Kotlin--JavaScript Mapping (pt. 1)
-
-TBD
 
 {{% /section %}}
