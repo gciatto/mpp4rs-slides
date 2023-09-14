@@ -1733,13 +1733,22 @@ function handlePlantumlFigure(element) {
     element.innerHTML = '<img' + attributes + 'src="' + plantumlImage("svg", element.innerText) + '">';
 }
 
-window.addEventListener("load", function () {
-    var images = document.querySelectorAll('figure.plantuml');
-    for (var i = 0; i < images.length; i++) {
-        var element = images[i];
+function handlePlantumlFigureByID(id) {
+    var element = document.getElementById(id);
+    if (element === null) {
+        console.error("Cannot find PlantUML figure with ID " + id);
+    } else {
         handlePlantumlFigure(element);
     }
-});
+}
+
+// window.addEventListener("load", function () {
+//     var images = document.querySelectorAll('figure.plantuml');
+//     for (var i = 0; i < images.length; i++) {
+//         var element = images[i];
+//         handlePlantumlFigure(element);
+//     }
+// });
 
 // TO TEST: click on the link printed by running node plantuml.js and ensure it shows a sequence diagram
 // console.log(plantumlImage("svg", "Alice --> Bob: Authentication Request"));

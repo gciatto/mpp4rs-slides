@@ -626,12 +626,12 @@
 </ul>
 </section><section>
 <h2 id="domain-entities">Domain entities</h2>
-<figure class="plantuml" alt="" onload="handlePlantumlFigure(this);" style="width: 100%;max-width: 95vw;max-height: 80vh;">
+<figure id="plantuml-figure-1694681896394607111" class="plantuml" alt="" style="width: 50%;max-width: 95vw;max-height: 80vh;">
 <p>top to bottom direction</p>
 <p>package “kotlin” {
 interface Iterable<t>
 }</t></p>
-<p>package “io.github.gciatto.csv” {</p>
+<p>package “io github gciatto csv” {</p>
 <pre><code>interface Row {
     + get(index: Int): String
     + size: Int
@@ -671,6 +671,9 @@ Table -u----|&gt; Iterable: //T// = Row
 </code></pre>
 <p>}</p>
 </figure>
+<script>
+    handlePlantumlFigureByID("plantuml-figure-1694681896394607111");
+</script>
 </section><section>
 <h2 id="the-row-interface">The <code>Row</code> interface</h2>
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// Represents a single row in a CSV file.
@@ -733,10 +736,41 @@ Table -u----|&gt; Iterable: //T// = Row
 </span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
 </span></span></code></pre></div></section><section>
 <h2 id="common-implementations-of-domain-entities">Common implementations of domain entities</h2>
-<figure>
-  <img src="https://g.gravizo.com/svg?%0a%40startuml%0askinparam%20monochrome%20false%0atop%20to%20bottom%20direction%0apackage%20%22io.github.gciatto.csv.%2a%2aimpl%2a%2a%22%20%7b%0ainterface%20Row%0aabstract%20class%20AbstractRow%20%7b%0a-%20values%3a%20List%3cString%3e%0a%23%20constructor%28values%3a%20List%3cString%3e%29%0a%23%20toString%28type%3a%20String%3f%29%3a%20String%0a%7d%0aRow%20%3c%7c--%20AbstractRow%0ainterface%20Header%0aclass%20DefaultHeader%20%7b%0a-%20indexesByName%3a%20Map%3cString%2c%20Int%3e%0a%2b%20constructor%28columns%3a%20Iterable%3cString%3e%29%0a%7d%0aRow%20%3c%7c--%20Header%0aHeader%20%3c%7c--%20DefaultHeader%0aAbstractRow%20%3c%7c--%20DefaultHeader%0ainterface%20Record%0aclass%20DefaultRecord%20%7b%0a%2b%20constructor%28header%3a%20Header%2c%20values%3a%20Iterable%3cString%3e%29%0a%7d%0aRow%20%3c%7c--%20Record%0aRecord%20%3c%7c--%20DefaultRecord%0aAbstractRow%20%3c%7c--%20DefaultRecord%0aclass%20DefaultTable%20%7b%0a%2b%20constructor%28header%3a%20Header%2c%20records%3a%20Iterable%3cRecord%3e%29%0a%7d%0aTable%20%3c%7c--%20DefaultTable%0a%7d%0a%40enduml%0a" alt="" width="100%">
-    <figcaption></figcaption>
+<figure id="plantuml-figure-1694681896394744421" class="plantuml" alt="" style="width: 100%;max-width: 95vw;max-height: 80vh;">
+    <p>top to bottom direction</p>
+<p>package “io github gciatto csv <strong>impl</strong>” {
+interface Row</p>
+<pre><code>abstract class AbstractRow {
+    - values: List&lt;String&gt;
+    # constructor(values: List&lt;String&gt;)
+    # toString(type: String?): String
+}
+<p>Row &lt;|-d- AbstractRow</p>
+<p>interface Header</p>
+<p>class DefaultHeader {
+- indexesByName: Map&lt;String, Int&gt;
++ constructor(columns: Iterable&lt;String&gt;)
+}</p>
+<p>Row &lt;|-d- Header
+Header &lt;|-d- DefaultHeader
+AbstractRow &lt;|-d- DefaultHeader</p>
+<p>interface Record</p>
+<p>class DefaultRecord {
++ constructor(header: Header, values: Iterable&lt;String&gt;)
+}</p>
+<p>Row &lt;|-d- Record
+Record &lt;|– DefaultRecord
+AbstractRow &lt;|-d- DefaultRecord</p>
+<p>class DefaultTable {
++ constructor(header: Header, records: Iterable&lt;Record&gt;)
+}</p>
+</code><p><code>Table &lt;|– DefaultTable
+</code></p></pre><p></p>
+<p>}</p>
 </figure>
+<script>
+    handlePlantumlFigureByID("plantuml-figure-1694681896394744421");
+</script>
 </section><section>
 <h2 id="the-abstractrow-class">The <code>AbstractRow</code> class</h2>
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// Base implementation for the Row interface.
@@ -867,10 +901,24 @@ Table -u----|&gt; Iterable: //T// = Row
 <p>Class diagram:</p>
 </li>
 </ul>
-<figure>
-  <img src="https://g.gravizo.com/svg?%0a%40startuml%0askinparam%20monochrome%20false%0aclass%20Csv%7b%0a%2b%20headerOf%28columns%29%3a%20Header%0a%2b%20anonymousHeader%28size%3a%20Int%29%3a%20Header%0a..%0a%2b%20recordOf%28header%2c%20values%29%3a%20Record%0a..%0a%2b%20tableOf%28header%2c%20records%29%3a%20Table%0a%2b%20tableOf%28rows%29%3a%20Table%0a%7d%0a%40enduml%0a" alt="" width="30%%">
-    <figcaption></figcaption>
+<figure id="plantuml-figure-1694681896394783724" class="plantuml" alt="" style="width: 30%;max-width: 95vw;max-height: 80vh;">
+<pre><code>@startuml
+skinparam monochrome false
+class Csv{
+    + headerOf(columns): Header
+    + anonymousHeader(size: Int): Header
+    ..
+    + recordOf(header, values): Record
+    ..
+    + tableOf(header, records): Table
+    + tableOf(rows): Table
+}
+@enduml
+</code></pre>
 </figure>
+<script>
+    handlePlantumlFigureByID("plantuml-figure-1694681896394783724");
+</script>
 </section><section>
 <h2 id="the-csvkt-file">The <code>Csv.kt</code> file</h2>
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic">// Headers creation from columns names
@@ -1031,10 +1079,45 @@ Table -u----|&gt; Iterable: //T// = Row
 </ul>
 </li>
 </ul>
-<figure>
-  <img src="https://g.gravizo.com/svg?%0a%40startuml%0askinparam%20monochrome%20false%0apackage%20io.github.gciatto.csv%20%7b%0aclass%20Configuration%20%7b%0a%2b%20separator%3a%20Char%0a%2b%20delimiter%3a%20Char%0a%2b%20comment%3a%20Char%0a--%0a%2b%20isComment%28string%3a%20String%29%3a%20Boolean%0a%2b%20isRecord%28string%3a%20String%29%3a%20Boolean%0a%2b%20isHeader%28string%3a%20String%29%3a%20Boolean%0a..%0a%2b%20getComment%28string%3a%20String%29%3a%20String%3f%0a%2b%20getFields%28string%3a%20String%29%3a%20List%3cString%3e%0a%2b%20getColumnNames%28string%3a%20String%29%3a%20List%3cString%3e%0a%7d%0ainterface%20Formatter%20%7b%0a%2b%20source%3a%20Iterable%3cRow%3e%0a%2b%20configuration%3a%20Configuration%0a%2b%20format%28%29%3a%20Iterable%3cString%3e%0a%7d%0ainterface%20Parser%20%7b%0a%2b%20source%3a%20Any%0a%2b%20configuration%3a%20Configuration%0a%2b%20parse%28%29%3a%20Iterable%3cRow%3e%0a%7d%0aFormatter%20%221%22%20o--%20%221%22%20Configuration%0aParser%20%221%22%20o--%20%221%22%20Configuration%0a%7d%0a%40enduml%0a" alt="" width="40%%">
-    <figcaption></figcaption>
+<figure id="plantuml-figure-1694681896394813726" class="plantuml" alt="" style="width: 35%;max-width: 95vw;max-height: 80vh;">
+<p>@startuml
+skinparam monochrome false</p>
+<p>package “io github gciatto csv” {</p>
+<pre><code>class Configuration {
+    + separator: Char
+    + delimiter: Char
+    + comment: Char
+    --
+    + isComment(string: String): Boolean
+    + isRecord(string: String): Boolean
+    + isHeader(string: String): Boolean
+    ..
+    + getComment(string: String): String?
+    + getFields(string: String): List&lt;String&gt;
+    + getColumnNames(string: String): List&lt;String&gt;
+}
+
+interface Formatter {
+    + source: Iterable&lt;Row&gt;
+    + configuration: Configuration
+    + format(): Iterable&lt;String&gt;
+}
+
+interface Parser {
+    + source: Any
+    + configuration: Configuration
+    + parse(): Iterable&lt;Row&gt;
+}
+
+Formatter "1" o-- "1" Configuration
+Parser "1" o-- "1" Configuration
+</code></pre>
+<p>}
+@enduml</p>
 </figure>
+<script>
+    handlePlantumlFigureByID("plantuml-figure-1694681896394813726");
+</script>
 </section><section>
 <h2 id="the-configuration-class">The <code>Configuration</code> class</h2>
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">data</span> <span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">Configuration</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">separator</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Char</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">delimiter</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Char</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">comment</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Char</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
@@ -1092,10 +1175,49 @@ Table -u----|&gt; Iterable: //T// = Row
 </span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
 </span></span></code></pre></div></section><section>
 <h2 id="common-implementation-of-novel-entities">Common implementation of novel entities</h2>
-<figure>
-  <img src="https://g.gravizo.com/svg?%0a%40startuml%0askinparam%20monochrome%20false%0apackage%20io.github.gciatto.csv.impl%20%7b%0aclass%20Configuration%0ainterface%20Formatter%0ainterface%20Parser%0aDefaultFormatter%20%221%22%20o--%20%221%22%20Configuration%0aAbstractParser%20%221%22%20o--%20%221%22%20Configuration%0aclass%20DefaultFormatter%20%7b%0a%2b%20constructor%28source%3a%20Iterable%3cRow%3e%2c%20configuration%3a%20Configuration%29%0a-%20formatRow%28row%3a%20Row%29%3a%20String%0a-%20formatAsHeader%28row%3a%20Row%29%3a%20String%0a-%20formatAsRecord%28row%3a%20Row%29%3a%20String%0a%7d%0aFormatter%20%3c%7c--%20DefaultFormatter%0aabstract%20class%20AbstractParser%20%7b%0a%23%20constructor%28source%3a%20Any%2c%20configuration%3a%20Configuration%29%0a%23%20beforeParsing%28%29%0a%23%20afterParsing%28%29%0a%23%20%7babstract%7d%20sourceAsLines%28%29%3a%20Sequence%3cString%3e%0a%7d%0aParser%20%3c%7c--%20AbstractParser%0aclass%20StringParser%20%7b%0a%2b%20source%3a%20String%0a%2b%20constructor%28source%3a%20String%2c%20configuration%3a%20Configuration%29%0a%2b%20sourceAsLines%28%29%3a%20Sequence%3cString%3e%0a%7d%0aAbstractParser%20%3c%7c--%20StringParser%0a%7d%0a%40enduml%0a" alt="" width="100%">
-    <figcaption></figcaption>
+<figure id="plantuml-figure-1694681896394841228" class="plantuml" alt="" style="width: 100%;max-width: 95vw;max-height: 80vh;">
+<p>@startuml
+skinparam monochrome false</p>
+<p>package “io github gciatto csv impl” {</p>
+<pre><code>class Configuration
+interface Formatter
+interface Parser
+
+DefaultFormatter "1" o-- "1" Configuration
+AbstractParser "1" o-- "1" Configuration
+
+class DefaultFormatter {
+    + constructor(source: Iterable&lt;Row&gt;, configuration: Configuration)
+    - formatRow(row: Row): String
+    - formatAsHeader(row: Row): String
+    - formatAsRecord(row: Row): String
+}
+
+Formatter &lt;|-- DefaultFormatter
+
+abstract class AbstractParser {
+    # constructor(source: Any, configuration: Configuration)
+    # beforeParsing()
+    # afterParsing()
+    # {abstract} sourceAsLines(): Sequence&lt;String&gt;
+}
+
+Parser &lt;|-- AbstractParser
+
+class StringParser {
+    + source: String
+    + constructor(source: String, configuration: Configuration)
+    + sourceAsLines(): Sequence&lt;String&gt;
+}
+
+AbstractParser &lt;|-- StringParser
+</code></pre>
+<p>}
+@enduml</p>
 </figure>
+<script>
+    handlePlantumlFigureByID("plantuml-figure-1694681896394841228");
+</script>
 </section><section>
 <h2 id="the-defaultformatter-class">The <code>DefaultFormatter</code> class</h2>
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">DefaultFormatter</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">override</span> <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">source</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Iterable</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">Row</span><span style="color:#000;font-weight:bold">&gt;,</span> <span style="color:#204a87;font-weight:bold">override</span> <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Configuration</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000">Formatter</span> <span style="color:#000;font-weight:bold">{</span>
@@ -1197,10 +1319,9 @@ Table -u----|&gt; Iterable: //T// = Row
 </span></span></code></pre></div></li>
 </ul>
 </section><section>
-<h2 id="unit-tests-and-usage-examples">Unit tests and usage examples</h2>
+<h2 id="unit-tests-and-usage-examples-pt-1">Unit tests and usage examples (pt. 1)</h2>
 <ul>
-<li>
-<p>Dummy instances for testing:</p>
+<li>Dummy instances for testing:
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">object</span> <span style="color:#000">CsvStrings</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">iris</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">String</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">"""
 </span></span></span><span style="display:flex;"><span><span style="color:#4e9a06">    |# sepal_length, sepal_width, petal_length, petal_width, class
@@ -1219,6 +1340,10 @@ Table -u----|&gt; Iterable: //T// = Row
 </span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// other dummy constants here
 </span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000;font-weight:bold">}</span>
 </span></span></code></pre></div></li>
+</ul>
+</section><section>
+<h2 id="unit-tests-and-usage-examples-pt-2">Unit tests and usage examples (pt. 2)</h2>
+<ul>
 <li>
 <p>Tests involving parsing be like:</p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@Test</span>
@@ -2151,6 +2276,111 @@ Table -u----|&gt; Iterable: //T// = Row
 </div>
 
 </section>
+</section><section>
+<h2 id="multi-platform-cicd">Multi-platform CI/CD</h2>
+<p>Conceptual workflow:</p>
+<ol>
+<li>Check style (e.g. via <a href="https://ktlint.github.io/">KtLint</a>) of all Kotlin sources</li>
+<li>Automatic bug detection (e.g. via <a href="https://github.com/detekt/detekt">Detekt</a>)</li>
+<li>For each operative system <code>O</code> (e.g. Win, Mac, Linux):
+<ul>
+<li>for each target platform <code>T</code>:
+<ul>
+<li>for each relevant version <code>V</code> of the platform <code>T</code> (e.g. LTS releases + latest)
+<ol>
+<li>ensure main code compiles (e.g. via Gradle task <code>&lt;T&gt;MainClasses</code>)</li>
+<li>ensure test code compiles (e.g. via Gradle task <code>&lt;T&gt;TestClasses</code>)</li>
+<li>ensure test passes (e.g. via Gradle task <code>&lt;T&gt;Test</code>)</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>If need to release (e.g. commit on <code>master</code> branch)
+<ul>
+<li>for each target platform <code>T</code> $\cup$ <code>kotlin-multiplatform</code>:
+<ol>
+<li>assemble compiled code into archive</li>
+<li>push archive on main repository <code>R</code> of platform <code>T</code></li>
+</ol>
+</li>
+</ul>
+</li>
+</ol>
+</section><section>
+<h2 id="about-the-practical-cicd">About the practical CI/CD</h2>
+<ul>
+<li>
+<p>Even more complicated, because release on Maven Central is complex</p>
+</li>
+<li>
+<p>Setting up a CI/CD pipeline of this kind requires a lot of work</p>
+<ul>
+<li>and Gradle / GitHub Actions boilerplate</li>
+</ul>
+</li>
+<li>
+<p>Recommendations:</p>
+<ol>
+<li>Use templates, such as: <a href="https://github.com/gciatto/template-kt-mpp-project/">https://github.com/gciatto/template-kt-mpp-project/</a></li>
+<li>Use Gradle plugins, such as: <a href="https://github.com/gciatto/kt-mpp">https://github.com/gciatto/kt-mpp</a></li>
+<li>Use existing projects as examples, e.g. <a href="https://github.com/gciatto/kt-mpp">https://github.com/gciatto/kt-mpp</a></li>
+</ol>
+</li>
+</ul>
+</section><section>
+<h2 id="repositories-by-platform-pt-1">Repositories by platform (pt. 1)</h2>
+<blockquote>
+<p><strong>Takeaway</strong>: each platform has some preferred main repository where users expect to find packages onto</p>
+</blockquote>
+<ul>
+<li>
+<p><code>JVM</code> $\rightarrow$ <a href="https://central.sonatype.com">Maven Central Repository</a> (MCR)</p>
+<ul>
+<li>other Maven repositories exist, but they are more fragile</li>
+</ul>
+</li>
+<li>
+<p>Kotlin / Multiplatform $\rightarrow$ MCR</p>
+</li>
+<li>
+<p><code>JS</code> $\rightarrow$ <a href="https://www.npmjs.com/">NPM</a></p>
+</li>
+<li>
+<p><code>Android</code> $\rightarrow$ <a href="https://play.google.com/store?hl=en">Google Play</a></p>
+</li>
+<li>
+<p><code>Mac</code> / <code>iOS</code> $\rightarrow$ <a href="https://www.apple.com/ios/app-store/">App Store</a></p>
+<ul>
+<li>or <a href="https://brew.sh/">Homebrew</a></li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="repositories-by-platform-pt-2">Repositories by platform (pt. 2)</h2>
+<ul>
+<li>
+<p><code>Windows</code> $\rightarrow$ <a href="https://www.microsoft.com/en-us/store/apps/windows">Microsoft Store</a></p>
+<ul>
+<li>or <a href="https://chocolatey.org/">Chocolatey</a></li>
+<li>or <a href="https://scoop.sh/">Scoop</a></li>
+</ul>
+</li>
+<li>
+<p><code>Linux</code> $\rightarrow$ depends on the distro</p>
+<ul>
+<li>e.g. <a href="https://archlinux.org/">Arch Linux</a> $\rightarrow$ <a href="https://aur.archlinux.org/">AUR</a></li>
+<li>inter-distro: <a href="https://flatpak.org/">Flatpack</a> $\rightarrow$ <a href="https://flathub.org/home">Flathub</a></li>
+</ul>
+</li>
+<li>
+<p><code>Python</code> $\rightarrow$ <a href="https://pypi.org/">PyPI</a></p>
+</li>
+<li>
+<p><code>.Net</code> $\rightarrow$ <a href="https://www.nuget.org/">NuGet</a></p>
+</li>
+</ul>
 </section>
 
   
