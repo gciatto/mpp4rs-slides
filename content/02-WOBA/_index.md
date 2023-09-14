@@ -505,14 +505,14 @@ Let `T` denote some target platform
 
 ## Domain entities
 
-{{< plantuml >}}
+{{< plantuml width="50%" >}}
 top to bottom direction
 
 package "kotlin" {
     interface Iterable<T>
 }
 
-package "io.github.gciatto.csv" {
+package "io github gciatto csv" {
 
     interface Row {
         + get(index: Int): String
@@ -637,12 +637,10 @@ interface Table : Iterable<Row> {
 
 ## Common implementations of domain entities
 
-{{< gravizo >}}
-@startuml
-skinparam monochrome false
+{{% plantuml %}}
 top to bottom direction
 
-package "io.github.gciatto.csv.**impl**" {
+package "io github gciatto csv **impl**" {
     interface Row
 
     abstract class AbstractRow {
@@ -651,7 +649,7 @@ package "io.github.gciatto.csv.**impl**" {
         # toString(type: String?): String
     }
 
-    Row <|-- AbstractRow
+    Row <|-d- AbstractRow
 
     interface Header
 
@@ -660,9 +658,9 @@ package "io.github.gciatto.csv.**impl**" {
         + constructor(columns: Iterable<String>)
     }
 
-    Row <|-- Header
-    Header <|-- DefaultHeader
-    AbstractRow <|-- DefaultHeader
+    Row <|-d- Header
+    Header <|-d- DefaultHeader
+    AbstractRow <|-d- DefaultHeader
 
     interface Record
 
@@ -670,9 +668,9 @@ package "io.github.gciatto.csv.**impl**" {
         + constructor(header: Header, values: Iterable<String>)
     }
 
-    Row <|-- Record
+    Row <|-d- Record
     Record <|-- DefaultRecord
-    AbstractRow <|-- DefaultRecord
+    AbstractRow <|-d- DefaultRecord
 
     class DefaultTable {
         + constructor(header: Header, records: Iterable<Record>)
@@ -680,8 +678,7 @@ package "io.github.gciatto.csv.**impl**" {
 
     Table <|-- DefaultTable
 }
-@enduml
-{{< /gravizo >}}
+{{% /plantuml %}}
 
 ---
 
@@ -823,7 +820,7 @@ internal class DefaultTable(override val header: Header, records: Iterable<Recor
 
 - Class diagram:
     
-    {{< gravizo width="30%">}}
+    {{< plantuml width="30%">}}
     @startuml
     skinparam monochrome false
     class Csv{
@@ -836,7 +833,7 @@ internal class DefaultTable(override val header: Header, records: Iterable<Recor
         + tableOf(rows): Table
     }
     @enduml
-    {{< /gravizo >}}
+    {{< /plantuml >}}
 
 ---
 
@@ -967,11 +964,11 @@ fun tableOf(rows: Iterable<Row>): Table {
 - `Parser`: converts some source into a `Table`, according to some `Configuration`
     * source $\approx$ anything that can be interpreted as a string to be parsed (e.g. file, string, etc.)
 
-{{< gravizo width="40%">}}
+{{< plantuml width="35%">}}
 @startuml
 skinparam monochrome false
 
-package io.github.gciatto.csv {
+package "io github gciatto csv" {
 
     class Configuration {
         + separator: Char
@@ -1004,7 +1001,7 @@ package io.github.gciatto.csv {
 
 }
 @enduml
-{{< /gravizo >}}
+{{< /plantuml >}}
 
 ---
 
@@ -1075,11 +1072,11 @@ interface Parser {
 
 ## Common implementation of novel entities
 
-{{< gravizo >}}
+{{< plantuml >}}
 @startuml
 skinparam monochrome false
 
-package io.github.gciatto.csv.impl {
+package "io github gciatto csv impl" {
 
     class Configuration
     interface Formatter
@@ -1115,7 +1112,7 @@ package io.github.gciatto.csv.impl {
     AbstractParser <|-- StringParser
 }
 @enduml
-{{< /gravizo >}}
+{{< /plantuml >}}
 
 ---
 
@@ -2160,5 +2157,13 @@ f(["a", "b", "c"])
 ```
 {{% /col %}}
 {{% /multicol %}}
+
+{{% /section %}}
+
+---
+
+{{% section %}}
+
+## About multi-platform CI/CD
 
 {{% /section %}}
