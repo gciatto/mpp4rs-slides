@@ -1233,7 +1233,7 @@ class StringParser(override val source: String, configuration: Configuration)
 
 ---
 
-## Unit tests and usage examples
+## Unit tests and usage examples (pt. 1)
 
 - Dummy instances for testing:
     ```kotlin
@@ -1255,6 +1255,10 @@ class StringParser(override val source: String, configuration: Configuration)
         // other dummy constants here
     }
     ```
+    
+---
+
+## Unit tests and usage examples (pt. 2)
 
 - Tests involving parsing be like:
     ```kotlin
@@ -2162,8 +2166,68 @@ f(["a", "b", "c"])
 
 ---
 
-{{% section %}}
+## Multi-platform CI/CD
 
-## About multi-platform CI/CD
+Conceptual workflow:
+1. Check style (e.g. via [KtLint](https://ktlint.github.io/)) of all Kotlin sources
+2. Automatic bug detection (e.g. via [Detekt](https://github.com/detekt/detekt))
+3. For each operative system `O` (e.g. Win, Mac, Linux):
+    - for each target platform `T`:
+        + for each relevant version `V` of the platform `T` (e.g. LTS releases + latest)
+            1. ensure main code compiles (e.g. via Gradle task `<T>MainClasses`)
+            2. ensure test code compiles (e.g. via Gradle task `<T>TestClasses`)
+            3. ensure test passes (e.g. via Gradle task `<T>Test`)
+4. If need to release (e.g. commit on `master` branch)
+    - for each target platform `T` $\cup$ `kotlin-multiplatform`:
+        1. assemble compiled code into archive
+        2. push archive on main repository `R` of platform `T`
 
-{{% /section %}}
+--- 
+
+## About the practical CI/CD
+
+- Even more complicated, because release on Maven Central is complex
+
+- Setting up a CI/CD pipeline of this kind requires a lot of work
+    + and Gradle / GitHub Actions boilerplate
+
+- Recommendations:
+    1. Use templates, such as: https://github.com/gciatto/template-kt-mpp-project/
+    2. Use Gradle plugins, such as: https://github.com/gciatto/kt-mpp
+    3. Use existing projects as examples, e.g. https://github.com/gciatto/kt-mpp
+
+
+
+---
+
+## Repositories by platform (pt. 1)
+
+> __Takeaway__: each platform has some preferred main repository where users expect to find packages onto
+
+- `JVM` $\rightarrow$ [Maven Central Repository](https://central.sonatype.com) (MCR)
+    + other Maven repositories exist, but they are more fragile
+
+- Kotlin / Multiplatform $\rightarrow$ MCR
+
+- `JS` $\rightarrow$ [NPM](https://www.npmjs.com/)
+
+- `Android` $\rightarrow$ [Google Play](https://play.google.com/store?hl=en)
+
+- `Mac` / `iOS` $\rightarrow$ [App Store](https://www.apple.com/ios/app-store/)
+    * or [Homebrew](https://brew.sh/)
+
+---
+
+## Repositories by platform (pt. 2)
+
+- `Windows` $\rightarrow$ [Microsoft Store](https://www.microsoft.com/en-us/store/apps/windows)
+    * or [Chocolatey](https://chocolatey.org/)
+    * or [Scoop](https://scoop.sh/)
+
+- `Linux` $\rightarrow$ depends on the distro   
+    * e.g. [Arch Linux](https://archlinux.org/) $\rightarrow$ [AUR](https://aur.archlinux.org/)
+    * inter-distro: [Flatpack](https://flatpak.org/) $\rightarrow$ [Flathub](https://flathub.org/home) 
+
+- `Python` $\rightarrow$ [PyPI](https://pypi.org/)
+
+- `.Net` $\rightarrow$ [NuGet](https://www.nuget.org/)
