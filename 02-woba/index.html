@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><link rel="stylesheet" href="/mpp4rs-slides/reveal-js/dist/reset.css">
 <link rel="stylesheet" href="/mpp4rs-slides/reveal-js/dist/reveal.css">
-  <link rel="stylesheet" href="/mpp4rs-slides/css/custom-theme.min.1a38f952ad4fe39d0c6997be4ebfeb2dd1d24c5191378417611ac238204dee27.css" id="theme"><link rel="stylesheet" href="/mpp4rs-slides/highlight-js/solarized-dark.min.css">
+  <link rel="stylesheet" href="/mpp4rs-slides/css/custom-theme.min.8b089bfe746f9f3982eb341bf72cf4df4e5a39f8484e75c31111c3a10ac1630f.css" id="theme"><link rel="stylesheet" href="/mpp4rs-slides/highlight-js/solarized-dark.min.css">
 <link rel="stylesheet" href="https://gitcdn.link/repo/DanySK/css-blur-animation/master/blur.css">
 <link href="https://fonts.googleapis.com/css?family=Roboto Mono" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=Oxygen Mono" rel="stylesheet">
@@ -225,6 +225,11 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// other custom repositories here (discouraged)
 </span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000;font-weight:bold">}</span> 
 </span></span></code></pre></div></li>
+</ul>
+</section><section>
+<h2 id="kotlin-multi-platform-build-configuration-pt-2">Kotlin multi-platform build configuration (pt. 2)</h2>
+<p>Defines several aspects of the project:</p>
+<ul>
 <li>
 <p>which platforms to target (reference <a href="https://kotlinlang.org/docs/multiplatform-dsl-reference.html#targets">here</a>)</p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#000">kotlin</span> <span style="color:#000;font-weight:bold">{</span>
@@ -249,10 +254,6 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic">// other targets here
 </span></span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000;font-weight:bold">}</span>
 </span></span></code></pre></div></li>
-</ul>
-</section><section>
-<h2 id="kotlin-multi-platform-build-configuration-pt-2">Kotlin multi-platform build configuration (pt. 2)</h2>
-<ul>
 <li>
 <p>other admissible targets:</p>
 <ul>
@@ -260,8 +261,11 @@
 <li>various native sub-targets (details <a href="https://kotlinlang.org/docs/native-target-support.html">here</a>)</li>
 </ul>
 </li>
-<li>
-<p>which third-party library should each target depend upon</p>
+</ul>
+</section><section>
+<h2 id="kotlin-multi-platform-build-configuration-pt-3">Kotlin multi-platform build configuration (pt. 3)</h2>
+<ul>
+<li>which third-party library should each target depend upon
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#000">kotlin</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#000">sourceSets</span> <span style="color:#000;font-weight:bold">{</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">commonMain</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">getting</span> <span style="color:#000;font-weight:bold">{</span>
@@ -302,7 +306,7 @@
 </span></span></code></pre></div></li>
 </ul>
 </section><section>
-<h2 id="kotlin-multi-platform-build-configuration-pt-3">Kotlin multi-platform build configuration (pt. 3)</h2>
+<h2 id="kotlin-multi-platform-build-configuration-pt-4">Kotlin multi-platform build configuration (pt. 4)</h2>
 <ul>
 <li>
 <p>configure Kotlin compiler options</p>
@@ -626,7 +630,7 @@
 </ul>
 </section><section>
 <h2 id="domain-entities">Domain entities</h2>
-<figure id="plantuml-figure-1694681896394607111" class="plantuml" alt="" style="width: 50%;max-width: 95vw;max-height: 80vh;">
+<figure id="plantuml-figure-1697795035648736676" class="plantuml" alt="" style="width: 50%;max-width: 95vw;max-height: 80vh;">
 <p>top to bottom direction</p>
 <p>package “kotlin” {
 interface Iterable<t>
@@ -672,7 +676,7 @@ Table -u----|&gt; Iterable: //T// = Row
 <p>}</p>
 </figure>
 <script>
-    handlePlantumlFigureByID("plantuml-figure-1694681896394607111");
+    handlePlantumlFigureByID("plantuml-figure-1697795035648736676");
 </script>
 </section><section>
 <h2 id="the-row-interface">The <code>Row</code> interface</h2>
@@ -736,7 +740,7 @@ Table -u----|&gt; Iterable: //T// = Row
 </span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
 </span></span></code></pre></div></section><section>
 <h2 id="common-implementations-of-domain-entities">Common implementations of domain entities</h2>
-<figure id="plantuml-figure-1694681896394744421" class="plantuml" alt="" style="width: 100%;max-width: 95vw;max-height: 80vh;">
+<figure id="plantuml-figure-1697795035648918593" class="plantuml" alt="" style="width: 100%;max-width: 95vw;max-height: 80vh;">
     <p>top to bottom direction</p>
 <p>package “io github gciatto csv <strong>impl</strong>” {
 interface Row</p>
@@ -769,7 +773,7 @@ AbstractRow &lt;|-d- DefaultRecord</p>
 <p>}</p>
 </figure>
 <script>
-    handlePlantumlFigureByID("plantuml-figure-1694681896394744421");
+    handlePlantumlFigureByID("plantuml-figure-1697795035648918593");
 </script>
 </section><section>
 <h2 id="the-abstractrow-class">The <code>AbstractRow</code> class</h2>
@@ -901,7 +905,7 @@ AbstractRow &lt;|-d- DefaultRecord</p>
 <p>Class diagram:</p>
 </li>
 </ul>
-<figure id="plantuml-figure-1694681896394783724" class="plantuml" alt="" style="width: 30%;max-width: 95vw;max-height: 80vh;">
+<figure id="plantuml-figure-1697795035648945495" class="plantuml" alt="" style="width: 30%;max-width: 95vw;max-height: 80vh;">
 <pre><code>@startuml
 skinparam monochrome false
 class Csv{
@@ -917,7 +921,7 @@ class Csv{
 </code></pre>
 </figure>
 <script>
-    handlePlantumlFigureByID("plantuml-figure-1694681896394783724");
+    handlePlantumlFigureByID("plantuml-figure-1697795035648945495");
 </script>
 </section><section>
 <h2 id="the-csvkt-file">The <code>Csv.kt</code> file</h2>
@@ -1079,7 +1083,7 @@ class Csv{
 </ul>
 </li>
 </ul>
-<figure id="plantuml-figure-1694681896394813726" class="plantuml" alt="" style="width: 35%;max-width: 95vw;max-height: 80vh;">
+<figure id="plantuml-figure-1697795035648976598" class="plantuml" alt="" style="width: 35%;max-width: 95vw;max-height: 80vh;">
 <p>@startuml
 skinparam monochrome false</p>
 <p>package “io github gciatto csv” {</p>
@@ -1116,7 +1120,7 @@ Parser "1" o-- "1" Configuration
 @enduml</p>
 </figure>
 <script>
-    handlePlantumlFigureByID("plantuml-figure-1694681896394813726");
+    handlePlantumlFigureByID("plantuml-figure-1697795035648976598");
 </script>
 </section><section>
 <h2 id="the-configuration-class">The <code>Configuration</code> class</h2>
@@ -1175,7 +1179,7 @@ Parser "1" o-- "1" Configuration
 </span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
 </span></span></code></pre></div></section><section>
 <h2 id="common-implementation-of-novel-entities">Common implementation of novel entities</h2>
-<figure id="plantuml-figure-1694681896394841228" class="plantuml" alt="" style="width: 100%;max-width: 95vw;max-height: 80vh;">
+<figure id="plantuml-figure-1697795035649001300" class="plantuml" alt="" style="width: 100%;max-width: 95vw;max-height: 80vh;">
 <p>@startuml
 skinparam monochrome false</p>
 <p>package “io github gciatto csv impl” {</p>
@@ -1216,7 +1220,7 @@ AbstractParser &lt;|-- StringParser
 @enduml</p>
 </figure>
 <script>
-    handlePlantumlFigureByID("plantuml-figure-1694681896394841228");
+    handlePlantumlFigureByID("plantuml-figure-1697795035649001300");
 </script>
 </section><section>
 <h2 id="the-defaultformatter-class">The <code>DefaultFormatter</code> class</h2>
@@ -2325,7 +2329,7 @@ AbstractParser &lt;|-- StringParser
 <ol>
 <li>Use templates, such as: <a href="https://github.com/gciatto/template-kt-mpp-project/">https://github.com/gciatto/template-kt-mpp-project/</a></li>
 <li>Use Gradle plugins, such as: <a href="https://github.com/gciatto/kt-mpp">https://github.com/gciatto/kt-mpp</a></li>
-<li>Use existing projects as examples, e.g. <a href="https://github.com/gciatto/kt-mpp">https://github.com/gciatto/kt-mpp</a></li>
+<li>Use existing projects as examples, e.g. <a href="https://github.com/tuProlog/2p-kt">https://github.com/tuProlog/2p-kt</a></li>
 </ol>
 </li>
 </ul>
@@ -2381,6 +2385,16 @@ AbstractParser &lt;|-- StringParser
 <p><code>.Net</code> $\rightarrow$ <a href="https://www.nuget.org/">NuGet</a></p>
 </li>
 </ul>
+</section><section>
+<h2 id="hahahugoshortcode1s0hbhb">Multi-platform Programming for Research-Oriented Software</h2>
+<br>
+<h3 id="giovanni-ciatto-----giovanniciattouniboitmailtogiovanniciattouniboit"><a href="mailto:giovanni.ciatto@unibo.it">Giovanni Ciatto — <code>giovanni.ciatto@unibo.it</code></a></h3>
+<br>
+<!-- Compiled on: 2023-10-20
+ --- [<i class="fa fa-print" aria-hidden="true"></i> printable version](?print-pdf&pdfSeparateFragments=false) -->
+<p>Compiled on: 2023-10-20
+</p>
+<p><a href=".."><i class="fa fa-undo" aria-hidden="true"></i> back</a></p>
 </section>
 
   

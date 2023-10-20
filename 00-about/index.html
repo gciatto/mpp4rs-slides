@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><link rel="stylesheet" href="/mpp4rs-slides/reveal-js/dist/reset.css">
 <link rel="stylesheet" href="/mpp4rs-slides/reveal-js/dist/reveal.css">
-  <link rel="stylesheet" href="/mpp4rs-slides/css/custom-theme.min.1a38f952ad4fe39d0c6997be4ebfeb2dd1d24c5191378417611ac238204dee27.css" id="theme"><link rel="stylesheet" href="/mpp4rs-slides/highlight-js/solarized-dark.min.css">
+  <link rel="stylesheet" href="/mpp4rs-slides/css/custom-theme.min.8b089bfe746f9f3982eb341bf72cf4df4e5a39f8484e75c31111c3a10ac1630f.css" id="theme"><link rel="stylesheet" href="/mpp4rs-slides/highlight-js/solarized-dark.min.css">
 <link rel="stylesheet" href="https://gitcdn.link/repo/DanySK/css-blur-animation/master/blur.css">
 <link href="https://fonts.googleapis.com/css?family=Roboto Mono" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=Oxygen Mono" rel="stylesheet">
@@ -41,16 +41,31 @@
 <p>Lectures in lab with immediate hands-on.</p>
 <h2 id="timetable">Timetable</h2>
 <ul>
-<li>TBD</li>
+<li>
+<p>Tuesday 2023-10-24 <strong>09:00-13:00</strong>, online (<a href="https://teams.microsoft.com/l/meetup-join/19%3ameeting_OGYxOTc0OWYtMzdmZS00YWZlLTkyMzQtNTRkNWYwNDZmNDVh%40thread.v2/0?context=%7b%22Tid%22%3a%22e99647dc-1b08-454a-bf8c-699181b389ab%22%2c%22Oid%22%3a%220994ea56-e36d-4ebf-8631-b5c703034c66%22%7d">Teams meeting</a>)</p>
+</li>
+<li>
+<p>Wednesday 2023-10-25 <strong>09:00-13:00</strong>, online (<a href="https://teams.microsoft.com/l/meetup-join/19%3ameeting_OGYxOTc0OWYtMzdmZS00YWZlLTkyMzQtNTRkNWYwNDZmNDVh%40thread.v2/0?context=%7b%22Tid%22%3a%22e99647dc-1b08-454a-bf8c-699181b389ab%22%2c%22Oid%22%3a%220994ea56-e36d-4ebf-8631-b5c703034c66%22%7d">Teams meeting</a>)</p>
+</li>
+<li>
+<p>Thursday 2023-10-26 <strong>09:00-13:00</strong>, online (<a href="https://teams.microsoft.com/l/meetup-join/19%3ameeting_OGYxOTc0OWYtMzdmZS00YWZlLTkyMzQtNTRkNWYwNDZmNDVh%40thread.v2/0?context=%7b%22Tid%22%3a%22e99647dc-1b08-454a-bf8c-699181b389ab%22%2c%22Oid%22%3a%220994ea56-e36d-4ebf-8631-b5c703034c66%22%7d">Teams meeting</a>)</p>
+</li>
+<li>
+<p>Maybe Friday too, if we need more time</p>
+</li>
 </ul>
+<br>
+<blockquote>
+<p>Yes, I will record lectures and make recordings available to students</p>
+</blockquote>
 </section><section>
 <h1 id="goals">Goals</h1>
 <ol>
-<li>Understand software platforms and their roles in the practice of computer science</li>
-<li>Understand analogies and differences among different platforms</li>
-<li>Learn how to design software in a platform agnostic way</li>
-<li>Learn best practices, toolkits, and issues of multi-platform programming</li>
-<li>Understand how the software engineering workflow should be extended to tackle multi-platform programming</li>
+<li>Understand <strong>software platforms</strong> and their roles in the practice of computer science</li>
+<li>Understand <em>analogies</em> and <em>differences</em> among different platforms</li>
+<li>Learn how to design software in a <strong>platform-agnostic</strong> way</li>
+<li>Learn best practices, toolkits, and issues of <strong>multi-platform programming</strong></li>
+<li>Understand how the <strong>software engineering</strong> <strong>workflow</strong> should be extended to tackle multi-platform programming</li>
 </ol>
 </section><section>
 <h1 id="prerequisites">Prerequisites</h1>
@@ -86,13 +101,16 @@ but apparently there is always the time to do it twice”</p>
 <h1 id="exam">Exam</h1>
 <h3 id="development-of-an-individual-project"><strong>Development</strong> of an <strong>individual</strong> project</h3>
 <ul>
-<li>Must feature:
+<li>
+<p>Must feature:</p>
 <ul>
-<li>running on at least 2 platforms</li>
-<li>being usable “as a library” on all supported platforms</li>
+<li>involving <strong>at least 2</strong> inter-communicating <strong>platforms</strong></li>
+<li>being usable <em>“as a library”</em> on all supported platforms</li>
 </ul>
 </li>
-<li>Better if you re-use some of your research activity material</li>
+<li>
+<p>Better if you re-use some of your research activity material</p>
+</li>
 </ul>
 </section><section>
 <h1 id="software">Software</h1>
@@ -104,10 +122,8 @@ but apparently there is always the time to do it twice”</p>
 <li>Consider using <a href="https://github.com/shyiko/jabba">Jabba</a></li>
 </ul>
 </li>
-<li>Kotlin (kotlinc REPL working)</li>
 <li>Gradle</li>
 <li>Python 3</li>
-<li>Docker</li>
 </ul>
 <h2 id="recommended">Recommended</h2>
 <ul>
@@ -115,6 +131,16 @@ but apparently there is always the time to do it twice”</p>
 <li>Visual Studio Code</li>
 <li>A decent Unix terminal</li>
 </ul>
+</section><section>
+<h2 id="hahahugoshortcode1s0hbhb">Multi-platform Programming for Research-Oriented Software</h2>
+<br>
+<h3 id="giovanni-ciatto-----giovanniciattouniboitmailtogiovanniciattouniboit"><a href="mailto:giovanni.ciatto@unibo.it">Giovanni Ciatto — <code>giovanni.ciatto@unibo.it</code></a></h3>
+<br>
+<!-- Compiled on: 2023-10-20
+ --- [<i class="fa fa-print" aria-hidden="true"></i> printable version](?print-pdf&pdfSeparateFragments=false) -->
+<p>Compiled on: 2023-10-20
+</p>
+<p><a href=".."><i class="fa fa-undo" aria-hidden="true"></i> back</a></p>
 </section>
 
   
