@@ -2,7 +2,7 @@
 +++
 
 title = "MPP4RS"
-description = "Landing page"
+description = "Multi-platform Programming for Research-Oriented Software"
 outputs = ["Reveal"]
 aliases = [
     "/landing/"
@@ -10,7 +10,7 @@ aliases = [
 
 +++
 
-# Multi-platform Programming for Research-Oriented Software
+# {{< course_name >}}
 
 PhD Course for the Computer Science and Engineering PhD Programme
 

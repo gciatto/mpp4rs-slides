@@ -32,17 +32,28 @@ Lectures in lab with immediate hands-on.
 
 ## Timetable
 
-* TBD
+* Tuesday 2023-10-24 __09:00-13:00__, online ([Teams meeting]({{< teams_meeting >}}))
+
+* Wednesday 2023-10-25 __09:00-13:00__, online ([Teams meeting]({{< teams_meeting >}}))
+
+* Thursday 2023-10-26 __09:00-13:00__, online ([Teams meeting]({{< teams_meeting >}}))
+
+* Maybe Friday too, if we need more time
+
+<br/>
+
+
+> Yes, I will record lectures and make recordings available to students
 
 ---
 
 # Goals
 
-1. Understand software platforms and their roles in the practice of computer science
-2. Understand analogies and differences among different platforms
-3. Learn how to design software in a platform agnostic way
-4. Learn best practices, toolkits, and issues of multi-platform programming
-5. Understand how the software engineering workflow should be extended to tackle multi-platform programming
+1. Understand **software platforms** and their roles in the practice of computer science
+2. Understand _analogies_ and _differences_ among different platforms
+3. Learn how to design software in a **platform-agnostic** way
+4. Learn best practices, toolkits, and issues of **multi-platform programming**
+5. Understand how the **software engineering** __workflow__ should be extended to tackle multi-platform programming
 
 ---
 
@@ -67,9 +78,11 @@ Lectures in lab with immediate hands-on.
 # Exam
 
 ### **Development** of an **individual** project
+
 * Must feature:
-  * running on at least 2 platforms
-  * being usable "as a library" on all supported platforms
+  * involving __at least 2__ inter-communicating __platforms__
+  * being usable _"as a library"_ on all supported platforms
+
 * Better if you re-use some of your research activity material
 
 ---
@@ -77,15 +90,19 @@ Lectures in lab with immediate hands-on.
 # Software
 
 ## Required
+
 * A working internet connection
 * A working JDK installation
   * Consider using [Jabba](https://github.com/shyiko/jabba)
-* Kotlin (kotlinc REPL working)
 * Gradle
 * Python 3
-* Docker
 
 ## Recommended
+
 * IntelliJ Idea
 * Visual Studio Code
 * A decent Unix terminal
+
+---
+
+{{% import path="reusable/header.md" %}}

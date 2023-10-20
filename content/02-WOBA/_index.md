@@ -168,6 +168,12 @@ Defines several aspects of the project:
     } 
     ```
 
+---
+
+## Kotlin multi-platform build configuration (pt. 2)
+
+Defines several aspects of the project:
+
 - which platforms to target (reference [here](https://kotlinlang.org/docs/multiplatform-dsl-reference.html#targets))
     ```kotlin
     kotlin {
@@ -193,13 +199,13 @@ Defines several aspects of the project:
     }
     ```
 
----
-
-## Kotlin multi-platform build configuration (pt. 2)
-
 - other admissible targets: 
     * `android`
     * various native sub-targets (details [here](https://kotlinlang.org/docs/native-target-support.html))
+
+---
+
+## Kotlin multi-platform build configuration (pt. 3)
 
 - which third-party library should each target depend upon
     ```kotlin
@@ -244,7 +250,7 @@ Defines several aspects of the project:
 
 ---
 
-## Kotlin multi-platform build configuration (pt. 3)
+## Kotlin multi-platform build configuration (pt. 4)
 
 - configure Kotlin compiler options
     ```kotlin
@@ -2194,9 +2200,7 @@ Conceptual workflow:
 - Recommendations:
     1. Use templates, such as: https://github.com/gciatto/template-kt-mpp-project/
     2. Use Gradle plugins, such as: https://github.com/gciatto/kt-mpp
-    3. Use existing projects as examples, e.g. https://github.com/gciatto/kt-mpp
-
-
+    3. Use existing projects as examples, e.g. https://github.com/tuProlog/2p-kt
 
 ---
 
@@ -2231,3 +2235,7 @@ Conceptual workflow:
 - `Python` $\rightarrow$ [PyPI](https://pypi.org/)
 
 - `.Net` $\rightarrow$ [NuGet](https://www.nuget.org/)
+
+---
+
+{{% import path="reusable/header.md" %}}

@@ -756,3 +756,7 @@ Let `N` be the amount of supported platforms
   * how to create platform-agnostic design?
 
 {{% /section %}}
+
+---
+
+{{% import path="reusable/header.md" %}}
