@@ -737,7 +737,7 @@ Whenever a new functionality needs to be developed:
 
 ---
 
-## Write once, build everywhere (analysis)
+## Write first, wrap elsewhere (analysis)
 
 Let `N` be the amount of supported platforms
 
