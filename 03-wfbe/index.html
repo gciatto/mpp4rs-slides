@@ -23,7 +23,366 @@
       <div class="slides">
   
 
-    <section><h2 id="tbd">TBD</h2>
+    <section><h2 id="write-first-wrap-elsewhere-the-case-of-jpypehttpsjpypereadthedocsio">Write first, wrap elsewhere: the case of <a href="https://jpype.readthedocs.io/">JPype</a></h2>
+<ul>
+<li>
+<p>In the end of the day, the Python interpreter is C++ software</p>
+</li>
+<li>
+<p>Most commonly, efficient Python code is written in C++ and then wrapped into Python</p>
+</li>
+<li>
+<p>Put it simply, the JVM too is C++ software</p>
+</li>
+<li>
+<p>Can Python code be written in Java and then wrapped into Python?</p>
+</li>
+<li>
+<p>Apparently yes, via several ad-hoc bridging technologies:</p>
+<ul>
+<li><a href="https://jpype.readthedocs.io/">JPype</a> a bridge for calling JVM code from Python as a native library</li>
+<li><a href="https://jython.org/">Jython</a> a JVM-based Python interpreter</li>
+<li><a href="https://www.py4j.org/">Py4J</a> an RPC based bridge for calling Java from Python</li>
+<li><a href="https://pyjnius.readthedocs.io/">Pyjnius</a> similar to JPype, but based on <a href="https://cython.org">Cython</a></li>
+<li>and many others…</li>
+</ul>
+</li>
+<li>
+<p>Why exactly JPype?</p>
+<ul>
+<li>still maintained, works with vanilla CPython, good documentation, good interoperabilty with JVM types</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="jpype-overview">JPype Overview:</h2>
+<ol>
+<li>
+<p>Ensure you have a JVM installed on your system</p>
+<ul>
+<li>with the <code>JAVA_HOME</code> environment variable set to the JVM installation directory</li>
+</ul>
+</li>
+<li>
+<p>Ensure your compiled Java code is available as a <code>.jar</code> file</p>
+<ul>
+<li>say, in <code>/path/to/my.jar</code></li>
+</ul>
+</li>
+<li>
+<p>Install the JPype package via <code>pip install JPype1</code></p>
+</li>
+<li>
+<p>You first need JPype to start a JVM instance in your Python process</p>
+<ul>
+<li>tby default, JVM location is inferred from the <code>JAVA_HOME</code> environment variable</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">jpype</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"># start the JVM</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">jpype</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">startJVM</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">classpath</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">"/path/to/my.jar"</span><span style="color:#000;font-weight:bold">])</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Once the JVM is started, one can import Java classes and call their methods as if they were Python objects</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">jpype.imports</span> <span style="color:#8f5902;font-style:italic"># this is necessary to import Java classes</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">from</span> <span style="color:#000">java.lang</span> <span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">System</span> <span style="color:#8f5902;font-style:italic"># import the java.lang.System class</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">System</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">out</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">println</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"Hello World!"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></div></li>
+</ol>
+</section><section>
+<h2 id="jpypes-bridging-model-pt-1">JPype’s Bridging Model (pt. 1)</h2>
+<p>Overview on the <a href="https://jpype.readthedocs.io/en/latest/quickguide.html#classes-objects">official documentation</a></p>
+<ul>
+<li>
+<p>Java <strong>classes</strong> are <strong>presented</strong> wherever possible <em>similar</em> to Python classes</p>
+</li>
+<li>
+<p>the only major difference is that <strong>Java classes</strong> and objects are <em>closed</em> and <strong>cannot be modified</strong></p>
+</li>
+</ul>
+<figure><img src="jpype-types.png" alt="Java classes vs. Python classes in JPype" width="50%">
+</figure>
+
+</section><section>
+<h2 id="jpypes-bridging-model-pt-2">JPype’s Bridging Model (pt. 2)</h2>
+<p>Overview on the <a href="https://jpype.readthedocs.io/en/latest/quickguide.html#exceptions">official documentation</a></p>
+<ul>
+<li>
+<p>Java exceptions extend from Python exceptions</p>
+</li>
+<li>
+<p>Java exceptions can be dealt with in the same way as Python native exceptions</p>
+<ul>
+<li>i.e. via <code>try</code>-<code>except</code> blocks</li>
+</ul>
+</li>
+<li>
+<p><code>JException</code> serves as the base class for all Java exceptions</p>
+</li>
+</ul>
+<!-- ![Java exceptions vs. Python exceptions in JPype](./jpype-exceptions.png) -->
+<figure><img src="jpype-exceptions.png" alt="Java exceptions vs. Python exceptions in JPype" width="50%">
+</figure>
+
+</section><section>
+<h2 id="jpypes-bridging-model-pt-3">JPype’s Bridging Model (pt. 3)</h2>
+<p>Overview on the <a href="https://jpype.readthedocs.io/en/latest/quickguide.html#primitives">official documentation</a></p>
+<ul>
+<li>
+<p>most Python primitives <strong>directly map</strong> into Java primitives</p>
+</li>
+<li>
+<p>however, Python does <em>not</em> have the <em>same</em> primitive types…</p>
+</li>
+<li>
+<p>… hence, <strong>explicit casts</strong> may be needed in some cases</p>
+</li>
+<li>
+<p>each primitive Java type is <strong>exposed</strong> in JPype (<code>jpype.JBoolean</code>, <code>.JByte</code>, <code>.JChar</code>, <code>.JShort</code>, <code>.JInt</code>, <code>.JLong</code>, <code>.JFloat</code>, <code>.JDouble</code>).</p>
+</li>
+</ul>
+<figure><img src="jpype-primitives.png" alt="Java primitives vs. Python primitives in JPype" width="50%">
+</figure>
+
+</section><section>
+<h2 id="jpypes-bridging-model-pt-4">JPype’s Bridging Model (pt. 4)</h2>
+<p>Overview on the <a href="https://jpype.readthedocs.io/en/latest/quickguide.html#strings">official documentation</a></p>
+<ul>
+<li>
+<p>Java strings are <strong>similar</strong> to Python strings</p>
+</li>
+<li>
+<p>they are both <strong>immutable</strong> and produce a new string when altered</p>
+</li>
+<li>
+<p>most operations can use Java strings <strong>in place</strong> of Python strings</p>
+<ul>
+<li>with minor exceptions, as Python strings are not completely <em>duck typed</em></li>
+</ul>
+</li>
+<li>
+<p>when comparing or using strings as dictionary keys, all <code>JString</code> objects should be converted to Python</p>
+</li>
+</ul>
+<figure><img src="jpype-strings.png" alt="Java strings vs. Python strings in JPype" width="50%">
+</figure>
+
+</section><section>
+<h2 id="jpypes-bridging-model-pt-5">JPype’s Bridging Model (pt. 5)</h2>
+<p>Overview on the <a href="https://jpype.readthedocs.io/en/latest/quickguide.html#arrays">official documentation</a></p>
+<ul>
+<li>
+<p>Java arrays are <strong>mapped</strong> to Python <strong>lists</strong></p>
+</li>
+<li>
+<p>more precisely, they <strong>operate like</strong> Python <em>lists</em>, but they are <strong>fixed in size</strong></p>
+</li>
+<li>
+<p>reading a <strong>slice</strong> from a Java array returns a <em>view</em> of the array, <strong>not a copy</strong></p>
+</li>
+<li>
+<p>passing a <strong>slide</strong> of a Python list to Java will create a <strong>copy</strong> of the sub-list</p>
+</li>
+</ul>
+<figure><img src="jpype-arrays.png" alt="Java arrays vs. Python lists in JPype" width="50%">
+</figure>
+
+</section><section>
+<h2 id="jpypes-bridging-model-pt-6">JPype’s Bridging Model (pt. 6)</h2>
+<p>Overview on the <a href="https://jpype.readthedocs.io/en/latest/quickguide.html#collections">official documentation</a></p>
+<ul>
+<li>
+<p>Java collections are <strong>overloaded</strong> with Python <strong>syntax</strong> where possible</p>
+<ul>
+<li>to operate similarly to Python collections</li>
+</ul>
+</li>
+<li>
+<p>Java’s <code>Iterable</code>s are <strong>mapped</strong> to Python <em>iterables</em> by overriding the <code>__iter__</code> method</p>
+</li>
+<li>
+<p>Java’s <code>Collection</code>s are <strong>mapped</strong> to Python containers by overriding <code>__len__</code></p>
+</li>
+<li>
+<p>Java’s <code>Map</code>s support Python’s <strong>dictionaries</strong> syntax by overriding <code>__getitem__</code> and <code>__setitem__</code></p>
+</li>
+<li>
+<p>Java’s <code>List</code>s support Python’s <strong>lists</strong> syntax by overriding <code>__getitem__</code> and <code>__setitem__</code></p>
+</li>
+</ul>
+<figure><img src="jpype-collections.png" alt="Java collections vs. Python collections in JPype" width="50%">
+</figure>
+
+</section><section>
+<h2 id="jpypes-bridging-model-pt-7">JPype’s Bridging Model (pt. 7)</h2>
+<p>Overview on the <a href="https://jpype.readthedocs.io/en/latest/quickguide.html#mplements-and-extension">official documentation</a></p>
+<ul>
+<li>
+<p>Java <em>interfaces</em> can be <strong>implemented</strong> in Python, via JPype’s <strong>decorators</strong></p>
+</li>
+<li>
+<p>Java’s open / abstract classes <strong>cannot be extended</strong> in Python</p>
+</li>
+<li>
+<p>Python <strong>lambda expressions</strong> can be cast’d to Java’s <strong>functional interfaces</strong></p>
+</li>
+</ul>
+<figure><img src="jpype-implements.png" alt="Implementing Java interfaces in Python" width="50%">
+</figure>
+
+</section><section>
+<h2 id="jpype-type-conversion-model-pt-1">JPype type conversion model (pt. 1)</h2>
+<p>Overview on the <a href="https://jpype.readthedocs.io/en/latest/userguide.html#type-matching">official documentation</a></p>
+<figure><img src="jpype-conversions.png" alt="Explicit and implicit type conversions in JPype" width="70%">
+</figure>
+
+</section><section>
+<h2 id="jpype-type-conversion-model-pt-2">JPype type conversion model (pt. 2)</h2>
+<h3 id="legend">Legend</h3>
+<ul>
+<li>
+<p>none, there is no way to convert</p>
+</li>
+<li>
+<p><strong>explicit</strong> (<em>E</em>), JPype can convert the desired type, but only explicitly via casting</p>
+</li>
+<li>
+<p><strong>implicit</strong> (<em>I</em>), JPype will convert as needed</p>
+</li>
+<li>
+<p><strong>exact</strong> (<em>X</em>), like implicit, but takes <em>priority</em> in <strong>overload selection</strong></p>
+</li>
+</ul>
+</section><section>
+<h2 id="overload-selection">Overload selection</h2>
+<ul>
+<li>
+<p>Consider the following example of Python code with JPype:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">jpype.imports</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">from</span> <span style="color:#000">java.lang</span> <span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">System</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">System</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">out</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">println</span><span style="color:#000;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">1</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">System</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">out</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">println</span><span style="color:#000;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">2.0</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">System</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">out</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">println</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">'A'</span><span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Which overload of <code>System.out.println</code> is called among the <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/PrintStream.html">many admissible ones</a>?</p>
+<ul>
+<li>Python’s <code>1</code> is convertible to Java’s <code>int</code>, <code>long</code>, and <code>short</code>
+<ul>
+<li>but Java’s <code>int</code> is the <strong>exact</strong> match</li>
+</ul>
+</li>
+<li>Python’s <code>2.0</code> is convertible to Java’s <code>float</code> and <code>double</code>
+<ul>
+<li>but Java’s <code>double</code> is the <strong>exact</strong> match</li>
+</ul>
+</li>
+<li>Python’s <code>'A'</code> is convertible to Java’s <code>String</code> and <code>char</code>
+<ul>
+<li>but Java’s <code>String</code> is the <strong>exact</strong> match</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="ambiguous-overload-selection">Ambiguous overload selection</h2>
+<ul>
+<li>
+<p>Consider the following example of Python code with JPype:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">jpype</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">csv</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">jpype</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">JPackage</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"io.github.gciatto.csv.Csv"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">csv</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">headerOf</span><span style="color:#000;font-weight:bold">([</span><span style="color:#4e9a06">"filed"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"another field"</span><span style="color:#000;font-weight:bold">])</span>
+</span></span></code></pre></div></li>
+<li>
+<p>This would raise the following <strong>error</strong>:</p>
+<pre tabindex="0"><code>TypeError: Ambiguous overloads found for io.github.gciatto.csv.Csv.headerOf(list) between:
+    public static final io.github.gciatto.csv.Header io.github.gciatto.csv.Csv.headerOf(java.lang.Iterable)
+    public static final io.github.gciatto.csv.Header io.github.gciatto.csv.Csv.headerOf(java.lang.String[])
+</code></pre><ul>
+<li>because Python’s <code>list</code> is convertible to both Java’s <code>Iterable</code> and <code>String[]</code>
+<ul>
+<li>but neither is the <strong>exact</strong> match</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>To solve this issue, one can <strong>explicitly</strong> cast the Python <code>list</code> to the desired Java type:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">jpype</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">jpype.imports</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">from</span> <span style="color:#000">java.lang</span> <span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">Iterable</span> <span style="color:#204a87;font-weight:bold">as</span> <span style="color:#000">JIterable</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">csv</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">jpype</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">JClass</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"io.github.gciatto.csv.Csv"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">csv</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">headerOf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">JIterable</span><span style="color:#ce5c00;font-weight:bold">@</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">"field"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"another field"</span><span style="color:#000;font-weight:bold">])</span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"># returns Header("field", "another field")</span>
+</span></span></code></pre></div></li>
+</ul>
+</section><section>
+<h2 id="customising-java-types-in-python-pt-1">Customising Java types in Python (pt. 1)</h2>
+<ul>
+<li>
+<p>One may customise the behaviour of Java types in Python by <strong>providing custom implementations</strong> for them</p>
+<ul>
+<li>by means of the <code>@JImplementationFor</code> decorator</li>
+</ul>
+</li>
+<li>
+<p>In that case the special method <code>__jclass_init__</code> is called on the custom implementation, <em>just once</em>, to configure the class</p>
+</li>
+<li>
+<p>In <em>type hierarchies</em>, implementations provided for superclasses are <strong>inherited</strong> by subclasses</p>
+</li>
+</ul>
+</section><section>
+<h2 id="customising-java-types-in-python-pt-2">Customising Java types in Python (pt. 2)</h2>
+<p>Consider for instance the following customisations, allowing to use <em>Java collections</em> with <strong>Python syntax</strong></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">from</span> <span style="color:#000">typing</span> <span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">Iterable</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">Sequence</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@jpype.JImplementationFor</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"java.lang.Iterable"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">_JIterable</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">__jclass_init__</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000">Iterable</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">register</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#8f5902;font-style:italic"># makes this class a subtype of Iterable, to speed up isinstance checks </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">__iter__</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">iterator</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@jpype.JImplementationFor</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"java.util.Collection"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">_JCollection</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">__len__</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">size</span><span style="color:#000;font-weight:bold">()</span>      <span style="color:#8f5902;font-style:italic"># supports "len(coll)" syntax</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">__delitem__</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">i</span><span style="color:#000;font-weight:bold">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">remove</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">i</span><span style="color:#000;font-weight:bold">)</span>   <span style="color:#8f5902;font-style:italic"># supports "del coll[i]" syntax</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">__contains__</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">i</span><span style="color:#000;font-weight:bold">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">contains</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">i</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#8f5902;font-style:italic"># supports "i in coll" syntax</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic"># __iter__ is inherited from _JIterable</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic"># because in Java: Collection extends Iterable</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@jpype.JImplementationFor</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">'java.util.List'</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">_JList</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87">object</span><span style="color:#000;font-weight:bold">):</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">__jclass_init__</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000">Sequence</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">register</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#8f5902;font-style:italic"># makes this class a subtype of Sequence, to speed up isinstance checks</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">__getitem__</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">ndx</span><span style="color:#000;font-weight:bold">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">get</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ndx</span><span style="color:#000;font-weight:bold">)</span>   <span style="color:#8f5902;font-style:italic"># supports "list[i]" syntax</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">obj</span><span style="color:#000;font-weight:bold">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">add</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">obj</span><span style="color:#000;font-weight:bold">)</span>   <span style="color:#8f5902;font-style:italic"># supports "list.append(obj)" syntax</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic"># __len__, __delitem__, __contains__, __iter__ are inherited from _JCollection</span>
+</span></span></code></pre></div><p>this is taken directly from <a href="https://github.com/jpype-project/jpype/blob/7363ce8a357d0b64f537c31849bd4e43732d9cdf/jpype/_jcollection.py">JPype’s codebase</a></p>
 </section><section>
 <h2 id="hahahugoshortcode1s0hbhb">Multi-platform Programming for Research-Oriented Software</h2>
 <br>
