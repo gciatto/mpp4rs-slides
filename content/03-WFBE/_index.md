@@ -667,4 +667,63 @@ csv-python/
 
 ---
 
+## Including JVM in JPype projects (pt. 1)
+
+- Notice that the JVM is available as a __Python dependency__ too:
+    + https://pypi.org/project/jdk4py/
+
+- This means that the JVM can be __automatically downloaded__ and __installed__ via `pip`:
+
+    ```bash
+    pip install jdk4py
+    ```
+
+- ... or added as a dependency to the `requirements.txt` file:
+
+    ```
+    JPype1==1.4.1
+    jdk4py==17.0.7.0
+    ``` 
+
+- so, one may simply need to configure JPype to use _that_ JVM:
+
+    ```python
+    # jcsv/jvm/__init__.py
+    import jpype, sys
+    from jdk4py import JAVA_HOME
+
+    def jvm_lib_file_names():
+        if sys.platform == "win32":
+            return {"jvm.dll"}
+        elif sys.platform == "darwin":
+            return {"libjli.dylib"}
+        else:
+            return {"libjvm.so"}
+
+
+    def jvmlib(): 
+        for name in __jvm_lib_file_names():
+            for path in JAVA_HOME.glob(f"**/{name}"):
+                if path.exists:
+                    return str(path)
+        return None
+
+    jpype.startJVM(jvmpath=jvmlib())
+    ```
+---
+
+## About unit testing
+
+- Unit tests are __essential__ to ensure the _correctness_ of the Pythonic API
+    + they prevent _corruption_ of the Pythonic API when the JAR is __updated__
+
+- Consider for instance tests in:
+    + `test/test_parsing.py`
+    + `test/test_python_api.py`
+
+- It is important to __test__ all the _costumisations_ and _factory methods_
+    + because these are __not covered__ by the unit tests of the _JVM-based library_
+
+---
+
 {{% import path="reusable/header.md" %}}
