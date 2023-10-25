@@ -316,4 +316,75 @@ this is taken directly from [JPype's codebase](https://github.com/jpype-project/
 
 ---
 
+## Making wrapped code Pythonic (pt. 1)
+
+- The code wrapped via JPype is __not__ Pythonic by default
+    + it works in principle, but it is very _hard to use_ for the average Python developer
+        * we cannot assume the _average_ Python developer is _familiar_ with _Java_...
+        * nor with JPype
+        * and the developer should know both aspects to use the wrapped code _as is_
+
+- It is important to make the wrapped code as _Pythonic_ as possible
+    + __factory methods__ for building instances of types
+    + simplified __package structure__
+        * e.g. `io.github.gciatto.csv.Csv` $\rightarrow$ `jcsv.Csv`
+    + __properties__ instead of _getters_ and _setters_
+    + `snake_case` instead of `camelCase`
+    + __magic methods__ implemented whenever possible
+        * e.g. `__len__` for `java.util.Collection`
+        * e.g. `__getitem__` for `java.util.List`
+    + __optional parameters__ in methods instead of _overloads_
+
+- All such refinements can be done in JPype via __customisations__ of the Java types
+    + _unit tests_ should be written to ensure the customisations are _not broken_ by future changes
+
+---
+
+## Making wrapped code Pythonic (pt. 2)
+
+### Workflow
+
+For all __public types__ in the wrapped _Java library_:
+- decide their corresponding __Python package__
+- provide Pythonic __factory methods__
+- __customise__ the Python class to make it _Pythonic_ (possibly exploiting __type hierarchies__ to save time)
+    + add __properties__ calling _getters/setters_
+    + __override__ Java methods to make them _Pythonic_
+        * e.g. use _magic methods_ where possible
+        * e.g. use _optional parameters_ where possible, removing the need for _overloads_
+- write __unit tests__ for _Pythonic API_
+
+---
+
+## Example: the `jcsv` package
+
+- The `jcsv` package is a Pythonic wrapper for our JVM-based `io.github.gciatto.csv` library
+
+- Java's type definition are brought to Python in `jcsv/__init__.py`:
+
+    ```python
+    import jpype
+    import jpype.imports
+    from java.lang import Iterable as JIterable
+
+    _csv = jpype.JPackage("io.github.gciatto.csv")
+
+    Table = _csv.Table
+    Row = _csv.Row
+    Record = _csv.Record
+    Header = _csv.Header
+    Formatter = _csv.Formatter
+    Parser = _csv.Parser
+    Configuration = _csv.Configuration
+    Csv = _csv.Csv
+    CsvJvm = _csv.CsvJvm
+    ```
+
+    making it possible to write the following code on the user side:
+    
+    ```python
+    from jcsv import Table, Record, Header
+    ```
+---
+
 {{% import path="reusable/header.md" %}}
