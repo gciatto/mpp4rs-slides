@@ -618,7 +618,10 @@ csv-python/
     └── test_python_api.py
 ```
 
-1. The `build.gradle.kts` file automated the generation of the `csv.jar` file
+1. We need to __ensure__ that the _JVM-based library_ is available on the system where `jcsv` is installed
+    + why not including it in the Python package?
+
+1. The `build.gradle.kts` file automates the generation of the `csv.jar` file
     + it is a _Fat-JAR_ containing all the dependencies of the JVM-based library
     + such JAR is placed in the `jcsv/jvm` directory
     + it is part of Python sources, so that it can be distributed with the Python library
@@ -667,7 +670,9 @@ csv-python/
 
 ---
 
-## Including JVM in JPype projects (pt. 1)
+## Including JVM in JPype projects
+
+- We need to __ensure__ that some __JVM is available__ on the system where `jcsv` is installed
 
 - Notice that the JVM is available as a __Python dependency__ too:
     + https://pypi.org/project/jdk4py/
