@@ -384,13 +384,102 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#8f5902;font-style:italic"># __len__, __delitem__, __contains__, __iter__ are inherited from _JCollection</span>
 </span></span></code></pre></div><p>this is taken directly from <a href="https://github.com/jpype-project/jpype/blob/7363ce8a357d0b64f537c31849bd4e43732d9cdf/jpype/_jcollection.py">JPype’s codebase</a></p>
 </section><section>
+<h2 id="making-wrapped-code-pythonic-pt-1">Making wrapped code Pythonic (pt. 1)</h2>
+<ul>
+<li>
+<p>The code wrapped via JPype is <strong>not</strong> Pythonic by default</p>
+<ul>
+<li>it works in principle, but it is very <em>hard to use</em> for the average Python developer
+<ul>
+<li>we cannot assume the <em>average</em> Python developer is <em>familiar</em> with <em>Java</em>…</li>
+<li>nor with JPype</li>
+<li>and the developer should know both aspects to use the wrapped code <em>as is</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>It is important to make the wrapped code as <em>Pythonic</em> as possible</p>
+<ul>
+<li><strong>factory methods</strong> for building instances of types</li>
+<li>simplified <strong>package structure</strong>
+<ul>
+<li>e.g. <code>io.github.gciatto.csv.Csv</code> $\rightarrow$ <code>jcsv.Csv</code></li>
+</ul>
+</li>
+<li><strong>properties</strong> instead of <em>getters</em> and <em>setters</em></li>
+<li><code>snake_case</code> instead of <code>camelCase</code></li>
+<li><strong>magic methods</strong> implemented whenever possible
+<ul>
+<li>e.g. <code>__len__</code> for <code>java.util.Collection</code></li>
+<li>e.g. <code>__getitem__</code> for <code>java.util.List</code></li>
+</ul>
+</li>
+<li><strong>optional parameters</strong> in methods instead of <em>overloads</em></li>
+</ul>
+</li>
+<li>
+<p>All such refinements can be done in JPype via <strong>customisations</strong> of the Java types</p>
+<ul>
+<li><em>unit tests</em> should be written to ensure the customisations are <em>not broken</em> by future changes</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h2 id="making-wrapped-code-pythonic-pt-2">Making wrapped code Pythonic (pt. 2)</h2>
+<h3 id="workflow">Workflow</h3>
+<p>For all <strong>public types</strong> in the wrapped <em>Java library</em>:</p>
+<ul>
+<li>decide their corresponding <strong>Python package</strong></li>
+<li>provide Pythonic <strong>factory methods</strong></li>
+<li><strong>customise</strong> the Python class to make it <em>Pythonic</em> (possibly exploiting <strong>type hierarchies</strong> to save time)
+<ul>
+<li>add <strong>properties</strong> calling <em>getters/setters</em></li>
+<li><strong>override</strong> Java methods to make them <em>Pythonic</em>
+<ul>
+<li>e.g. use <em>magic methods</em> where possible</li>
+<li>e.g. use <em>optional parameters</em> where possible, removing the need for <em>overloads</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>write <strong>unit tests</strong> for <em>Pythonic API</em></li>
+</ul>
+</section><section>
+<h2 id="example-the-jcsv-package">Example: the <code>jcsv</code> package</h2>
+<ul>
+<li>
+<p>The <code>jcsv</code> package is a Pythonic wrapper for our JVM-based <code>io.github.gciatto.csv</code> library</p>
+</li>
+<li>
+<p>Java’s type definition are brought to Python in <code>jcsv/__init__.py</code>:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">jpype</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">jpype.imports</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">from</span> <span style="color:#000">java.lang</span> <span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">Iterable</span> <span style="color:#204a87;font-weight:bold">as</span> <span style="color:#000">JIterable</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">_csv</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">jpype</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">JPackage</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"io.github.gciatto.csv"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">Table</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">_csv</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">Table</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">Row</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">_csv</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">Row</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">Record</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">_csv</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">Record</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">Header</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">_csv</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">Header</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">Formatter</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">_csv</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">Formatter</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">Parser</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">_csv</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">Parser</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">Configuration</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">_csv</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">Csv</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">_csv</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">Csv</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">CsvJvm</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">_csv</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">CsvJvm</span>
+</span></span></code></pre></div><p>making it possible to write the following code on the user side:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">from</span> <span style="color:#000">jcsv</span> <span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">Table</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">Record</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">Header</span>
+</span></span></code></pre></div></li>
+</ul>
+</section><section>
 <h2 id="hahahugoshortcode1s0hbhb">Multi-platform Programming for Research-Oriented Software</h2>
 <br>
 <h3 id="giovanni-ciatto-----giovanniciattouniboitmailtogiovanniciattouniboit"><a href="mailto:giovanni.ciatto@unibo.it">Giovanni Ciatto — <code>giovanni.ciatto@unibo.it</code></a></h3>
 <br>
-<!-- Compiled on: 2023-10-24
+<!-- Compiled on: 2023-10-25
  --- [<i class="fa fa-print" aria-hidden="true"></i> printable version](?print-pdf&pdfSeparateFragments=false) -->
-<p>Compiled on: 2023-10-24
+<p>Compiled on: 2023-10-25
 </p>
 <p><a href=".."><i class="fa fa-undo" aria-hidden="true"></i> back</a></p>
 </section>
