@@ -600,4 +600,71 @@ For all __public types__ in the wrapped _Java library_:
 
 ---
 
+## Including `.jar`s in JPype projects (pt. 1)
+
+```bash
+csv-python/
+├── build.gradle.kts            # this is where the generation of csv.jar is automated
+├── jcsv
+│   ├── __init__.py
+│   ├── jvm
+│   │   ├── __init__.py         # this is where JPype is loaded
+│   │   └── csv.jar             # this the Fat-JAR of the JVM-based library
+│   └── python.py
+├── requirements.txt
+└── test
+    ├── __init__.py
+    ├── test_parsing.py
+    └── test_python_api.py
+```
+
+1. The `build.gradle.kts` file automated the generation of the `csv.jar` file
+    + it is a _Fat-JAR_ containing all the dependencies of the JVM-based library
+    + such JAR is placed in the `jcsv/jvm` directory
+    + it is part of Python sources, so that it can be distributed with the Python library
+
+2. The `jcsv/jvm/__init__.py` file loads JPype and the `csv.jar` file
+
+---
+
+## Including `.jar`s in JPype projects (pt. 2)
+
+1. Snippet from the `build.gradle.kts`:
+
+    ```kotlin
+    tasks.create<Copy>("createCoreJar") {
+        group = "Python"
+        val shadowJar by project(":csv-core").tasks.getting(Jar::class)
+        dependsOn(shadowJar)
+        from(shadowJar.archiveFile) {
+            rename(".*?\\.jar", "csv.jar")
+        }
+        into(projectDir.resolve("jcsv/jvm"))
+    }
+    ```
+
+2. Content of the `jcsv/jvm/__init__.py` file:
+
+    ```python
+    import jpype
+    from pathlib import Path
+
+    # the directory where csv.jar is placed
+    CLASSPATH = Path(__file__).parent
+
+    # the list of all .jar files in CLASSPATH
+    JARS = [str(j.resolve()) for j in CLASSPATH.glob('*.jar')]
+
+    jpype.startJVM(classpath=JARS)
+    ```
+
+3. Important line in `jcsv/__init__.py`:
+    ```python
+    import jcsv.jvm
+    ```
+
+    this is forcing the startup of the JVM with the correct classpath whenever someone is using the `jcsv` module
+
+---
+
 {{% import path="reusable/header.md" %}}
