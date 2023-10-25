@@ -672,6 +672,143 @@
 </li>
 </ul>
 </section><section>
+<h2 id="including-jars-in-jpype-projects-pt-1">Including <code>.jar</code>s in JPype projects (pt. 1)</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span>csv-python/
+</span></span><span style="display:flex;"><span>├── build.gradle.kts            <span style="color:#8f5902;font-style:italic"># this is where the generation of csv.jar is automated</span>
+</span></span><span style="display:flex;"><span>├── jcsv
+</span></span><span style="display:flex;"><span>│&nbsp;&nbsp; ├── __init__.py
+</span></span><span style="display:flex;"><span>│&nbsp;&nbsp; ├── jvm
+</span></span><span style="display:flex;"><span>│&nbsp;&nbsp; │&nbsp;&nbsp; ├── __init__.py         <span style="color:#8f5902;font-style:italic"># this is where JPype is loaded</span>
+</span></span><span style="display:flex;"><span>│&nbsp;&nbsp; │&nbsp;&nbsp; └── csv.jar             <span style="color:#8f5902;font-style:italic"># this the Fat-JAR of the JVM-based library</span>
+</span></span><span style="display:flex;"><span>│&nbsp;&nbsp; └── python.py
+</span></span><span style="display:flex;"><span>├── requirements.txt
+</span></span><span style="display:flex;"><span>└── <span style="color:#204a87">test</span>
+</span></span><span style="display:flex;"><span> &nbsp;&nbsp; ├── __init__.py
+</span></span><span style="display:flex;"><span> &nbsp;&nbsp; ├── test_parsing.py
+</span></span><span style="display:flex;"><span> &nbsp;&nbsp; └── test_python_api.py
+</span></span></code></pre></div><ol>
+<li>
+<p>We need to <strong>ensure</strong> that the <em>JVM-based library</em> is available on the system where <code>jcsv</code> is installed</p>
+<ul>
+<li>why not including it in the Python package?</li>
+</ul>
+</li>
+<li>
+<p>The <code>build.gradle.kts</code> file automates the generation of the <code>csv.jar</code> file</p>
+<ul>
+<li>it is a <em>Fat-JAR</em> containing all the dependencies of the JVM-based library</li>
+<li>such JAR is placed in the <code>jcsv/jvm</code> directory</li>
+<li>it is part of Python sources, so that it can be distributed with the Python library</li>
+</ul>
+</li>
+<li>
+<p>The <code>jcsv/jvm/__init__.py</code> file loads JPype and the <code>csv.jar</code> file</p>
+</li>
+</ol>
+</section><section>
+<h2 id="including-jars-in-jpype-projects-pt-2">Including <code>.jar</code>s in JPype projects (pt. 2)</h2>
+<ol>
+<li>
+<p>Snippet from the <code>build.gradle.kts</code>:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#000">tasks</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">create</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000">Copy</span><span style="color:#000;font-weight:bold">&gt;(</span><span style="color:#4e9a06">"createCoreJar"</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">group</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">"Python"</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">val</span> <span style="color:#000">shadowJar</span> <span style="color:#204a87;font-weight:bold">by</span> <span style="color:#000">project</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">":csv-core"</span><span style="color:#000;font-weight:bold">).</span><span style="color:#000">tasks</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">getting</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">Jar</span><span style="color:#ce5c00;font-weight:bold">::</span><span style="color:#204a87;font-weight:bold">class</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">dependsOn</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">shadowJar</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">from</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">shadowJar</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">archiveFile</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000">rename</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">".*?</span><span style="color:#4e9a06">\\</span><span style="color:#4e9a06">.jar"</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">"csv.jar"</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">into</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">projectDir</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">resolve</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">"jcsv/jvm"</span><span style="color:#000;font-weight:bold">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Content of the <code>jcsv/jvm/__init__.py</code> file:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">jpype</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">from</span> <span style="color:#000">pathlib</span> <span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">Path</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"># the directory where csv.jar is placed</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">CLASSPATH</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">Path</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">__file__</span><span style="color:#000;font-weight:bold">)</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">parent</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"># the list of all .jar files in CLASSPATH</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">JARS</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">[</span><span style="color:#204a87">str</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">j</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">resolve</span><span style="color:#000;font-weight:bold">())</span> <span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">j</span> <span style="color:#204a87;font-weight:bold">in</span> <span style="color:#000">CLASSPATH</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">glob</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">'*.jar'</span><span style="color:#000;font-weight:bold">)]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">jpype</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">startJVM</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">classpath</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">JARS</span><span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Important line in <code>jcsv/__init__.py</code>:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">jcsv.jvm</span>
+</span></span></code></pre></div><p>this is forcing the startup of the JVM with the correct classpath whenever someone is using the <code>jcsv</code> module</p>
+</li>
+</ol>
+</section><section>
+<h2 id="including-jvm-in-jpype-projects">Including JVM in JPype projects</h2>
+<ul>
+<li>
+<p>We need to <strong>ensure</strong> that some <strong>JVM is available</strong> on the system where <code>jcsv</code> is installed</p>
+</li>
+<li>
+<p>Notice that the JVM is available as a <strong>Python dependency</strong> too:</p>
+<ul>
+<li><a href="https://pypi.org/project/jdk4py/">https://pypi.org/project/jdk4py/</a></li>
+</ul>
+</li>
+<li>
+<p>This means that the JVM can be <strong>automatically downloaded</strong> and <strong>installed</strong> via <code>pip</code>:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span>pip install jdk4py
+</span></span></code></pre></div></li>
+<li>
+<p>… or added as a dependency to the <code>requirements.txt</code> file:</p>
+<pre tabindex="0"><code>JPype1==1.4.1
+jdk4py==17.0.7.0
+</code></pre></li>
+<li>
+<p>so, one may simply need to configure JPype to use <em>that</em> JVM:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"># jcsv/jvm/__init__.py</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">jpype</span><span style="color:#ce5c00;font-weight:bold">,</span> <span style="color:#000">sys</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">from</span> <span style="color:#000">jdk4py</span> <span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">JAVA_HOME</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">jvm_lib_file_names</span><span style="color:#000;font-weight:bold">():</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">sys</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">platform</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#4e9a06">"win32"</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">"jvm.dll"</span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">elif</span> <span style="color:#000">sys</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">platform</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#4e9a06">"darwin"</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">"libjli.dylib"</span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">else</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">"libjvm.so"</span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">jvmlib</span><span style="color:#000;font-weight:bold">():</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">name</span> <span style="color:#204a87;font-weight:bold">in</span> <span style="color:#000">__jvm_lib_file_names</span><span style="color:#000;font-weight:bold">():</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">path</span> <span style="color:#204a87;font-weight:bold">in</span> <span style="color:#000">JAVA_HOME</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">glob</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">f</span><span style="color:#4e9a06">"**/</span><span style="color:#4e9a06">{</span><span style="color:#000">name</span><span style="color:#4e9a06">}</span><span style="color:#4e9a06">"</span><span style="color:#000;font-weight:bold">):</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">exists</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87">str</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">path</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">None</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">jpype</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">startJVM</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">jvmpath</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">jvmlib</span><span style="color:#000;font-weight:bold">())</span>
+</span></span></code></pre></div></li>
+</ul>
+</section><section>
+<h2 id="about-unit-testing">About unit testing</h2>
+<ul>
+<li>
+<p>Unit tests are <strong>essential</strong> to ensure the <em>correctness</em> of the Pythonic API</p>
+<ul>
+<li>they prevent <em>corruption</em> of the Pythonic API when the JAR is <strong>updated</strong></li>
+</ul>
+</li>
+<li>
+<p>Consider for instance tests in:</p>
+<ul>
+<li><code>test/test_parsing.py</code></li>
+<li><code>test/test_python_api.py</code></li>
+</ul>
+</li>
+<li>
+<p>It is important to <strong>test</strong> all the <em>costumisations</em> and <em>factory methods</em></p>
+<ul>
+<li>because these are <strong>not covered</strong> by the unit tests of the <em>JVM-based library</em></li>
+</ul>
+</li>
+</ul>
+</section><section>
 <h2 id="hahahugoshortcode1s0hbhb">Multi-platform Programming for Research-Oriented Software</h2>
 <br>
 <h3 id="giovanni-ciatto-----giovanniciattouniboitmailtogiovanniciattouniboit"><a href="mailto:giovanni.ciatto@unibo.it">Giovanni Ciatto — <code>giovanni.ciatto@unibo.it</code></a></h3>
