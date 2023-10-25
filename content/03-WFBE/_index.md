@@ -356,7 +356,7 @@ For all __public types__ in the wrapped _Java library_:
 
 ---
 
-## Example: the `jcsv` package
+## Example: the `jcsv` package (pt. 1)
 
 - The `jcsv` package is a Pythonic wrapper for our JVM-based `io.github.gciatto.csv` library
 
@@ -385,6 +385,219 @@ For all __public types__ in the wrapped _Java library_:
     ```python
     from jcsv import Table, Record, Header
     ```
+---
+
+## Example: the `jcsv` package (pt. 2)
+
+- __Parsing__ and **formatting** operations are mapped _straightforwardly_ to Python functions:
+
+    ```python
+    # jcsv/__init__.py
+
+    def parse_csv_string(string, separator = Csv.DEFAULT_SEPARATOR, delimiter = Csv.DEFAULT_DELIMITER, comment = Csv.DEFAULT_COMMENT):
+        return Csv.parseAsCSV(string, separator, delimiter, comment)
+
+
+    def parse_csv_file(path, separator = Csv.DEFAULT_SEPARATOR, delimiter = Csv.DEFAULT_DELIMITER, comment = Csv.DEFAULT_COMMENT):
+        return CsvJvm.parseCsvFile(str(path), separator, delimiter, comment)
+
+
+    def format_as_csv(rows, separator = Csv.DEFAULT_SEPARATOR, delimiter = Csv.DEFAULT_DELIMITER, comment = Csv.DEFAULT_COMMENT):
+        return Csv.formatAsCSV(JIterable@rows, separator, delimiter, comment)
+    ```
+
+---
+
+## Example: the `jcsv` package (pt. 3)
+
+- Ad-hoc _factory method_ is provided for building `Header` instances:
+    
+    ```python
+    # jcsv/__init__.py
+    from jcsv.python import iterable_or_varargs
+
+    def header(*args):
+        if len(args) == 1 and isinstance(args[0], int):
+            return Csv.anonymousHeader(args[0])
+        return iterable_or_varargs(args, lambda xs: Csv.headerOf(JIterable@map(str, xs)))
+    ```
+
+    making it possible to write the following code on the user side:
+    
+    ```python
+    import jcsv
+
+    header1 = jcsv.header("column1", "column2", "column3") 
+    header2 = jcsv.header(3) # anonymous header with 3 columns
+    columns = (f"column{i}" for i in range(1, 4)) # generator expression
+    header3 = jcsv.header(columns) # same as header1, but passing an interable
+    ```
+
+- Function `iterable_or_varargs` aims at _simulating_ **multiple overloads**:
+    
+    ```python
+    # jcsv/python.py
+    from typing import Iterable
+
+    def iterable_or_varargs(args, f):
+        assert isinstance(args, Iterable)
+        if len(args) == 1:
+            item = args[0]
+            if isinstance(item, Iterable):
+                return f(item)
+            else:
+                return f([item])
+        else:
+            return f(args)
+    ```
+
+---
+
+## Example: the `jcsv` package (pt. 4)
+
+- Ad-hoc _factory method_ is provided for building `Record` instances:
+
+    ```python
+    # jcsv/__init__.py
+
+    def record(header, *args):
+        return iterable_or_varargs(args, lambda xs: Csv.recordOf(header, JIterable@map(str, xs)))
+    ```
+
+- Ad-hoc _factory method_ is provided for building `Table` instances:
+
+    ```python
+    # jcsv/__init__.py
+
+    def __ensure_header(h):
+        return h if isinstance(h, Header) else header(h)
+    def __ensure_record(r, h):
+        return r if isinstance(r, Record) else record(h, r)
+
+    def table(header, *args):
+        header = __ensure_header(header)
+        args = [__ensure_record(row, header) for row in args]
+        return iterable_or_varargs(args, lambda xs: Csv.tableOf(header, JIterable@xs))
+    ```
+
+---
+
+## Example: the `jcsv` package (pt. 5)
+
+- The `Row` class is customised to make it more Pythonic:
+    ```python
+    # jcsv/__init__.py
+
+    @jpype.JImplementationFor("io.github.gciatto.csv.Row")
+    class _Row:
+        def __len__(self):
+            return self.getSize()
+
+        def __getitem__(self, item):
+            if isinstance(item, int) and item < 0:
+                item = len(self) + item
+            try:
+                return self.get(item)
+            except _java.IndexOutOfBoundsException as e:
+                raise IndexError(f"index {item} out of range") from e
+
+        @property
+        def size(self):
+            return len(self)
+    ```
+
+    + supporting the syntax `len(row)` instead of `row.getSize()`
+    + supporting the syntax `row[i]` instead of `row.get(i)`
+    + supporting the syntax `row[-i]` instead of `row.get(row.getSize() - i - 1)`
+    + letting `IndexError` be raised instead of `IndexOutOfBoundsException`
+    + supporting the syntax `row.size` instead of `row.getSize()`
+
+---
+
+## Example: the `jcsv` package (pt. 6)
+
+- The `Header` shall inherit all customisation for `Row`, plus the following ones:
+    ```python
+    @jpype.JImplementationFor("io.github.gciatto.csv.Header")
+    class _Header:
+        @property
+        def columns(self):
+            return [str(c) for c in self.getColumns()]
+
+        def __contains__(self, item):
+            return self.contains(item)
+
+        def index_of(self, column):
+            return self.indexOf(column)
+    ```
+
+    + supporting the syntax `header.columns` instead of `header.getColumns()`
+    + supporting the syntax `column in header` instead of `header.contains(column)`
+    + supporting the syntax `header.index_of(column)` instead of `header.indexOf(column)`
+
+---
+
+## Example: the `jcsv` package (pt. 7)
+
+- The `Record` shall inherit all customisation for `Row`, plus the following ones:
+    ```python
+    @jpype.JImplementationFor("io.github.gciatto.csv.Record")
+    class _Record:
+        @property
+        def header(self):
+            return self.getHeader()
+
+        @property
+        def values(self):
+            return [str(v) for v in self.getValues()]
+
+        def __contains__(self, item):
+            return self.contains(item)
+    ```
+
+    + supporting the syntax `record.header` instead of `record.getHeader()`
+    + supporting the syntax `record.values` instead of `record.getValues()`
+    + supporting the syntax `value in record` instead of `record.contains(value)`
+
+---
+
+## Example: the `jcsv` package (pt. 8)
+
+- The `Table` class is customised too, to make it more Pythonic:
+    ```python
+    @jpype.JImplementationFor("io.github.gciatto.csv.Table")
+    class _Table:
+        @property
+        def header(self):
+            return self.getHeader()
+
+        def __len__(self):
+            return self.getSize()
+
+        def __getitem__(self, item):
+            if isinstance(item, int) and item < 0:
+                item = len(self) + item
+            try:
+                return self.get(item)
+            except _java.IndexOutOfBoundsException as e:
+                raise IndexError(f"index {item} out of range") from e
+
+        @property
+        def records(self):
+            return self.getRecords()
+
+        @property
+        def size(self):
+            return len(self)
+    ```
+
+    + supporting the syntax `table.header` instead of `table.getHeader()`
+    + supporting the syntax `len(table)` instead of `table.getSize()`
+    + supporting the syntax `table[i]` instead of `table.get(i)`
+    + supporting the syntax `table[-i]` instead of `table.get(table.getSize() - i - 1)`
+    + supporting the syntax `record in table` instead of `table.contains(record)`
+    + supporting the syntax `table.records` instead of `table.getRecords()`
+
 ---
 
 {{% import path="reusable/header.md" %}}
